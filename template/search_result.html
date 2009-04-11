@@ -16,6 +16,7 @@
 
 </form>
 
+{% if persons.object_list %}
 
 <div class="search_results">
   {% for p in persons.object_list %}
@@ -28,20 +29,21 @@
   {% endfor %}  
 </div>
 
+{% ifnotequal persons.paginator.num_pages 1 %}
+
 <div class="pager">
   <span class="step-links">
-        {% if persons.has_previous %}
-        <i>&#8592;&#160;<b>Ctrl</b></i>&#160;
+        {% if persons.has_previous %}        
         <a href="?query={{ query }}&page={{ persons.previous_page_number }}">предыдущая</a>
         {% else %}
-            <span><i>&#8592;&#160;<b>Ctrl</b></i>&#160;предыдущая</span>
+            <span>предыдущая</span>
         {% endif %}        
 
         {% if persons.has_next %}
             <a href="?query={{ query }}&page={{ persons.next_page_number }}">
-              следующая</a>&#160;<i><b>Ctrl</b>&#160;&#8594;</i>
+              следующая</a>
         {% else %}
-            <span>следующая&#160;<i><b>Ctrl</b>&#160;&#8594;</i></span>
+            <span>следующая</span>
         {% endif %}
         <div>
         {% for p in persons.paginator.page_range %}
@@ -54,6 +56,7 @@
         </div>
     </span>
 </div>
-
+{% endifnotequal %}
+{% endif %}
 
 {% endblock %}

@@ -45,6 +45,8 @@
   {% endfor %}
 </div>
 
+{% ifnotequal persons.paginator.num_pages 1 %}
+
 <div class="pager">
   <span class="step-links">
         {% if persons.has_previous %}
@@ -71,7 +73,7 @@
         </div>
     </span>
 </div>
-
+{% endifnotequal %}
 {% endif %}
 
 {% if compare %}
