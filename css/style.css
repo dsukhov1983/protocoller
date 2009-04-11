@@ -1,0 +1,298 @@
+div.logo {
+background:transparent url(/static/img/logo.jpg) no-repeat scroll left top;
+height:150px;
+margin:1em 0 1em 5em;
+padding:0;
+}
+
+#page-left {
+width:16%;
+float:left;
+margin-right:-16%;
+}
+
+#content{
+float:left;
+margin-top:0.5em;
+margin-left:16%;
+width:60%;
+}
+
+#page-right {
+width:16%;
+float:right;
+}
+
+#search{
+padding-bottom:1em;
+}
+
+#menu{
+margin-left:16%;
+padding-bottom:8px;
+}
+
+#main{
+overflow:hidden;
+width:100%;
+}
+
+#footer{
+padding:10px;
+}
+
+.menu a{
+color:#1A3DC1;
+font-size:small;
+padding-left:3px;
+padding-right:3px;
+}
+
+.actions a{
+color:#1A3DC1;
+#font-size:small;
+margin-bottom:0.5em;
+display:block;
+}
+
+.hint a{
+color:#1A3DC1;
+}
+
+
+body {
+font-family:Trebuchet MS,Tahoma,sans-serif;
+font-size:medium;
+font-size-adjust:none;
+font-style:normal;
+font-variant:normal;
+font-weight:normal;
+line-height:normal;
+padding:0; 
+margin:0 auto;
+}
+
+
+.emptySearch{
+width: 100%;
+}
+
+.date {
+color:#555555;
+#font-size:70%;
+line-height:100%;
+}
+
+.placeholder {
+    color: gray;
+} 
+
+
+.place{
+float:right;
+color:#007766;
+}
+
+
+.title{
+font-size:1.1em;
+}
+
+.person{
+padding-bottom:1em;
+}
+
+.comp_list{
+display:block;
+padding-bottom:2em;
+}
+
+.competition p {
+display:inline;
+
+}
+
+.competition{
+display:block;
+text-align:left;
+padding-bottom:1em;
+}
+
+.season{
+#padding-bottom:1em;
+}
+
+.even {
+background-color:lightgrey;
+}
+
+
+table.protocol {
+border-collapse:collapse;
+margin-bottom:2em;
+}
+
+tr.head {
+border-bottom:1px solid black;
+border-color:black;
+border-width:1px;
+}
+
+td{
+padding-left:2px;
+padding-right:2px;
+#font-size:9pt;
+}
+
+th.group{
+color:#FF0000;
+font-weight: bold;
+text-align:left;
+padding-bottom:10px;
+padding-top:20px;
+}
+
+th.subgroup{
+#color:#FF0000;
+font-weight: bold;
+text-align:left;
+padding-bottom:10px;
+padding-top:20px;
+}
+
+
+.pseudolink {
+border-bottom:1px dashed #4F3D2B;
+color:#4F3D2B;
+cursor:pointer;
+#display:inline;
+#float:left;
+font-size:0.85em;
+font-weight:normal;
+text-decoration:none;
+white-space:nowrap;
+}
+
+
+form.feedback_form{
+margin-top:0.5em;
+}
+
+form label { 
+display: block;  /* block float the labels to left column, set a width */
+float: left; 
+width: 150px; 
+#padding: 0; 
+#margin: 5px 0 0; /* set top margin same as form input - textarea etc. elements */
+text-align: right; 
+}
+
+div.formfield{
+margin-bottom:0.5em;
+}
+
+#stylized{
+border:solid 2px #b7ddf2;
+background:#ebf4fb;
+margin-top:1em;
+}
+#stylized h1 {
+font-size:14px;
+font-weight:bold;
+margin-bottom:8px;
+}
+#stylized p{
+font-size:11px;
+color:#666666;
+margin-bottom:20px;
+border-bottom:solid 1px #b7ddf2;
+padding-bottom:10px;
+}
+#stylized label{
+display:block;
+#font-weight:bold;
+text-align:right;
+width:140px;
+float:left;
+}
+#stylized .small{
+color:#666666;
+display:block;
+font-size:11px;
+font-weight:normal;
+text-align:right;
+width:140px;
+}
+
+#stylized input, select{
+#float:left;
+font-size:12px;
+padding:4px 2px;
+border:solid 1px #aacfe4;
+width:200px;
+margin:2px 0 0.5em 0.5em;
+}
+
+#stylized button{
+#clear:both;
+margin-left:150px;
+#width:125px;
+#height:31px;
+#background:#666666 url(img/button.png) no-repeat;
+text-align:center;
+line-height:31px;
+color:#FFFFFF;
+font-size:11px;
+font-weight:bold;
+}
+
+#stylized fieldset{
+border:none;
+border-top:solid 1px #b7ddf2;
+}
+
+#stylized legend{
+font-weight:bold;
+}
+
+form .reqMark {
+color:#FF0000;
+padding:0 4px;
+}
+
+ul.errorlist{
+color:red;
+list-style-type: none;
+}
+
+.pager {
+padding:0 40px 1.3em 0;
+clear:left;
+font-family:Arial,sans-serif;
+font-size:1em;
+}
+
+.pager span a, .pager span {
+margin:0 0.2em;
+}
+.pager span {
+color:#999999;
+}
+.pager span {
+margin-right:0.5em;
+}
+
+.pager span i {
+font-size:0.7em;
+}
+
+#content :hover > a.anchor {
+visibility:visible;
+}
+#content a.anchor {
+color:#1A3DC1;
+#font-size:0.8em;
+#padding:0 4px;
+text-decoration:none;
+visibility:hidden;
+}

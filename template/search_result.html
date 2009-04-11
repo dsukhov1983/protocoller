@@ -1,0 +1,59 @@
+{% extends "base_generic.html" %}
+
+{% load pytils_dt %}
+{% load pretty_print %}
+
+{% block content %}
+
+<form action="/search" method="get" id="search" name="search">
+<input id="query" class="emptySearch" placeholder="Поиск" maxlength="80" value="{{ query }}" name="query" type="text"/> 
+ <script type="text/javascript">
+   $(document).ready(function(){ 
+   $('#query').placeholder();
+   }); 
+   
+ </script>
+
+</form>
+
+
+<div class="search_results">
+  {% for p in persons.object_list %}
+  <div class="person">
+    <a href="{% url person_results p.id %}">
+      <span class="title">{{ p.full_name }} {{ p.get_rank_display }} 
+        {{ p.year }} </span> {{ p.city }} {{ p.club }}
+    </a>
+  </div>
+  {% endfor %}  
+</div>
+
+<div class="pager">
+  <span class="step-links">
+        {% if persons.has_previous %}
+        <i>&#8592;&#160;<b>Ctrl</b></i>&#160;
+        <a href="?query={{ query }}&page={{ persons.previous_page_number }}">предыдущая</a>
+        {% else %}
+            <span><i>&#8592;&#160;<b>Ctrl</b></i>&#160;предыдущая</span>
+        {% endif %}        
+
+        {% if persons.has_next %}
+            <a href="?query={{ query }}&page={{ persons.next_page_number }}">
+              следующая</a>&#160;<i><b>Ctrl</b>&#160;&#8594;</i>
+        {% else %}
+            <span>следующая&#160;<i><b>Ctrl</b>&#160;&#8594;</i></span>
+        {% endif %}
+        <div>
+        {% for p in persons.paginator.page_range %}
+            {% ifequal persons.number p %}
+            <b>{{ p }}</b>
+            {% else %}
+            <a href="?query={{ query }}&page={{ p }}">{{ p }}</a>
+            {% endifequal %}
+        {% endfor %}
+        </div>
+    </span>
+</div>
+
+
+{% endblock %}

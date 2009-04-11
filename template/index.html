@@ -1,0 +1,55 @@
+{% extends "base_generic.html" %}
+
+{% load pytils_dt %}
+{% load pretty_print %}
+
+{% block left %}
+<div class="seasons">
+{% for cg, tmp in comp_groups %}
+<div class="actions">
+<a href="#{{ cg|urlencode }}">{{ cg }}</a>
+</div>
+{% endfor %}
+</div>
+{% endblock %}
+
+
+
+{% block content %}
+
+<form action="/search" method="get" name="search">
+<input id="query" class="emptySearch" placeholder="Поиск" maxlength="80" value="" name="query" type="text"/> 
+ <script type="text/javascript">
+   $(document).ready(function(){ 
+   $('#query').placeholder();
+   }); 
+   
+ </script>
+
+</form>
+
+
+{% for cg, dglist in comp_groups %}
+<div class="season_res">
+<h2 class="season">{{ cg }}
+  <a class="anchor" name="{{ cg|urlencode }}" href="#{{ cg|urlencode }}">§</a></h2>
+<div class="comp_list">
+  {% for date, comp_list in dglist %}
+  <div class="date">{{ date|ru_strftime:"%d %B" }}</div>
+  {% for c in comp_list %}
+  <div class="competition">    
+    <div class="place">{{ c.place|default:"" }}</div>
+    <div class="title">{{ c }}</div>
+    {% for p in c.competitions.all %}
+    <div class="protocol">
+      <a href="{% url protocoller.miner.views.protocol p.id %}" >{{ p }}</a>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  {% endfor %}
+</div>
+</div>
+{% endfor %}
+
+{% endblock %}

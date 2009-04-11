@@ -1,0 +1,66 @@
+{% extends "base_generic.html" %}
+
+{% load pytils_dt %}
+{% load pretty_print %}
+
+{% block content %}
+
+<div class="search_results">
+  <p>Сравнение</p>
+  {% for p in persons %}
+  <div class="person">
+    <a href="{% url person_results p.id %}">
+      <span class="title">{{ p.full_name }} {{ p.get_rank_display }} 
+        {{ p.year }} </span> {{ p.city }} {{ p.club }}
+    </a>    
+  </div>
+  {% endfor %}
+</div>
+
+<table class="protocol">
+  {% for season, rg in res_groups %}
+
+  <tr><th colspan="10" class="group">{{ season }}</th></tr>
+
+  {% for comp, results in rg %}
+
+  <tr>
+    <th colspan="10" class="subgroup">{{ comp.event.date|ru_strftime:"%d %B" }} 
+    {{ comp.event }} {{ comp }}</th>
+  </tr>  
+
+{% comment %}
+  <tr class="head">
+    <th>М(абс)</th>
+    <th>М(абс)</th>    
+    <th>Фамилия Имя</th>
+    <th>Звание</th>
+    <th>Г.р.</th>
+    <th>Город</th>
+    <th>Клуб</th>
+    <th>Рез-тат</th>
+    <th>Отставание</th>
+  </tr>
+{% endcomment %}
+
+  {% for r in results %}
+  <tr class="{% cycle odd,even %}">
+    <td>{% print_pos r %}</td>
+    <td>{% print_grp_pos r %}</td>
+    <td><a href="{% url person_results r.person.id %}">
+        {{ r.person.full_name }}</a>
+    </td>
+    <td>{{ r.person.get_rank_display }}</td>
+    <td>{{ r.person.year }}</td>
+    <td>{{ r.person.city|default:"" }}</td>
+    <td>{{ r.person.club|default:"" }}</td>
+    <td>{% print_time r %}</td>
+    <td>{% time_diff r.time r.competition.best_result %}</td>
+  </tr>
+  {% endfor %}
+  {% endfor %}
+  {% endfor %}
+  
+</table>
+
+{% endblock %}

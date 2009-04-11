@@ -1,0 +1,102 @@
+{% extends "base_generic.html" %}
+
+{% load pytils_dt %}
+{% load pretty_print %}
+
+{% block content %}
+
+<form action="/compare" method="get" id="search" name="search">
+<input id="query" class="emptySearch" placeholder="Поиск" maxlength="80" value="{{ query }}" name="query" type="text"/> 
+<input id="cl" value="{{ cl }}" name="cl" type="hidden"/>
+
+ <script type="text/javascript">
+   $(document).ready(function(){ 
+   $('#query').placeholder();
+   });    
+
+   function submit_form(link){
+   $("#search").attr('action', link)
+   $("#search").submit()
+   }
+   
+   function do_compare(){
+   $("#search").attr('action', '/do_compare')
+   $("#search").submit()
+   }
+
+ </script>
+</form>
+
+{% if persons.object_list %}
+<div class="search_results"> 
+  <p>Результаты поиска:</p>
+  {% for p in persons.object_list %}
+  <div class="person">
+    <a href="{% url person_results p.id %}">
+      <span class="title">{{ p.full_name }} {{ p.get_rank_display }} 
+        {{ p.year }} </span> {{ p.city }} {{ p.club }}
+    </a>
+
+    {% if not p.is_in_list %}    
+    <a class="pseudolink" href="/compare?query={{ query }}&page={{ persons.number }}&cl={{ cl }},{{ p.id }}">добавить к сравнению</a>
+    {% endif %}
+    
+  </div>
+  {% endfor %}
+</div>
+
+<div class="pager">
+  <span class="step-links">
+        {% if persons.has_previous %}
+        <i>&#8592;&#160;<b>Ctrl</b></i>&#160;
+        <a href="?query={{ query }}&page={{ persons.previous_page_number }}&cl={{ cl }}">предыдущая</a>
+        {% else %}
+            <span><i>&#8592;&#160;<b>Ctrl</b></i>&#160;предыдущая</span>
+        {% endif %}        
+
+        {% if persons.has_next %}
+            <a href="?query={{ query }}&page={{ persons.next_page_number }}&cl={{ cl }}">
+              следующая</a>&#160;<i><b>Ctrl</b>&#160;&#8594;</i>
+        {% else %}
+            <span>следующая&#160;<i><b>Ctrl</b>&#160;&#8594;</i></span>
+        {% endif %}
+        <div>
+        {% for p in persons.paginator.page_range %}
+            {% ifequal persons.number p %}
+            <b>{{ p }}</b>
+            {% else %}
+            <a href="?query={{ query }}&page={{ p }}">{{ p }}</a>
+            {% endifequal %}
+        {% endfor %}
+        </div>
+    </span>
+</div>
+
+{% endif %}
+
+{% if compare %}
+
+<div class="search_results">
+  <p>Добавлены к сравнению:</p>
+  {% for p in compare %}
+  <div class="person">
+    <a href="{% url person_results p.id %}">
+      <span class="title">{{ p.full_name }} {{ p.get_rank_display }} 
+        {{ p.year }} </span> {{ p.city }} {{ p.club }}
+    </a>
+
+    {% if not p.is_in_list %}
+    <a class="pseudolink" href="#" onclick="submit_form('{% url compare_del p.id %}')">удалить</a>
+    {% endif %}
+    
+  </div>
+  {% endfor %}
+</div>
+
+<div class="actions">
+  <a href="#" onclick="do_compare()">Сравнить</a>
+</div>
+
+{% endif %}
+
+{% endblock %}
