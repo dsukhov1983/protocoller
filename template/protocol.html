@@ -10,7 +10,9 @@
   <p class="place">{{ comp.place|default:"" }}</p>
   <p class="name">{{ comp }}</p>
   <p class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</p>
+  {% if alternate %}
   <p><a href="{% url protocol_by_groups comp.id %}">протокол по группам</a></p>
+  {% endif %}
 </div>
 
 <table class="protocol">

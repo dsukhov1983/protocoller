@@ -9,6 +9,13 @@ SEX_TYPES = (
     (UNKNOWN, 'U'),
     ) 
 
+(ABS_RATING, GROUP_RATING, BOTH_RATING) = range(3)
+RATING_TYPES = (
+    (ABS_RATING, 'абсолютный зачет'),
+    (GROUP_RATING, 'зачет по группам'),
+    (BOTH_RATING, 'оба')
+    )
+
 
 class Place(models.Model):
 
@@ -45,7 +52,7 @@ class Competition(models.Model):
     START_TYPES = (
         (MASS_START, u'мс.ст.'),
         (SEP_START, u'рзд.ст.')
-        )  
+        )    
 
     event = models.ForeignKey(SportEvent, null=True,
                               related_name="competitions")
@@ -61,6 +68,7 @@ class Competition(models.Model):
     start_type = models.IntegerField(choices=START_TYPES)
     distance = models.IntegerField()
     link = models.URLField(null=True, blank=True)
+    rating = models.IntegerField(choices=RATING_TYPES, default=BOTH_RATING)
 
     best_result = models.TimeField(null=True, blank=True, default="0:0:0")
 

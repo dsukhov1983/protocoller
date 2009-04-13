@@ -1,8 +1,11 @@
+# -*- coding: utf-8 -*-
 import re
 import itertools
 import operator
+import random
+
 from django.db.models import Q
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django import forms
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
@@ -10,6 +13,18 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from protocoller.miner import models
 
 
+SAMPLE_SEARCHES=(u'Ильин Василий',
+                 u'Барышников Алексей',
+                 u'Климов Михаил',
+                 u'Кукрус Андрей',
+                 u'Зарицкий Михаил',
+                 u'Малыгин Александр',
+                 u'Кочетков Олег',
+                 u'Сухов Дмитрий')
+
+def get_random_search():
+    return SAMPLE_SEARCHES[random.randint(0,
+                                          len(SAMPLE_SEARCHES)-1)]
 
 def date2season(dt):
     """converts datetime to season like 2008/2009"""
@@ -37,9 +52,8 @@ def index(request):
 
     
     return render_to_response('index.html',
-                              {'comp_groups': comp_groups})
-
-
+                              {'comp_groups': comp_groups,
+                               'sample_search':get_random_search(),})
     
 
 
@@ -51,6 +65,9 @@ def about(request):
 def protocol(request, comp_id):
     competition = get_object_or_404(models.Competition,
                                     id=comp_id)
+
+    if competition.rating == models.GROUP_RATING:
+        return redirect('protocol_by_groups', comp_id=comp_id)
     
     results = models.Result.objects.select_related().filter(competition=competition)
 
@@ -61,11 +78,16 @@ def protocol(request, comp_id):
 
     return render_to_response('protocol.html',
                               {'results': results,
-                               'comp': competition})
+                               'comp': competition,
+                               'alternate': competition.rating == models.BOTH_RATING
+                               })
 
 def protocol_by_groups(request, comp_id):
     competition = get_object_or_404(models.Competition,
                                     id=comp_id)
+
+    if competition.rating == models.ABS_RATING:
+        return redirect('protocol', comp_id=comp_id)
 
     results = models.Result.objects.select_related().filter(competition=competition).order_by('group')
 
@@ -76,7 +98,9 @@ def protocol_by_groups(request, comp_id):
 
     return render_to_response('protocol_groups.html',
                               {'result_groups': rg,
-                               'comp': competition})
+                               'comp': competition,
+                               'alternate': competition.rating == models.BOTH_RATING
+                               })
 
 
 
@@ -104,10 +128,11 @@ def person_results(request, person_id):
 
 
 def search_persons(query):
-    ql = filter(None, query.strip().split(' '))
+    ql = map(lambda s:s.title(),
+             filter(None, query.strip().split(' ')))
 
     if len(ql)>1:
-        n, s = ql[:2]
+        n, s = ql[:2]        
         persons = models.Person.objects.filter(
             (Q(name__icontains=n) & Q(surname__icontains=s))|
             (Q(name__icontains=s) & Q(surname__icontains=n)))
@@ -138,7 +163,8 @@ def search(request):
 
     return render_to_response('search_result.html',
                               {'persons': persons,
-                               'query': q})
+                               'query': q,
+                               'sample_search':get_random_search()})
 
 
 def compare(request, add=None, delete=None):
@@ -193,7 +219,8 @@ def compare(request, add=None, delete=None):
                               {'persons': persons,
                                'compare': compare_list,
                                'query': q,
-                               'cl': cl})
+                               'cl': cl,
+                               'sample_search':get_random_search()})
     
 
 def do_compare(request):

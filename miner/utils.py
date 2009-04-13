@@ -566,3 +566,24 @@ def validate_person_fields(person):
 
     for attr in ['name', 'surname', 'year' ]:
         validate_attr_data(attr, person, results)
+
+
+def guess_competition_rating(comp):
+    """finds out the competition rating"""
+
+    res_abs = models.Result.objects.filter(pos__gt=0, competition=comp).count()
+
+    res_groups = models.Result.objects.filter(pos_in_grp__gt=0, competition=comp).count()
+
+  
+    if not res_abs and not res_groups:
+        print "%s: unknown rating"%comp
+        return
+    elif res_abs and res_groups:
+        comp.rating = models.BOTH_RATING
+    elif res_abs:
+        comp.rating = models.ABS_RATING
+    else:
+        comp.rating = models.GROUP_RATING
+
+    comp.save()

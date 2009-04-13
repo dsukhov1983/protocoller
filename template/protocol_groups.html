@@ -9,7 +9,9 @@
   <p class="place">{{ comp.place|default:"" }}</p>
   <p class="name">{{ comp }}</p>
   <p class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</p>
+  {% if alternate %}
   <p><a href="{% url protocol comp.id %}">абсолютный зачет</a></p>
+  {% endif %}
 </div>
 
 <table class="protocol">

@@ -161,6 +161,11 @@ padding-top:20px;
 }
 
 
+.sampleSearch{
+font-size:0.85em;
+padding-top:0.5em;
+}
+
 .pseudolink {
 border-bottom:1px dashed #4F3D2B;
 color:#4F3D2B;
@@ -190,6 +195,7 @@ text-align: right;
 div.formfield{
 margin-bottom:0.5em;
 }
+
 
 #stylized{
 border:solid 2px #b7ddf2;
@@ -266,7 +272,7 @@ list-style-type: none;
 }
 
 .pager {
-padding:0 40px 1.3em 0;
+padding:0.8em 40px 1.3em 0;
 clear:left;
 font-family:Arial,sans-serif;
 font-size:1em;
@@ -296,3 +302,10 @@ color:#1A3DC1;
 text-decoration:none;
 visibility:hidden;
 }
+
+.hint{
+font-size:0.8em;
+background:#CEDDFF;
+padding:10px;
+}
+

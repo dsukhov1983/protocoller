@@ -16,16 +16,19 @@
 
 
 {% block content %}
-
-<form action="/search" method="get" name="search">
-<input id="query" class="emptySearch" placeholder="Поиск" maxlength="80" value="" name="query" type="text"/> 
+<form action="/search" method="get" name="search" id="searchForm">
+<input id="query" class="emptySearch" placeholder="Найти спортсмена" maxlength="80" value="" name="query" type="text"/> 
  <script type="text/javascript">
    $(document).ready(function(){ 
    $('#query').placeholder();
-   }); 
-   
+   });    
  </script>
-
+<div class="sampleSearch">
+Например, <span class="pseudolink"
+                onClick="$('#query').focus().val('{{ sample_search }}')">
+    {{ sample_search }}
+</span>
+</div>
 </form>
 
 
@@ -52,4 +55,17 @@
 </div>
 {% endfor %}
 
+{% endblock %}
+
+{% block right %}
+<div class="hint">
+На сайте собраны результаты соревнований по лыжным гонкам 
+за несколько лет.
+<p>
+Кроме просмотра протоколов здесь можно также:
+<ul>
+  <li><a href="/search">искать</a> результаты спортсмена по его фамилии, имени;</li>
+  <li><a href="/compare">сравнивать</a> результаты спортсменов между собой.</li>
+</ul>
+</div>
 {% endblock %}

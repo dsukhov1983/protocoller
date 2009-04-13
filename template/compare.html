@@ -7,6 +7,12 @@
 
 <form action="/compare" method="get" id="search" name="search">
 <input id="query" class="emptySearch" placeholder="Поиск" maxlength="80" value="{{ query }}" name="query" type="text"/> 
+<div class="sampleSearch">
+Например, <span class="pseudolink"
+                onClick="$('#query').focus().val('{{ sample_search }}')">
+    {{ sample_search }}
+</span>
+</div>
 <input id="cl" value="{{ cl }}" name="cl" type="hidden"/>
 
  <script type="text/javascript">
@@ -74,6 +80,10 @@
     </span>
 </div>
 {% endifnotequal %}
+{% else %}
+{% if query %}
+Ничего не найдено.
+{% endif %}
 {% endif %}
 
 {% if compare %}
