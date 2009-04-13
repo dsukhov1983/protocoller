@@ -346,6 +346,7 @@ def find_best_result(comp_id):
         comp = models.Competition.objects.get(id=comp_id)
         br = models.Result.objects.get(competition=comp, pos=1)
         comp.best_result = br.time
+        print br.time
         comp.save()
         return
     except Exception,e:
@@ -355,6 +356,7 @@ def find_best_result(comp_id):
         comp = models.Competition.objects.get(id=comp_id)
         br = models.Result.objects.filter(competition=comp).exclude(pos__lt=0).exclude(pos_in_grp__lt=0).order_by('time')[0]
         comp.best_result = br.time
+        print br.time
         comp.save()
         return
     except Exception,e:

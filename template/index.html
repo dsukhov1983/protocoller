@@ -39,7 +39,7 @@
   {% for c in comp_list %}
   <div class="competition">    
     <div class="place">{{ c.place|default:"" }}</div>
-    <div class="title">{{ c }}</div>
+    <div class="title">{{ c.name }}</div>
     {% for p in c.competitions.all %}
     <div class="protocol">
       <a href="{% url protocoller.miner.views.protocol p.id %}" >{{ p }}</a>

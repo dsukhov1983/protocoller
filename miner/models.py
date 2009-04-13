@@ -28,7 +28,7 @@ class SportEvent(models.Model):
     date = models.DateField()
 
     def __unicode__(self):
-        return "%s"%(self.name)
+        return "%s %s"%(self.name, self.date.year)
 
 
 class Competition(models.Model):

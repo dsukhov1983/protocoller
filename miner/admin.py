@@ -16,7 +16,7 @@ admin.site.register(models.RawResult, RawResultAdmin)
 class CompetitionAdmin(admin.ModelAdmin):
 
     raw_id_fields = ('event',)
-    list_display = ('id', 'event', 'name', 'style', 'distance')
+    list_display = ('id', 'event', 'name', 'sex', 'style', 'distance')
     list_display_links = ('id', 'name')
     ordering = ('-event__date',)
 

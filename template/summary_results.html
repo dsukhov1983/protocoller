@@ -34,7 +34,7 @@
     <td>{{ r.competition.event.date|ru_strftime:"%d %B"}}</td>
     <td>{{ r.competition.event.place|default:"" }}</td>
     <td>
-      <a href="{% url protocoller.miner.views.protocol r.competition.id %}" >{{ r.competition.event }} {{ r.competition }}</a>      
+      <a href="{% url protocoller.miner.views.protocol r.competition.id %}" >{{ r.competition.event.name }} {{ r.competition }}</a>      
     </td>
     <td>{% print_pos r %}</td>
     <td>{% print_grp_pos r %}</td>    
