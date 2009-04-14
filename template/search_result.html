@@ -6,7 +6,7 @@
 {% block content %}
 
 <form action="/search" method="get" id="search" name="search">
-<input id="query" class="emptySearch" placeholder="Поиск" maxlength="80" value="{{ query }}" name="query" type="text"/> 
+<input id="query" class="emptySearch" placeholder="Найти спортсмена" maxlength="80" value="{{ query }}" name="query" type="text"/> 
  <script type="text/javascript">
    $(document).ready(function(){ 
    $('#query').placeholder();
@@ -67,4 +67,11 @@
  {% endif %}
 {% endif %}
 
+{% endblock %}
+
+
+{% block right %}
+<div class="hint">
+Здесь можно найти информацию о спортсмене по его имени и фамилии.
+</div>
 {% endblock %}

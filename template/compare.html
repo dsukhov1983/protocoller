@@ -6,7 +6,7 @@
 {% block content %}
 
 <form action="/compare" method="get" id="search" name="search">
-<input id="query" class="emptySearch" placeholder="Поиск" maxlength="80" value="{{ query }}" name="query" type="text"/> 
+<input id="query" class="emptySearch" placeholder="Найти спортсмена" maxlength="80" value="{{ query }}" name="query" type="text"/> 
 <div class="sampleSearch">
 Например, <span class="pseudolink"
                 onClick="$('#query').focus().val('{{ sample_search }}')">
@@ -111,4 +111,12 @@
 
 {% endif %}
 
+{% endblock %}
+
+
+{% block right %}
+<div class="hint">
+На этой странице можно найти и выбрать для сравнения результаты
+ нескольких спортсменов.
+</div>
 {% endblock %}

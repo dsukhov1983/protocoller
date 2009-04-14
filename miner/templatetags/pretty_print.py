@@ -18,7 +18,7 @@ def print_pos(result):
 @register.simple_tag
 def print_grp_pos(result):
 
-    return _result_map.get(result.pos, result.pos_in_grp) or ""
+    return _result_map.get(result.pos_in_grp, result.pos_in_grp) or ""
 
 
 @register.simple_tag
