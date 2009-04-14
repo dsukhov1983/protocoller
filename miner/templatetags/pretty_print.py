@@ -12,7 +12,7 @@ _result_map = dict(models.RESULT_TYPES)
 @register.simple_tag
 def print_pos(result):
 
-    return _result_map.get(result.pos, result.pos)
+    return _result_map.get(result.pos, result.pos) or ""
 
 
 @register.simple_tag
