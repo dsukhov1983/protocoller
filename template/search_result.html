@@ -27,7 +27,7 @@
   <div class="person">
     <a href="{% url person_results p.id %}">
       <span class="title">{{ p.full_name }} {{ p.get_rank_display }} 
-        {{ p.year }} </span> {{ p.city }} {{ p.club }}
+        {{ p.year }} </span> {{ p.city|default:"" }} {{ p.club|default:"" }}
     </a>
   </div>
   {% endfor %}  

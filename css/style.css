@@ -6,16 +6,16 @@ padding:0;
 }
 
 #page-left {
-width:16%;
+width:12%;
 float:left;
-margin-right:-16%;
+margin-right:-12%;
 }
 
 #content{
 float:left;
 margin-top:0.5em;
-margin-left:16%;
-width:60%;
+margin-left:12%;
+width:68%;
 }
 
 #page-right {
@@ -23,12 +23,13 @@ width:16%;
 float:right;
 }
 
-#search{
+#searchForm{
 padding-bottom:1em;
+width:100%;
 }
 
 #menu{
-margin-left:16%;
+margin-left:12%;
 padding-bottom:8px;
 }
 
@@ -130,6 +131,7 @@ background-color:lightgrey;
 table.protocol {
 border-collapse:collapse;
 margin-bottom:2em;
+width:100%;
 }
 
 tr.head {
@@ -309,3 +311,6 @@ background:#CEDDFF;
 padding:10px;
 }
 
+.seasons{
+padding-left:10px;
+}

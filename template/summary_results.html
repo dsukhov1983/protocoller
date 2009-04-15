@@ -8,8 +8,8 @@
 <p>Фамилия Имя: {{ person.full_name }}</p>
 <p>Год рождения: {{ person.year }}</p>
 <p>Звание: {{ person.get_rank_display }}</p>
-<p>Город: {{ person.city }}</p>
-<p>Клуб: {{ person.club }}</p>
+<p>Город: {{ person.city|default:"" }}</p>
+<p>Клуб: {{ person.club|default:"" }}</p>
 </div>
 
 <table class="protocol">

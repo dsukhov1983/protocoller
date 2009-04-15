@@ -53,10 +53,14 @@ def time_diff(t1, t2):
 
     td = time(hour=hour, minute=min, second=sec)
 
+    rel_td = " %.3f"%(float(s1)/float(s2))
+
     if td.hour:
-        return td.strftime('+%H:%M:%S')
+        return td.strftime('+%H:%M:%S')+rel_td
     elif td.minute:
-        return td.strftime('+%M:%S')
+        return td.strftime('+%M:%S')+rel_td
     else:
-        return td.strftime('+%M:%S')
+        return td.strftime('+%M:%S')+rel_td
+
+
 
