@@ -587,3 +587,8 @@ def guess_competition_rating(comp):
         comp.rating = models.GROUP_RATING
 
     comp.save()
+
+
+def post_process_comp(comp):
+    guess_competition_rating(comp)
+    find_best_result(comp.id)

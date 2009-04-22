@@ -90,6 +90,24 @@ def protocol(request, comp_id):
                                })
 
 def protocol_by_groups(request, comp_id):
+
+    def res_in_grp_cmp(r1, r2):
+        r1, r2 = r1.pos_in_grp, r2.pos_in_grp
+        print r1, r2
+        if r1 > 0 and r2 > 0:
+            if r1 > r2:
+                return 1
+            elif r1 == r2:
+                return 0
+            else:
+                return -1
+        elif r1 > 0:
+            return -1
+        elif r2 > 0:
+            return 1
+        else:
+            return 0
+    
     competition = get_object_or_404(models.Competition,
                                     id=comp_id)
 
@@ -101,7 +119,8 @@ def protocol_by_groups(request, comp_id):
     rg = itertools.groupby(results,
                            lambda x:x.group)
     
-    rg = [(n,list(l)) for n,l in rg]
+    rg = [(n,sorted(l,cmp=res_in_grp_cmp)) for n,l in rg]
+    print rg[0]
 
     return render_to_response('protocol_groups.html',
                               {'result_groups': rg,

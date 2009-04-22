@@ -65,4 +65,6 @@ admin.site.register(models.Place)
 class PersonFeedbackAdmin(admin.ModelAdmin):
     raw_id_fields = ('person', 'wrong_results')
 
+    list_display = ('person', 'contact_name')
+
 admin.site.register(models.PersonFeedback, PersonFeedbackAdmin)
