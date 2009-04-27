@@ -93,7 +93,6 @@ def protocol_by_groups(request, comp_id):
 
     def res_in_grp_cmp(r1, r2):
         r1, r2 = r1.pos_in_grp, r2.pos_in_grp
-        print r1, r2
         if r1 > 0 and r2 > 0:
             if r1 > r2:
                 return 1

@@ -203,7 +203,7 @@ def time_parse(obj, val):
             d = datetime.datetime.strptime(val, fmt)
             obj.time = datetime.time(d.hour, d.minute, d.second)
             return
-        except:
+        except Exception, e:
             pass
 
     print "Failed to parse date %s"%val

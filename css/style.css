@@ -79,7 +79,7 @@ width: 100%;
 }
 
 .date {
-color:#555555;
+color:#6979AA;
 #font-size:70%;
 line-height:100%;
 }
@@ -103,6 +103,10 @@ font-size:1.1em;
 padding-bottom:1em;
 }
 
+.person a{
+display: inline;
+}
+
 .comp_list{
 display:block;
 padding-bottom:2em;
@@ -121,10 +125,11 @@ padding-bottom:1em;
 
 .season{
 #padding-bottom:1em;
+color:#354274;
 }
 
 .even {
-background-color:lightgrey;
+background-color: #CDCDD8;
 }
 
 
@@ -147,7 +152,7 @@ padding-right:2px;
 }
 
 th.group{
-color:#FF0000;
+color:#6979AA;
 font-weight: bold;
 text-align:left;
 padding-bottom:10px;
@@ -156,7 +161,7 @@ padding-top:20px;
 
 th.subgroup{
 #color:#FF0000;
-font-weight: bold;
+font-weight: normal;
 text-align:left;
 padding-bottom:10px;
 padding-top:20px;
@@ -168,16 +173,26 @@ font-size:0.85em;
 padding-top:0.5em;
 }
 
-.pseudolink {
-border-bottom:1px dashed #4F3D2B;
-color:#4F3D2B;
-cursor:pointer;
+.pseudolink1 {
+#border-bottom:1px dashed #4F3D2B;
+#color:#4F3D2B;
+#cursor:pointer;
 #display:inline;
+#background:red;
 #float:left;
-font-size:0.85em;
-font-weight:normal;
+#font-size:0.85em;
+#font-weight:normal;
+#text-decoration:none;
+#white-space:nowrap;
+}
+
+
+.pseudolink{
+color:#1A3DC1;
+display:inline;
+border-bottom:1px dashed #4F3D2B;
+cursor:pointer;
 text-decoration:none;
-white-space:nowrap;
 }
 
 

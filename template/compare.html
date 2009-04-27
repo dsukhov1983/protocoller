@@ -42,9 +42,9 @@
       <span class="title">{{ p.full_name }} {{ p.get_rank_display }} 
         {{ p.year }} </span> {{ p.city }} {{ p.club }}
     </a>
-
     {% if not p.is_in_list %}    
-    <a class="pseudolink" href="/compare?query={{ query }}&page={{ persons.number }}&cl={{ cl }},{{ p.id }}">добавить к сравнению</a>
+    <a class="pseudolink" 
+       href="/compare?query={{ query }}&page={{ persons.number }}&cl={{ cl }},{{ p.id }}">добавить к сравнению</a>
     {% endif %}
     
   </div>
