@@ -1,5 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <link rel="stylesheet" href="/static/css/style.css" />
@@ -11,32 +11,27 @@
 
 <body> 
   
-  <div id="menu" class="menu">
-    <a href="/">Главная</a>
-    <a href="/search">Поиск</a>
-    <a href="/compare">Сравнение</a>
-    <a href="/about">О сайте</a>
-  </div>
+  <table>
+    <tr>
+      <td></td>
+      <td id="menu" class="menu">
+            <a href="/">Главная</a>
+            <a href="/search">Поиск</a>
+            <a href="/compare">Сравнение</a>
+            <a href="/about">О сайте</a>
+      </td>
+      <td></td>
+    </tr>
+    <tr id="main">
+      <td id="page-left">{% block left %}{% endblock %}</td>
+      <td id="content">{% block content %}{% endblock %}</td>
+      <td id="page-right">{% block right %}{% endblock %}</td>
+    </tr>
+    <tr id="footer">
+      <td colspan="3">{% block footer %}{% endblock %}</td>
+    </tr>
+  </table>
   
-  <div id="main">
-
-    <div id="page-left">
-      {% block left %}{% endblock %}
-    </div>
-
-    <div id="content">
-      {% block content %}{% endblock %}
-    </div>
-    
-    <div id="page-right">
-      {% block right %}{% endblock %}
-    </div>
-  
-  </div>
-
-  <div id="footer">
-    {% block footer %}{% endblock %}
-  </div>
 
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
