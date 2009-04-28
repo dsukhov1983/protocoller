@@ -1,3 +1,11 @@
+body{
+width:100%;
+}
+
+#page_table{
+width:100%;
+}
+
 #page-left {
 width:12%;
 }
