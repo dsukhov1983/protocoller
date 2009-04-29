@@ -124,6 +124,16 @@ padding-bottom:1em;
 color:#354274;
 }
 
+
+.event{
+color:#354274;
+font-size:large;
+font-style:normal;
+font-variant:normal;
+font-weight:bold;
+}
+
+
 .even {
 background-color: #CDCDD8;
 }
