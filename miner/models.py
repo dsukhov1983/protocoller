@@ -174,7 +174,7 @@ class RawResult(models.Model):
     
     number = models.IntegerField(null=True, blank=True)
     pos = models.IntegerField(default=0)
-    group = models.CharField(max_length=10, null=True, blank=True)
+    group = models.CharField(max_length=20, null=True, blank=True)
     pos_in_grp = models.IntegerField(null=True, blank=True)
     time = models.TimeField()
     qualif_rank = models.IntegerField(choices=RANK_TYPES, default=NR)   
@@ -235,7 +235,7 @@ class Result(models.Model):
 
     number = models.IntegerField(null=True, blank=True)
     pos = models.IntegerField(default=0)
-    group = models.CharField(max_length=10, null=True, blank=True)
+    group = models.CharField(max_length=20, null=True, blank=True)
     pos_in_grp = models.IntegerField(null=True, blank=True)
     time = models.TimeField()
     qualif_rank = models.IntegerField(choices=RANK_TYPES,

@@ -592,3 +592,16 @@ def guess_competition_rating(comp):
 def post_process_comp(comp):
     guess_competition_rating(comp)
     find_best_result(comp.id)
+
+
+
+def find_person_by_surname(surname):
+
+    global all_persons
+
+    srl = sorted(filter(lambda v: v[1]<= 2,
+                     [(r, levenshtein(r.surname, surname))
+                      for r in all_persons]),
+                 lambda a,b: cmp(a[1], b[1]))
+
+    return srl
