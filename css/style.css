@@ -8,14 +8,17 @@ width:100%;
 
 #page-left {
 width:12%;
+vertical-align:top;
 }
 
 #content{
 width:68%;
+vertical-align:top;
 }
 
 #page-right {
 width:16%;
+vertical-align:top;
 }
 
 #search{
@@ -120,7 +123,6 @@ padding-bottom:1em;
 }
 
 .season{
-#padding-bottom:1em;
 color:#354274;
 }
 
@@ -154,7 +156,6 @@ border-width:1px;
 td{
 padding-left:2px;
 padding-right:2px;
-#font-size:9pt;
 }
 
 th.group{
@@ -166,7 +167,6 @@ padding-top:20px;
 }
 
 th.subgroup{
-#color:#FF0000;
 font-weight: normal;
 text-align:left;
 padding-bottom:10px;
@@ -179,18 +179,6 @@ font-size:0.85em;
 padding-top:0.5em;
 }
 
-.pseudolink1 {
-#border-bottom:1px dashed #4F3D2B;
-#color:#4F3D2B;
-#cursor:pointer;
-#display:inline;
-#background:red;
-#float:left;
-#font-size:0.85em;
-#font-weight:normal;
-#text-decoration:none;
-#white-space:nowrap;
-}
 
 
 .pseudolink{
@@ -210,8 +198,6 @@ form label {
 display: block;  /* block float the labels to left column, set a width */
 float: left; 
 width: 150px; 
-#padding: 0; 
-#margin: 5px 0 0; /* set top margin same as form input - textarea etc. elements */
 text-align: right; 
 }
 
@@ -239,7 +225,6 @@ padding-bottom:10px;
 }
 #stylized label{
 display:block;
-#font-weight:bold;
 text-align:right;
 width:140px;
 float:left;
@@ -254,7 +239,6 @@ width:140px;
 }
 
 #stylized input, select{
-#float:left;
 font-size:12px;
 padding:4px 2px;
 border:solid 1px #aacfe4;
@@ -263,11 +247,7 @@ margin:2px 0 0.5em 0.5em;
 }
 
 #stylized button{
-#clear:both;
 margin-left:150px;
-#width:125px;
-#height:31px;
-#background:#666666 url(img/button.png) no-repeat;
 text-align:center;
 line-height:31px;
 color:#FFFFFF;
@@ -320,8 +300,6 @@ visibility:visible;
 }
 #content a.anchor {
 color:#1A3DC1;
-#font-size:0.8em;
-#padding:0 4px;
 text-decoration:none;
 visibility:hidden;
 }

@@ -12,7 +12,7 @@ from protocoller.miner import models
 
 RESULT_VARIANTS = (
     (models.DNS, [u'dns', u'не старт']),
-    (models.DNF, [u'dnf', u'сошел', u'сошла', u'не фин']),
+    (models.DNF, [u'dnf', u'сош', u'не фин']),
     (models.DQF, [u'dqf', u'дискв'])
     )
 
