@@ -6,7 +6,7 @@
 {% block content %}
 
 <form action="/search" method="get" id="search" name="search">
-<input id="query" class="emptySearch" placeholder="Найти спортсмена в протоколах" maxlength="80" value="{{ query }}" name="query" type="text"> 
+<input id="query" class="emptySearch" placeholder="Найти спортсмена в протоколах" maxlength="80" value="{{ query }}" name="query" type="text" /> 
  <script type="text/javascript">
    $(document).ready(function(){ 
    $('#query').placeholder();
@@ -14,14 +14,14 @@
  </script>
 <div class="sampleSearch">
 Например, <span class="pseudolink"
-                onClick="$('#query').focus().val('{{ sample_search }}')">
+                onclick="$('#query').focus().val('{{ sample_search }}')">
     {{ sample_search }}
 </span>
 </div>
 </form>
 
 {% if persons.object_list %}
-
+Результаты поиска:
 <div class="search_results">
   {% for p in persons.object_list %}
   <div class="person">

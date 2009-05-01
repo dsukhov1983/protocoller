@@ -4,6 +4,7 @@ import sys
 import datetime
 import logging
 import itertools
+from lxml import html
 
 from functools import partial
 
@@ -13,7 +14,7 @@ from protocoller.miner import models
 RESULT_VARIANTS = (
     (models.DNS, [u'dns', u'не старт']),
     (models.DNF, [u'dnf', u'сош', u'не фин']),
-    (models.DQF, [u'dqf', u'дискв'])
+    (models.DQF, [u'dqf', u'дискв', u'рез. аннул.'])
     )
 
 
@@ -605,3 +606,38 @@ def find_person_by_surname(surname):
                  lambda a,b: cmp(a[1], b[1]))
 
     return srl
+
+
+
+
+def process_me_page(url, **defaults):
+    """parse maraphon-electro protocol page
+    @param url: protocol page
+    """
+
+
+    field_map = {u'Место': defaults.has_key('group') and POS_IN_GRP or POS,
+                 u'Номер': NUM,
+                 u'Имя': NAME_SURNAME,
+                 u'Год р.': YEAR,
+                 u'Команда': CLUB,
+                 u'Регион': CITY,
+                 u'Результат': TIME} 
+
+    root = html.parse(url,
+                      parser=html.HTMLParser(encoding='cp1251')).getroot()
+    mc = root.get_element_by_id('main_container')
+
+    t = mc[0][3]
+
+    assert(t.tag == 'table')
+
+    fmap = {}
+    head = map(lambda s:s.text.strip(),t[0])
+    for i in range(len(head)):
+        if field_map.has_key(head[i]):
+            m = field_map[head[i]]
+            if m not in fmap.values():
+                fmap[i] = m
+    rr = map(lambda x:[s.text_content() for s in x], t[1:])
+    return parse_list(rr, fmap, defaults)
