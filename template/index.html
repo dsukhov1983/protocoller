@@ -17,14 +17,13 @@
 
 {% block content %}
 <form action="/search" method="get" name="search" id="search">
-<input id="query" class="emptySearch" placeholder="Найти спортсмена в протоколах" maxlength="80" value="" name="query" type="text"/> 
+<input id="query" class="emptySearch" placeholder="Найти спортсмена в протоколах" maxlength="80" value="" name="query" type="text"> 
  <script type="text/javascript">
    $(document).ready(function(){ 
    $('#query').placeholder();
    });    
  </script>
 <div class="sampleSearch">
-<nobr>
 Например, <span class="pseudolink"
                 onClick="$('#query').focus().val('{{ sample_search }}')">
     {{ sample_search }}
