@@ -18,7 +18,12 @@
 
 <table class="protocol">
 {% for group, results in result_groups %}
-<tr><th colspan="8" class="group">Группа {{ group }}</th></tr>
+<tr>
+  <th colspan="8" class="group">
+    Группа {{ group }} 
+    <a class="anchor" name="{{ group|urlencode }}" href="#{{ group|urlencode }}">§</a>
+  </th>
+</tr>
 
 <tr class="head">
   <th>М(грп)</th>
@@ -47,5 +52,18 @@
 {% endfor %}
 
 </table>
+
+{% endblock %}
+
+{% block left %}
+
+<div class="groups">
+Группы:
+{% for group, results in result_groups %}
+<div class="actions">
+  <a href="#{{ group|urlencode }}">{{ group }}</a>
+</div>
+{% endfor %}
+</div>
 
 {% endblock %}
