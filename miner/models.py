@@ -32,7 +32,7 @@ class SportEvent(models.Model):
 
     place = models.ForeignKey(Place, null=True, blank=True)
     name = models.CharField(max_length=250)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
 
     def __unicode__(self):
         return "%s %s"%(self.name, self.date.year)

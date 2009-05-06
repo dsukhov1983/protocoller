@@ -3,6 +3,7 @@ import re
 import itertools
 import operator
 import random
+import datetime
 
 from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -119,7 +120,7 @@ def protocol_by_groups(request, comp_id):
                            lambda x:x.group)
     
     rg = [(n,sorted(l,cmp=res_in_grp_cmp)) for n,l in rg]
-    print rg[0]
+
 
     return render_to_response('protocol_groups.html',
                               {'result_groups': rg,
@@ -354,3 +355,16 @@ def feedback_person(request, person):
                                    'res_groups': rg,
                                    'form': form})
 
+
+
+def get_event_per_month_list():
+
+    months = models.SportEvent.objects.extra(
+        select={'month':'strftime("%%Y-%%m",date)'}
+        ).order_by('date').values_list('month')
+
+    print months
+    months = map(lambda s:datetime.datetime.strptime(s[0],'%Y-%m'), months)
+
+    return [(m, len(list(l))) for m, l in itertools.groupby(months)]
+    
