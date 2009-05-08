@@ -61,7 +61,8 @@ def index(request):
     
     return render_to_response('index.html',
                               {'comp_groups': comp_groups,
-                               'sample_search':get_random_search(),})
+                               'sample_search':get_random_search(),
+                               'event_summary': get_event_summary()})
     
 
 
@@ -357,14 +358,19 @@ def feedback_person(request, person):
 
 
 
-def get_event_per_month_list():
+def get_event_summary():
 
     months = models.SportEvent.objects.extra(
         select={'month':'strftime("%%Y-%%m",date)'}
-        ).order_by('date').values_list('month')
+        ).order_by('-date').values_list('month')
 
-    print months
+
     months = map(lambda s:datetime.datetime.strptime(s[0],'%Y-%m'), months)
 
-    return [(m, len(list(l))) for m, l in itertools.groupby(months)]
+    mc = [(m, len(list(l))) for m, l in itertools.groupby(months)]
+
+    ys = itertools.groupby(mc,
+                           lambda (d,c): d.year)
+
+    return [(y, list(l)) for y,l in ys]
     

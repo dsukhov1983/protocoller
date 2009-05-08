@@ -4,13 +4,34 @@
 {% load pretty_print %}
 
 {% block left %}
-<div class="seasons">
-{% for cg, tmp in comp_groups %}
-<div class="actions">
-<a href="#{{ cg|urlencode }}">{{ cg }}</a>
-</div>
+
+<div class="retro-list">
+{% for year, ml in event_summary %}
+<p class="year">{{ year }}</h3>
+<ul class="month-list">
+  {% for month, cnt in ml %}
+  <li>
+    <a href="#">
+      {{ month|date:"F" }}</a>
+    <span>{{ cnt }}</span>
+  </li>
+  {% endfor %}
+</ul>
 {% endfor %}
 </div>
+<script type="text/javascript">
+$(document).ready(function()
+{
+  //hide the all of the element with class msg_body
+  $(".month-list").hide();
+  //toggle the componenet with class msg_body
+  $(".year").click(function()
+  {
+    $(this).next(".month-list").slideToggle(600);
+  });
+});
+</script>
+
 {% endblock %}
 
 
