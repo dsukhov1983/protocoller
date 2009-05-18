@@ -9,8 +9,11 @@ admin.autodiscover()
 urlpatterns = patterns(
     'protocoller.miner.views',    
     # Example:
-    (r'^$', 'index'),
-    (r'^index.html$', 'index'),
+    (r'^$', 'comp_list_view'),
+    (r'^index.html$', 'comp_list_view'),
+    (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
+    (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',
+     'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
     (r'^protocol/(?P<comp_id>\d+)/groups$', 'protocol_by_groups',
      {}, 'protocol_by_groups'),

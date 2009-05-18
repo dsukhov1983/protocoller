@@ -5,18 +5,31 @@
 
 {% block left %}
 
+
 <div class="retro-list">
 {% for year, ml in event_summary %}
-<p class="year">{{ year }}</h3>
+<div class="year-node">
+<p  class="year{% ifequal cur_year year %} selected-year{% endifequal %}"    
+    id="year_{{ year }}">{{ year }}</p>
 <ul class="month-list">
+  <li>
+    <a href="{% url protocoller.miner.views.comp_list_view year %}">
+      все</a>
+  </li>
   {% for month, cnt in ml %}
   <li>
-    <a href="#">
+
+    <a href="{% url protocoller.miner.views.comp_list_view year,month.month %}"  {% ifequal month.year cur_year %}
+       {% ifequal month.month cur_month %}
+       class="selected-month"
+       {% endifequal %}
+      {% endifequal %}>
       {{ month|date:"F" }}</a>
     <span>{{ cnt }}</span>
   </li>
   {% endfor %}
 </ul>
+</div>
 {% endfor %}
 </div>
 <script type="text/javascript">
@@ -24,6 +37,9 @@ $(document).ready(function()
 {
   //hide the all of the element with class msg_body
   $(".month-list").hide();
+  {% if cur_year %}
+  $("#year_{{ cur_year }}").next().slideToggle(100)
+  {% endif %}
   //toggle the componenet with class msg_body
   $(".year").click(function()
   {
@@ -76,7 +92,22 @@ $(document).ready(function()
 </div>
 </div>
 {% endfor %}
-
+<div class="pager">
+  <span class="step-links">
+    {% if cl_page.has_previous %}
+    <a href="?page={{ cl_page.previous_page_number }}">предыдущая</a>
+    {% else %}
+    <span>предыдущая</span>
+    {% endif %}  
+    
+    {% if cl_page.has_next %}
+    <a href="?page={{ cl_page.next_page_number }}">следующая</a>
+    {% else %}
+    <span>следующая</span>
+    {% endif %}
+    </span>
+</div>
+    
 {% endblock %}
 
 {% block right %}

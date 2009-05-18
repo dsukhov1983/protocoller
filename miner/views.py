@@ -182,7 +182,6 @@ def search(request):
     except ValueError:
         page = 1
 
-
     try:
         persons = paginator.page(page)
     except (EmptyPage, InvalidPage):
@@ -374,3 +373,54 @@ def get_event_summary():
 
     return [(y, list(l)) for y,l in ys]
     
+
+
+def comp_list_view(request, year=None, month=None):
+    try:
+        year = year and int(year)
+        month = month and int(month)
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+
+    comp_list = models.SportEvent.objects.all().select_related().order_by('-date')
+    
+    if year is not None:
+        if month is not None:
+            start_date = datetime.date(year, month, 1)
+            if month == 12:
+                end_date = datetime.date(year+1, 1, 1)
+            else:
+                end_date = datetime.date(year, month+1, 1)
+        else:
+            start_date = datetime.date(year, 1, 1)
+            end_date = datetime.date(year+1, 1, 1)
+
+        comp_list = comp_list.filter(date__gte = start_date,
+                                     date__lt = end_date)
+        
+
+    paginator = Paginator(comp_list, 30)
+
+    comp_list = paginator.page(page)
+
+    date_groups = itertools.groupby(comp_list.object_list,
+                                    lambda c:c.date)
+
+    comp_groups = []
+
+    for szn, dg in itertools.groupby(date_groups,
+                                     lambda d:d[0].year):
+        
+        dg = [(d, list(l)) for d,l in dg]
+        comp_groups.append((szn, dg))            
+
+    
+    return render_to_response('index.html',
+                              {'comp_groups': comp_groups,
+                               'cl_page': comp_list,
+                               'sample_search':get_random_search(),
+                               'event_summary': get_event_summary(),
+                               'cur_year': year,
+                               'cur_month': month})
