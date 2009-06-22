@@ -12,9 +12,9 @@ from protocoller.miner import models
 
 
 RESULT_VARIANTS = (
-    (models.DNS, [u'dns', u'не старт']),
+    (models.DNS, [u'dns', u'не старт', u'неявка']),
     (models.DNF, [u'dnf', u'сош', u'не фин']),
-    (models.DQF, [u'dqf', u'дискв', u'рез. аннул.', u'снят'])
+    (models.DQF, [u'dqf', u'диск', u'рез. аннул.', u'снят'])
     )
 
 
@@ -371,83 +371,9 @@ def reload_persons():
     print "loaded %s persons" % len(all_persons)
 
 
-def process_raw_result_list(rlist):    
-    
-    for r in rlist:
-        process_raw_result(r)
-
-def process_raw_result(rec):
 
 
-    def resolve(result, rec, srl):
-        
-        print "_______________________"
-        print "r = %r" % rec
-
-        for pos, (person, measure) in enumerate(srl):
-            print "[%s] %r ~ %s" % (pos, person, measure)
-            
-
-        choice = None
-        while True:
-            try:
-                choice = input("choose person ('n' for new): ")
-
-                if choice == 'n':
-                    return False
-                elif -1 < int(choice) < len(srl):
-                    prs = srl[int(choice)][0]
-                    result.person = prs
-                    prs.update_p(rec)
-                    prs.save()
-                    result.save()
-                    return True                
-                    
-            except Exception, e:
-                print "Failed: %s"%e
-
-        
-            
-    
-    print "processing %r"%rec
-
-    result = models.Result(number = rec.number,
-                           pos = rec.pos,
-                           group = rec.group,
-                           pos_in_grp = rec.pos_in_grp,
-                           time = rec.time,
-                           qualif_rank = rec.qualif_rank,
-                           competition = rec.competition,
-                           raw_result = rec)
-                           
-    
-    #trying to find such object
-    rl = models.Person.objects.filter(surname=rec.surname)
-
-
-    if rl:
-        srl = sorted([(r, measure(rec, r)) for r in rl],
-                     lambda a, b: cmp(a[1], b[1]))
-
-        if srl[0][1] == 0:
-            print ".choosed %r"%srl[0][0]
-            sys.stdout.flush()
-            result.person = srl[0][0]
-            result.save()
-            return 
-            
-
-    global all_persons
-
-    if all_persons:
-
-        srl = sorted(filter(lambda v: v[1]<= THRESHOLD,
-                     [(r, measure(rec, r)) for r in all_persons]),
-                     lambda a,b: cmp(a[1], b[1]))
-
-        if srl and resolve(result, rec, srl):
-            return        
-
+def new_person_from_rec(result, rec):
     #adding new
     prs = models.Person(name = rec.name,
                         surname = rec.surname,
@@ -462,8 +388,86 @@ def process_raw_result(rec):
     result.save()
     all_persons.append(prs)
     print "+"
-    sys.stdout.flush()
-                        
+    sys.stdout.flush() 
+
+
+def analyse_result(rec):
+    print "processing %r" % rec
+    
+    result = models.Result(number = rec.number,
+                           pos = rec.pos,
+                           group = rec.group,
+                           pos_in_grp = rec.pos_in_grp,
+                           time = rec.time,
+                           qualif_rank = rec.qualif_rank,
+                           competition = rec.competition,
+                           raw_result = rec)
+   
+    #trying to find such object
+    rl = models.Person.objects.filter(surname=rec.surname)
+
+    if rl:
+        srl = sorted([(r, measure(rec, r)) for r in rl],
+                     lambda a, b: cmp(a[1], b[1]))
+        if srl[0][1] == 0:
+            print ".choosed %r"%srl[0][0]
+            sys.stdout.flush()
+            result.person = srl[0][0]
+            result.save()
+            return None
+            
+
+    global all_persons
+    
+    srl = sorted(filter(lambda v: v[1]<= THRESHOLD,
+                        [(r, measure(rec, r)) for r in all_persons]),
+                 lambda a,b: cmp(a[1], b[1]))
+
+    if srl:
+        return (result, rec, srl)
+        
+    new_person_from_rec(result, rec)
+    return None
+
+
+def resolve(result, rec, srl):
+        
+    print "_______________________"
+    print "r = %r" % rec
+
+    for pos, (person, measure) in enumerate(srl):
+        print "[%s] %r ~ %s" % (pos, person, measure)
+
+
+    choice = None
+    while True:
+        try:
+            choice = input("choose person ('n' for new): ")
+
+            if choice == 'n':
+                new_person_from_rec(result, rec)
+                return
+            elif -1 < int(choice) < len(srl):
+                prs = srl[int(choice)][0]
+                result.person = prs
+                prs.update_p(rec)
+                prs.save()
+                result.save()
+                return
+
+        except Exception, e:
+                print "Failed: %s"%e
+    
+
+def process_rlist(rlist):
+
+    for r in rlist:
+        r.save()
+    
+    for r in filter(None, map(analyse_result, rlist)):
+        resolve(*r)        
+
+
     
 
 def parse_bitza_format(raw):
@@ -640,4 +644,7 @@ def process_me_page(url, **defaults):
             if m not in fmap.values():
                 fmap[i] = m
     rr = map(lambda x:[s.text_content() for s in x], t[1:])
-    return parse_list(rr, fmap, defaults)
+    mrr = parse_list(rr, fmap, defaults)
+
+    process_rlist(mrr)
+    post_process_comp(defaults['competition'])
