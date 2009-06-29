@@ -4,6 +4,7 @@ import sys
 import datetime
 import logging
 import itertools
+import csv
 from lxml import html
 
 from functools import partial
@@ -648,3 +649,21 @@ def process_me_page(url, **defaults):
 
     process_rlist(mrr)
     post_process_comp(defaults['competition'])
+
+
+
+def process_file(file, fmap, **defaults):
+    def d(v):
+        return v.decode('utf-8')
+
+    decode_vals = lambda l:map(d, l)
+        
+    
+    rdr = csv.reader(open(file), delimiter=',', quotechar='"')
+    data = list(rdr)
+    pdata = map(decode_vals, data)
+    mrr = parse_list(pdata, fmap, defaults)
+    return mrr
+
+    
+    
