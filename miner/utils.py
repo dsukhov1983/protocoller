@@ -10,7 +10,10 @@ from lxml import html
 from functools import partial
 
 from protocoller.miner import models
+from protocoller.miner import search_tree
 
+
+comparer = search_tree.SmartComparer()
 
 RESULT_VARIANTS = (
     (models.DNS, [u'dns', u'не старт', u'неявка']),
@@ -470,6 +473,12 @@ def process_rlist(rlist):
 
 
     
+def process_rlist_new(rlist):
+    for r in rlist:
+        r.save()
+
+    comparer.process_rlist(rlist)
+
 
 def parse_bitza_format(raw):
     """

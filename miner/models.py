@@ -137,7 +137,7 @@ class Person(models.Model):
             self.club = p.club
         if not self.city and p.city:
             self.city = p.city
-        if self.rank == NR and p.rank:
+        if p.rank < self.rank:
             self.rank = p.rank
 
 
