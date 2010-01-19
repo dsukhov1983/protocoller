@@ -656,7 +656,7 @@ def process_me_page(url, **defaults):
     rr = map(lambda x:[s.text_content() for s in x], t[1:])
     mrr = parse_list(rr, fmap, defaults)
 
-    process_rlist(mrr)
+    process_rlist_new(mrr)
     post_process_comp(defaults['competition'])
 
 

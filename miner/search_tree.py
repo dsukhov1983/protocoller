@@ -62,7 +62,7 @@ WRITESLIKE_SET = (u'аоя', u'еёя', u'иы', u'сч', u'нк',  u'зд', u'�
 
 VOWEL_SET = (u'йуеёыаоэяию', u'цкнгшщзхфвпрлджчмтб')
 
-ANYLETTER_SET = (u'йцукенгшщзхъфывапролджэячсмитьбю')
+ANYLETTER_SET = (u'йцукенгшщзхъфывапролджэячсмитьбю',)
 
 
 class MisprintBySetGen:
@@ -101,6 +101,10 @@ def idle_gen(s, pos):
     """ничего не меняет"""
     return [(s,pos)]
 
+def insert_get(s, pos):
+    """вставляет произвользую букву"""
+    return map(lambda c:(s[:pos] + c + s[pos:], pos), ANYLETTER_SET[0])
+
 
 class Combinator:
     """Подбирает опечатки"""
@@ -113,6 +117,7 @@ class Combinator:
                       (MisprintBySetGen(VOWEL_SET), 0.6),
                       (MisprintBySetGen(ANYLETTER_SET), 1.),
                       (letter_omission_gen, 1.),
+                      (insert_get, 1.0),
                       (swap_gen, 1.),
                       (idle_gen, 0.))
 
@@ -133,8 +138,7 @@ class Combinator:
         keyfunc = itemgetter(0)
         variants = [(ns, npos, penalty + min(map(itemgetter(1), vals)))
                     for (ns, npos), vals in groupby(sorted(variants, key = keyfunc), keyfunc)]
-
-
+        
         return list(chain(*[self._process_variant(st, ns, np, threshold, pen) for ns, np, pen in variants]))
         
     def _process_variant(self, st, s, pos, threshold, penalty):
@@ -237,9 +241,12 @@ class SmartComparer:
 
         #founded all persons with likely surnames
         variants = self.combinator.guess(self.st, rec.surname, 0, self.filter_thr)
-        #variants = [(st, penalty)] transform it to [(person, penalty)], ordered by penalty
-        variants = sorted([(p, pen) for st, pen in variants for p in st.links],
-                          key = itemgetter(1))
+        #variants = [(st, penalty)] transform it to [(person, penalty)],
+        #make uniq by person and order by penalty
+        variants = [(p, min(map(itemgetter(1), vals)))
+                    for p, vals in groupby(sorted([(p, pen) for st, pen in variants for p in st.links],
+                                                  key = itemgetter(0)), itemgetter(0))]
+        variants = sorted(variants, key = itemgetter(1))
 
 
         if len(variants) == 0:
@@ -301,7 +308,7 @@ class SmartComparer:
     
     def check_candidate(self, rec, person, penalty):
         """сличаем имя и дату рождения"""
-        if len(rec.name) > 1 and rec.name != person.name:
+        if len(rec.name) > 1 and len(person.name) > 1 and rec.name != person.name:
             name_st = SearchTree()
             name_st.add_word(person.name)
             v = sorted(self.combinator.guess(name_st, rec.name, 0, self.filter_thr, penalty),
@@ -312,7 +319,7 @@ class SmartComparer:
 
         #compare year
         if rec.year >= 1900 and person.year >= 1900 and rec.year != person.year:
-            penalty += 1.
+            penalty += float(min(6, abs(person.year - rec.year)))/2.0
 
         if penalty <= self.filter_thr:
             return (person, penalty)
