@@ -82,5 +82,6 @@ INSTALLED_APPS = (
     'django_evolution',
     'protocoller.miner',
     'django.contrib.admin',
-    'pytils'
+    'pytils', 
 )
+

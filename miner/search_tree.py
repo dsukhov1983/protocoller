@@ -10,10 +10,12 @@ from protocoller.miner import models
 
 class SearchTree:
     
-    def __init__(self):
-        self.children = defaultdict(SearchTree)
+    def __init__(self, letter = None, parent = None):
+        self.children = {}
         self.is_leaf = False
         self.links = []
+        self.parent = parent
+        self.letter = letter
 
     def __contains__(self, w):
         if not self.children.has_key(w[0]):
@@ -24,7 +26,11 @@ class SearchTree:
         return w[1:] in d
 
     def add_word(self, w, obj = None):
-        d = self.children[w[0]]
+        if self.children.has_key(w[0]):
+            d = self.children[w[0]]
+        else:
+            d = SearchTree(w[0], self)
+            self.children[w[0]] = d
         if len(w) > 1:
             d.add_word(w[1:], obj)
         else:
@@ -44,6 +50,26 @@ class SearchTree:
         if len(w) == 1:
             return d
         return d.get(w[1:], default)
+
+    def find_max_equals(self, w, pos = 0):
+        """проходит по дереву и находит наиболее совпадающую подстроку
+        @param w: слово
+        @param pos: позиция в слове, от которой искать совпадение
+        @returns: (search_tree, pos) -- узел дерева и позиция в слове
+        """
+        if pos == len(w):
+            #мы дошли до конца слова
+            return (self, pos - 1)
+        if self.children.has_key(w[pos]):
+            return self.children[w[pos]].find_max_equals(w, pos + 1)
+
+        return (self, pos)
+            
+
+    def __unicode__(self):
+        if self.parent is None:
+            return ""
+        return unicode(self.parent) + self.letter
 
 
 def gen_misprints(s, pos):
@@ -80,14 +106,14 @@ class MisprintBySetGen:
 
 
     def __call__(self, s, pos):
-        return map(lambda c:(s[:pos] + c + s[pos+1:], pos), self._equiv_map[s[pos]])
+        return map(lambda c:s[:pos] + c + s[pos+1:], self._equiv_map[s[pos]])
 
 
 def letter_omission_gen(s, pos):
     """пропуск буквы"""
     if pos + 1 == len(s):
-        return [(s[:-1], pos-1)]
-    return [(s[:pos] + s[pos+1:], pos)]
+        return []
+    return [s[:pos] + s[pos+1:]]
 
 
 def swap_gen(s, pos):
@@ -95,15 +121,15 @@ def swap_gen(s, pos):
     if len(s) == pos + 1:
         return []
     
-    return [(s[:pos] + s[pos+1] + s[pos] + s[pos+2:], pos)]
+    return [s[:pos] + s[pos+1] + s[pos] + s[pos+2:]]
 
 def idle_gen(s, pos):
     """ничего не меняет"""
-    return [(s,pos)]
+    return [s]
 
 def insert_get(s, pos):
     """вставляет произвользую букву"""
-    return map(lambda c:(s[:pos] + c + s[pos:], pos), ANYLETTER_SET[0])
+    return map(lambda c:s[:pos] + c + s[pos:], ANYLETTER_SET[0])
 
 
 class Combinator:
@@ -121,29 +147,62 @@ class Combinator:
                       (swap_gen, 1.),
                       (idle_gen, 0.))
 
+    def add_res(self, s, pen):
+        d = self.current_res
+        if not d.has_key(s) or d[s] > pen:
+            d[s] = pen
 
 
-    def guess(self, st, s, pos, threshold, penalty = 0.):
+    def guess(self, st, s, threshold, penalty = 0.):
+        self.current_res = {}
+        return self.guess_wc(st, s, 0, threshold, penalty)
+
+    def guess_wc(self, st, s, pos, threshold, penalty = 0.):
+        """Находит наиболее похожие варианты
+        @param st: SearchTree
+        @param w: искомое слово
+        @param pos: начальная позиция в слове
+        @param threshold: порог, по которому отсеиваются непохожие варианты
+        @param penalty: начальное значение несоответствия
+        @returns: [(pos, st, pen)]"""
+
+        def good_variant((s, pen)):
+            """проверяет не было ли предложено уже этого варианта с меньшим penalty"""
+            d = self.current_res
+            return not d.has_key(s) or d[s] > pen
+
         if penalty > threshold:
             return []
         if pos >= len(s):
             if st.is_leaf:
                 #maybe better return st here
+                self.add_res(s, penalty)
                 return [(st, penalty)]
             return []
 
+        res = []
+        if pos == len(s) - 1 and st.is_leaf and penalty + 1.0 <= threshold:
+            res.append((st, penalty + 1.))
+            self.add_res(s[:-1], penalty + 1.0)
+
         #gen misprints
-        variants = list(chain(*map(lambda (o,p):[(r,p) for r in o(s, pos)], self._gens)))
+        variants = list(chain(*map(lambda (o,pen):[(r, pen ) for r in o(s, pos)], self._gens)))
         #order, group by and minimize by penalty
         keyfunc = itemgetter(0)
-        variants = [(ns, npos, penalty + min(map(itemgetter(1), vals)))
-                    for (ns, npos), vals in groupby(sorted(variants, key = keyfunc), keyfunc)]
-        
-        return list(chain(*[self._process_variant(st, ns, np, threshold, pen) for ns, np, pen in variants]))
-        
+        variants = [(ns, penalty + min(map(itemgetter(1), vals)))
+                    for ns, vals in groupby(sorted(variants, key = keyfunc), keyfunc)]
+
+        #отфильтуем уже предложенные варианты
+        variants = filter(good_variant, variants)
+        #отсортируем по убыванию штрафа
+        variants = sorted(variants, key = itemgetter(1))
+
+        res += list(chain(*[self._process_variant(st, ns, pos, threshold, pen) for ns, pen in variants]))
+        return res
+
     def _process_variant(self, st, s, pos, threshold, penalty):
         if st.has_letter(s[pos]):
-            return self.guess(st.children[s[pos]], s, pos + 1, threshold, penalty)
+            return self.guess_wc(st.children[s[pos]], s, pos + 1, threshold, penalty)
         return []
             
 
@@ -152,9 +211,10 @@ class Combinator:
 
 class SmartComparer:
 
-    def __init__(self, agree_thr = 1.0, filter_thr = 6.0):
+    def __init__(self, agree_thr = 1.0, filter_thr = 6.0, surname_thr = 2.5):
         self.agree_thr = agree_thr
         self.filter_thr = filter_thr
+        self.surname_thr = surname_thr
         self.persons = list(models.Person.objects.all())
         #build search tree by surname
         self.st = SearchTree()
@@ -240,7 +300,7 @@ class SmartComparer:
                 return
 
         #founded all persons with likely surnames
-        variants = self.combinator.guess(self.st, rec.surname, 0, self.filter_thr)
+        variants = self.combinator.guess(self.st, rec.surname, self.surname_thr)
         #variants = [(st, penalty)] transform it to [(person, penalty)],
         #make uniq by person and order by penalty
         variants = [(p, min(map(itemgetter(1), vals)))
@@ -311,7 +371,7 @@ class SmartComparer:
         if len(rec.name) > 1 and len(person.name) > 1 and rec.name != person.name:
             name_st = SearchTree()
             name_st.add_word(person.name)
-            v = sorted(self.combinator.guess(name_st, rec.name, 0, self.filter_thr, penalty),
+            v = sorted(self.combinator.guess(name_st, rec.name, self.filter_thr, penalty),
                        key = itemgetter(1))
             if not v:
                 return
