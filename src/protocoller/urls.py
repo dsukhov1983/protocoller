@@ -40,9 +40,11 @@ urlpatterns = patterns(
 
 )
 
+
 if settings.DEBUG:
-    urlpatterns += patterns('',
-                            (r'^static/(?P<path>.*)$',
-                             'django.views.static.serve',
-                             {'document_root': '/home/quoter/devel/protocoller/'}),
-                            )
+    urlpatterns += patterns(
+          '',
+          (r'^static/(?P<path>.*)$',
+          'django.views.static.serve',
+               {'document_root': '/home/quoter/www/protocoller/media/'}),
+           )
