@@ -23,6 +23,15 @@
       </td>
       <td></td>
     </tr>
+    <tr>
+      <td>
+        {{ user.username }}
+        {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+        {% else %}
+        <p>Welcome, new user. Please log in.</p>
+        {% endif %}
+      </td>
     <tr id="main">
       <td id="page-left">{% block left %}{% endblock %}</td>
       <td id="content">{% block content %}{% endblock %}</td>

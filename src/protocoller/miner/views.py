@@ -376,6 +376,7 @@ def get_event_summary():
 
 
 def comp_list_view(request, year=None, month=None):
+    print request.user
     try:
         year = year and int(year)
         month = month and int(month)
@@ -383,8 +384,8 @@ def comp_list_view(request, year=None, month=None):
     except ValueError:
         page = 1
 
-
-    comp_list = models.SportEvent.objects.all().select_related().order_by('-date')
+    comp_list = models.SportEvent.objects.all().select_related()\
+                .order_by('-date')
     
     if year is not None:
         if month is not None:
@@ -399,20 +400,15 @@ def comp_list_view(request, year=None, month=None):
 
         comp_list = comp_list.filter(date__gte = start_date,
                                      date__lt = end_date)
-        
 
     paginator = Paginator(comp_list, 30)
-
     comp_list = paginator.page(page)
-
     date_groups = itertools.groupby(comp_list.object_list,
                                     lambda c:c.date)
 
     comp_groups = []
-
     for szn, dg in itertools.groupby(date_groups,
                                      lambda d:d[0].year):
-        
         dg = [(d, list(l)) for d,l in dg]
         comp_groups.append((szn, dg))            
 

@@ -69,6 +69,16 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'django_openid_auth.auth.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+OPENID_CREATE_USERS = True
+OPENID_UPDATE_DETAILS_FROM_SREG = True
+LOGIN_URL = '/openid/login/'
+LOGIN_REDIRECT_URL = '/'
+
 ROOT_URLCONF = 'protocoller.urls'
 
 TEMPLATE_DIRS = (
@@ -86,6 +96,17 @@ INSTALLED_APPS = (
     'django_evolution',
     'protocoller.miner',
     'django.contrib.admin',
-    'pytils', 
+    'pytils',
+    'django_openid_auth'
 )
 
+OPENID_SREG = {"requred": "nickname, email",
+               "optional":"postcode, country",
+               "policy_url": "http://example.com/policy"}
+
+TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
+"django.core.context_processors.debug",
+"django.core.context_processors.i18n",
+"django.core.context_processors.media",
+"django.core.context_processors.static",
+"django.contrib.messages.context_processors.messages")

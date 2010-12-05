@@ -1,14 +1,14 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 
-
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
 admin.autodiscover()
 
+
+
 urlpatterns = patterns(
     'protocoller.miner.views',    
-    # Example:
     (r'^$', 'comp_list_view'),
     (r'^index.html$', 'comp_list_view'),
     (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
@@ -26,19 +26,21 @@ urlpatterns = patterns(
     (r'^do_compare$', 'do_compare'),
     (r'^person_fb/(?P<person>\d+)$', 'feedback_person',
      {}, 'feedback_person'),
-
+    
     (r'^about$', 'about'),
-    
-    
+        
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     
     # Uncomment the next line to enable the admin:
     (r'^admin/(.*)', admin.site.root),
-  
-
 )
+
+urlpatterns += patterns(
+    '',
+    (r'^openid/', include('django_openid_auth.urls')),
+    )
 
 
 if settings.DEBUG:
@@ -48,3 +50,4 @@ if settings.DEBUG:
           'django.views.static.serve',
                {'document_root': '/home/quoter/www/protocoller/media/'}),
            )
+
