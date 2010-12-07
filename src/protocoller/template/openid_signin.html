@@ -1,0 +1,31 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+
+{% block content %}
+<h2>{% trans "Sign in with your Google or Yahoo account" %}</h2>
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+{% else %}
+    <p>Welcome, new user. Please log in.</p>
+{% endif %}
+
+<form action="{{ action }}" method="post">
+<p><input class="openid" type="text" name="openid_url"> <input type="submit" value="{% trans "Sign in" %}"></p>
+</form>
+
+<form action="{{ action }}" method="post">
+<div class="openid">
+  <button
+    name="openid_url"
+    value="https://www.google.com/accounts/o8/id"
+    class="openid"
+    type="submit"><img src="{{ MEDIA_URL }}static/openid/google.gif" alt="google account" /></button>
+  <button
+    name="openid_url"
+    value="http://open.login.yahoo.com/"
+    class="openid"
+    type="submit"><img src="{{ MEDIA_URL }}static/openid/yahoo.gif" alt="yahoo account" /></button>
+</div>
+</form>
+
+{% endblock %}
