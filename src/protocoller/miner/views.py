@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django import forms
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-
+from django.template import RequestContext
 
 from protocoller.miner import models
 
@@ -62,7 +62,8 @@ def index(request):
     return render_to_response('index.html',
                               {'comp_groups': comp_groups,
                                'sample_search':get_random_search(),
-                               'event_summary': get_event_summary()})
+                               'event_summary': get_event_summary()},
+                              context_instance = RequestContext(request))
     
 
 
@@ -375,8 +376,7 @@ def get_event_summary():
     
 
 
-def comp_list_view(request, year=None, month=None):
-    print request.user
+def comp_list_view(request, year = None, month = None):
     try:
         year = year and int(year)
         month = month and int(month)
@@ -411,7 +411,7 @@ def comp_list_view(request, year=None, month=None):
                                      lambda d:d[0].year):
         dg = [(d, list(l)) for d,l in dg]
         comp_groups.append((szn, dg))            
-
+        
     
     return render_to_response('index.html',
                               {'comp_groups': comp_groups,
@@ -419,4 +419,11 @@ def comp_list_view(request, year=None, month=None):
                                'sample_search':get_random_search(),
                                'event_summary': get_event_summary(),
                                'cur_year': year,
-                               'cur_month': month})
+                               'cur_month': month},
+                              context_instance = RequestContext(request))
+
+
+
+
+
+
