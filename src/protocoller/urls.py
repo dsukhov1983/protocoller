@@ -6,11 +6,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 
-
 urlpatterns = patterns(
     'protocoller.miner.views',    
     (r'^$', 'comp_list_view'),
-    (r'^index.html$', 'comp_list_view'),
+    (r'^index.html$', 'comp_list_view', {}, 'comp_list_view'),
     (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
     (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',
      'comp_list_view'),
@@ -26,7 +25,7 @@ urlpatterns = patterns(
     (r'^do_compare$', 'do_compare'),
     (r'^person_fb/(?P<person>\d+)$', 'feedback_person',
      {}, 'feedback_person'),
-    
+    (r'^logout$', 'logout_view'),
     (r'^about$', 'about'),
         
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
@@ -38,15 +37,17 @@ urlpatterns = patterns(
 )
 
 urlpatterns += patterns(
-    '',
-    (r'^openid/', include('django_openid_auth.urls')),
-    )
+    'django_openid_auth.views',
+    url(r'^openid/login/$', 'login_begin', name='openid-login', 
+        kwargs = dict(template_name = 'openid_signin.html')),
+    url(r'^openid/complete/$', 'login_complete', name='openid-complete'),
+)
 
 
 if settings.DEBUG:
     urlpatterns += patterns(
           '',
-          (r'^static/(?P<path>.*)$',
+          (r'^media/(?P<path>.*)$',
           'django.views.static.serve',
                {'document_root': '/home/quoter/www/protocoller/media/'}),
            )

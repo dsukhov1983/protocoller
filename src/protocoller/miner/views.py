@@ -10,6 +10,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django import forms
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.template import RequestContext
+from django.contrib.auth import logout
 
 from protocoller.miner import models
 
@@ -29,6 +30,11 @@ SAMPLE_SEARCHES=(u'Ильин Василий',
                  u'Нестеров Анатолий',
                  u'Хачкованян Карен',
                  u'Долгополов Никита')
+
+def logout_view(request):
+    logout(request)
+    return redirect('comp_list_view')
+
 
 def get_random_search():
     return SAMPLE_SEARCHES[random.randint(0,
