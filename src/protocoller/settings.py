@@ -97,7 +97,8 @@ INSTALLED_APPS = (
     'protocoller.miner',
     'django.contrib.admin',
     'pytils',
-    'django_openid_auth'
+    'django_openid_auth',
+    'django.contrib.markup'
 )
 
 OPENID_SREG = {"requred": "nickname, email",

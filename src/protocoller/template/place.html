@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+
+{% block content %}
+{% load markup %}
+
+<div>
+  <p>{{ place.name }}</p>
+  <div>{{ place.description|markdown }}</div>
+</div>
+
+{% endblock %}

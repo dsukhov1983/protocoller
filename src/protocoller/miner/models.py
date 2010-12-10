@@ -16,16 +16,18 @@ RATING_TYPES = (
     (BOTH_RATING, 'оба')
     )
 
-
 class Place(models.Model):
 
-    name = models.CharField(max_length=50)
-    link = models.URLField(null=True, blank=True)
-    location = models.CharField(max_length=200, null=True, blank=True)
+    name = models.CharField(max_length = 50)
+    link_name = models.CharField(max_length = 20, default = '', 
+                                 db_index = True)
+    link = models.URLField(null = True, blank = True)
+    location = models.CharField(max_length = 200, null = True,
+                                blank = True)
+    description = models.TextField(default = '')
 
     def __unicode__(self):
         return self.name
-
 
 
 class SportEvent(models.Model):
@@ -57,10 +59,7 @@ class Competition(models.Model):
     event = models.ForeignKey(SportEvent, null=True,
                               related_name="competitions")
     
-    #deprecated
-    #place = models.ForeignKey(Place, null=True, blank=True)    
-    #date = models.DateField()
-
+    
     sex = models.IntegerField(choices=SEX_TYPES, default=UNKNOWN)
     name = models.CharField(max_length=250, blank=True)
     
@@ -96,8 +95,6 @@ RANK_TYPES = (
     (NR, u'')
     )
 
-   
-
 class Person(models.Model):   
 
     name = models.CharField(max_length=20, default="",
@@ -129,7 +126,6 @@ class Person(models.Model):
             self.city,
             self.club]))
         
-
     def update_p(self, p):
         if not self.year and p.year:
             self.year = p.year
@@ -148,8 +144,6 @@ RESULT_TYPES = (
     (DNF, u'dnf'),
     (DQF, u'dqf')
     )
-
-
 
 
 class RawResult(models.Model):
@@ -251,8 +245,6 @@ class Result(models.Model):
         else:
             return ""
 
-
-    
 
 class ImportState(models.Model):
 

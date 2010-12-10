@@ -148,16 +148,17 @@ def get_person_results(person):
     return rg
 
 def person_results(request, person_id):
-    person = get_object_or_404(models.Person,
-                                    id=person_id)
-
+    person = get_object_or_404(models.Person, id = person_id)
     rg = get_person_results(person)
-    
-    
     return render_to_response('summary_results.html',
                               {'res_groups': rg,
                                'person': person})
 
+def place_view(request, name):
+    place = get_object_or_404(models.Place, link_name = name)
+    return render_to_response('place.html', dict(place = place),
+                              context_instance = RequestContext(request))
+    
 
 
 

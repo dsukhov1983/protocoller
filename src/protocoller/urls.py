@@ -25,6 +25,7 @@ urlpatterns = patterns(
     (r'^do_compare$', 'do_compare'),
     (r'^person_fb/(?P<person>\d+)$', 'feedback_person',
      {}, 'feedback_person'),
+    (r'^place/(?P<name>\w+)$', 'place_view', {}, 'place'),
     (r'^logout$', 'logout_view'),
     (r'^about$', 'about'),
         
