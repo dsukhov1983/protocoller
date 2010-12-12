@@ -428,7 +428,8 @@ def comp_list_view(request, year = None, month = None):
 
 
 def calendar_view(request, year = None, month = None):
-    events = models.SportEvent.objects.filter(date__gte = datetime.datetime.now())
+    events = models.SportEvent.objects.filter(date__gte = datetime.datetime.now())\
+        .select_related()
     return render_to_response('calendar.html',
                               dict(events = events),
                               context_instance = RequestContext(request))

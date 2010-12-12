@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+{% load i18n %}
+{% load pytils_dt %}
+{% load pretty_print %}
+{% load markup %}
+
+{% block content %}
+<a href="/event/edit/{{ event.id }}">Изменить</a>
+<div class="comp-header">
+  <p class="date">{{ event.date|ru_strftime:"%d %B %Y" }}</p>
+  <p class="event">{{ name }}</p>
+  <p class="place">{{ event.place|default:"" }}</p>
+</div>
+
+<div>{{ event.description|markdown }}</div>
+<div>{{ event.standing|markdown}}
+
+{% endblock %}
