@@ -396,12 +396,12 @@ def comp_list_view(request, year = None, month = None):
         if month is not None:
             start_date = datetime.date(year, month, 1)
             if month == 12:
-                end_date = datetime.date(year+1, 1, 1)
+                end_date = datetime.date(year + 1, 1, 1)
             else:
                 end_date = datetime.date(year, month+1, 1)
         else:
             start_date = datetime.date(year, 1, 1)
-            end_date = datetime.date(year+1, 1, 1)
+            end_date = datetime.date(year + 1, 1, 1)
 
         comp_list = comp_list.filter(date__gte = start_date,
                                      date__lt = end_date)
@@ -411,15 +411,12 @@ def comp_list_view(request, year = None, month = None):
     date_groups = itertools.groupby(comp_list.object_list,
                                     lambda c:c.date)
     
-    date_groups = list(date_groups)
-    print "###", date_groups
     comp_groups = []
     for szn, dg in itertools.groupby(date_groups,
                                      lambda d:d[0].year):
         dg = [(d, list(l)) for d,l in dg]
         comp_groups.append((szn, dg))            
         
-    
     return render_to_response('index.html',
                               {'comp_groups': comp_groups,
                                'cl_page': comp_list,
@@ -431,7 +428,9 @@ def comp_list_view(request, year = None, month = None):
 
 
 def calendar_view(request, year = None, month = None):
+    events = models.SportEvent.objects.filter(date__gte = datetime.datetime.now())
     return render_to_response('calendar.html',
+                              dict(events = events),
                               context_instance = RequestContext(request))
 
 
@@ -440,24 +439,42 @@ def sportsmen_view(request, year = None, month = None):
                               context_instance = RequestContext(request))
 
 
-class AddSportEventForm(forms.ModelForm):
+
+
+class SportEventForm(forms.ModelForm):
     class Meta:
         model = models.SportEvent
+        fields = ('place', 'date', 'name',
+                  'description', 'standing')
     
 
 
 @login_required
-def add_sport_event_view(request):
+def edit_sport_event_view(request, event_id = None):
     if request.method == 'POST': # If the form has been submitted...
-        form = AddSportEventForm(request.POST) # A form bound to the POST data
+        form = SportEventForm(request.POST) # A form bound to the POST data
         if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data
-            pass
+            event = form.save(commit = False)
+            event.created_by = request.user
+            event.save()
+            return render_to_response(
+                'sport_event.html',
+                dict(event = event), 
+                context_instance = RequestContext(request))
     else:
-        form = AddSportEventForm(created_by = request.user) # An unbound form
+        if event_id:
+            event = get_object_or_404(models.SportEvent, id = event_id)
+            form = SportEventForm(instance = event)
+        else:
+            form = SportEventForm() # An unbound form
 
-        return render_to_response('add_sport_event.html',
-                                  dict(form = form),
-                                  context_instance = RequestContext(request))
+    return render_to_response('add_sport_event.html',
+                              dict(form = form),
+                              context_instance = RequestContext(request))
 
 
+def sport_event_view(request, event_id):
+    event = get_object_or_404(models.SportEvent, id = event_id)
+    return render_to_response('sport_event.html',
+                              dict(event = event), 
+                              context_instance = RequestContext(request))

@@ -43,11 +43,13 @@ class SportEvent(models.Model):
     place = models.ForeignKey(Place, null=True, blank=True)
     name = models.CharField(max_length=250)
     date = models.DateField(db_index=True)
-    description = models.TextField(default = '')
-    state = models.TextField(default = '')
-    last_change = models.DateField(auto_now = True, 
-                                   default = datetime.datetime.now())
-    created_by = models.ForeignKey(User, null = True)
+    description = models.TextField(default = '', null = True)
+    standing = models.TextField(default = '', null = True)
+    state = models.IntegerField(choices = STATE_TYPES, default = STATE_NEW)
+    last_change = models.DateTimeField(auto_now = True, 
+                                       default = datetime.datetime.now(),
+                                       editable = False)
+    created_by = models.ForeignKey(User, null = True, editable = False)
 
     def __unicode__(self):
         return "%s %s"%(self.name, self.date.year)
@@ -81,9 +83,11 @@ class Competition(models.Model):
     distance = models.IntegerField()
     link = models.URLField(null=True, blank=True)
     rating = models.IntegerField(choices=RATING_TYPES, default=BOTH_RATING)
-
     best_result = models.TimeField(null=True, blank=True, default="0:0:0")
-
+    last_change = models.DateTimeField(auto_now = True, 
+                                       default = datetime.datetime.now(),
+                                       editable = False)
+    created_by = models.ForeignKey(User, null = True, editable = False)
 
     def __unicode__(self):
         s = u"%s %s км, %s, %s" % (self.name,                              
