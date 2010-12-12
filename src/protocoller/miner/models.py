@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import time
 from django.db import models
+from django.contrib.auth import User
 
 (MALE, FEMALE, UNKNOWN) = range(3)
 SEX_TYPES = (
@@ -32,9 +32,20 @@ class Place(models.Model):
 
 class SportEvent(models.Model):
 
+    (STATE_NEW, STATE_APPROVED, STATE_HIDDEN) = range(3)
+    STATE_TYPES = (
+        (STATE_NEW, u'новый'),
+        (STATE_APPROVED, u'подтвержден'),
+        (STATE_HIDDEN, u'скрыт'),
+        )
+
     place = models.ForeignKey(Place, null=True, blank=True)
     name = models.CharField(max_length=250)
     date = models.DateField(db_index=True)
+    description = models.TextField(default = '')
+    state = models.TextField(default = '')
+    last_change = models.DateField(auto_now = True)
+    created_by = models.ForeignKey(User, null = True)
 
     def __unicode__(self):
         return "%s %s"%(self.name, self.date.year)

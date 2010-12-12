@@ -11,7 +11,7 @@ from django import forms
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.template import RequestContext
 from django.contrib.auth import logout
-
+from django.contrib.auth.decorators import login_required
 from protocoller.miner import models
 
 
@@ -159,8 +159,6 @@ def place_view(request, name):
     return render_to_response('place.html', dict(place = place),
                               context_instance = RequestContext(request))
     
-
-
 
 def search_persons(query):
     ql = map(lambda s:s.title(),
@@ -430,7 +428,36 @@ def comp_list_view(request, year = None, month = None):
                               context_instance = RequestContext(request))
 
 
+def calendar_view(request, year = None, month = None):
+    return render_to_response('calendar.html',
+                              context_instance = RequestContext(request))
 
 
+def sportsmen_view(request, year = None, month = None):
+    return render_to_response('sportsmen.html',
+                              context_instance = RequestContext(request))
+
+
+class AddSportEventForm(forms.ModelForm):
+    class Meta:
+        model = models.SportEvent
+    
+
+
+@login_required
+def add_sport_event_view(request):
+    if request.method == 'POST': # If the form has been submitted...
+        form = AddSportEventForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            # Process the data in form.cleaned_data
+            pass
+    else:
+        form = ContactForm() # An unbound form
+
+    return render_to_response('contact.html', {
+        'form': form,
+    })
+    return render_to_response('add_sport_event.html',
+                              context_instance = RequestContext(request))
 
 

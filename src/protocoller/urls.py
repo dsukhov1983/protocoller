@@ -9,7 +9,11 @@ admin.autodiscover()
 urlpatterns = patterns(
     'protocoller.miner.views',    
     (r'^$', 'comp_list_view'),
-    (r'^index.html$', 'comp_list_view', {}, 'comp_list_view'),
+#    (r'^index.html$', 'comp_list_view', {}, 'comp_list_view'),
+    (r'^protocols$', 'comp_list_view'),
+    (r'calendar$', 'calendar_view'),
+    (r'calendar/add$', 'add_sport_event_view'),
+    (r'sportsmen$', 'sportsmen_view'),
     (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
     (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',
      'comp_list_view'),

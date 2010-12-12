@@ -17,10 +17,10 @@
     <tr>
       <td></td>
       <td id="menu" class="menu">
-            <a href="/">Главная</a>
-            <a href="/search">Поиск</a>
-            <a href="/compare">Сравнение</a>
-            <a href="/about">О сайте</a>
+        <a href="/calendar">Календарь</a>
+        <a href="/protocols">Протоколы</a>
+        <a href="/sportsmen">Спортсмены</a>
+        <a href="/about">О сайте</a>
       </td>
       <td>{% if user.is_authenticated %}
         <p>{{ user.first_name }} {{ user.last_name }}<a href="/logout/">Выйти</a></p>
