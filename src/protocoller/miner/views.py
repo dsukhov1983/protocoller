@@ -410,7 +410,9 @@ def comp_list_view(request, year = None, month = None):
     comp_list = paginator.page(page)
     date_groups = itertools.groupby(comp_list.object_list,
                                     lambda c:c.date)
-
+    
+    date_groups = list(date_groups)
+    print "###", date_groups
     comp_groups = []
     for szn, dg in itertools.groupby(date_groups,
                                      lambda d:d[0].year):
@@ -452,12 +454,10 @@ def add_sport_event_view(request):
             # Process the data in form.cleaned_data
             pass
     else:
-        form = ContactForm() # An unbound form
+        form = AddSportEventForm(created_by = request.user) # An unbound form
 
-    return render_to_response('contact.html', {
-        'form': form,
-    })
-    return render_to_response('add_sport_event.html',
-                              context_instance = RequestContext(request))
+        return render_to_response('add_sport_event.html',
+                                  dict(form = form),
+                                  context_instance = RequestContext(request))
 
 

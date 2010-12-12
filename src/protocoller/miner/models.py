@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+import datetime
 from django.db import models
-from django.contrib.auth import User
+from django.contrib.auth.models import User
 
 (MALE, FEMALE, UNKNOWN) = range(3)
 SEX_TYPES = (
@@ -44,7 +45,8 @@ class SportEvent(models.Model):
     date = models.DateField(db_index=True)
     description = models.TextField(default = '')
     state = models.TextField(default = '')
-    last_change = models.DateField(auto_now = True)
+    last_change = models.DateField(auto_now = True, 
+                                   default = datetime.datetime.now())
     created_by = models.ForeignKey(User, null = True)
 
     def __unicode__(self):
