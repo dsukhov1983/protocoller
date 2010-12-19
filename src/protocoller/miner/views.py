@@ -35,6 +35,10 @@ def logout_view(request):
     logout(request)
     return redirect('comp_list_view')
 
+def login_view(request):
+    return render_to_response('openid_signin.html', 
+                              context_instance=RequestContext(request))
+
 
 def get_random_search():
     return SAMPLE_SEARCHES[random.randint(0,
@@ -74,7 +78,8 @@ def index(request):
 
 
 def about(request):
-    return render_to_response('about.html')
+    return render_to_response('about.html',
+                              context_instance=RequestContext(request))
 
 
 
@@ -96,7 +101,8 @@ def protocol(request, comp_id):
                               {'results': results,
                                'comp': competition,
                                'alternate': competition.rating == models.BOTH_RATING
-                               })
+                               },
+                              context_instance=RequestContext(request))
 
 def protocol_by_groups(request, comp_id):
 
@@ -134,7 +140,8 @@ def protocol_by_groups(request, comp_id):
                               {'result_groups': rg,
                                'comp': competition,
                                'alternate': competition.rating == models.BOTH_RATING
-                               })
+                               },
+                              context_instance=RequestContext(request))
 
 
 
@@ -152,7 +159,8 @@ def person_results(request, person_id):
     rg = get_person_results(person)
     return render_to_response('summary_results.html',
                               {'res_groups': rg,
-                               'person': person})
+                               'person': person},
+                              context_instance=RequestContext(request))
 
 def place_view(request, name):
     place = get_object_or_404(models.Place, link_name = name)
@@ -196,7 +204,8 @@ def search(request):
     return render_to_response('search_result.html',
                               {'persons': persons,
                                'query': q,
-                               'sample_search':get_random_search()})
+                               'sample_search':get_random_search()},
+                              context_instance=RequestContext(request))
 
 
 def compare(request, add=None, delete=None):
@@ -252,7 +261,8 @@ def compare(request, add=None, delete=None):
                                'compare': compare_list,
                                'query': q,
                                'cl': cl,
-                               'sample_search':get_random_search()})
+                               'sample_search':get_random_search()},
+                              context_instance=RequestContext(request))
     
 
 def do_compare(request):
@@ -288,7 +298,8 @@ def do_compare(request):
 
     return render_to_response('compare_results.html',
                               {'persons': compare_list,
-                               'res_groups': rgl})
+                               'res_groups': rgl},
+                              context_instance=RequestContext(request))
 
 
 
@@ -324,7 +335,8 @@ def feedback_person(request, person):
         return render_to_response('person_feedback.html',
                                   {'person': p,
                                    'res_groups': rg,
-                                   'form': form})
+                                   'form': form},
+                                  context_instance=RequestContext(request))
 
 
     form = PersonFeedbackForm(request.POST)
@@ -349,7 +361,8 @@ def feedback_person(request, person):
                 print e
         fb.save()
         
-        return render_to_response('success_feedback.html')
+        return render_to_response('success_feedback.html',
+                                  context_instance=RequestContext(request))
     
     else:
         for season, results in rg:
@@ -359,7 +372,8 @@ def feedback_person(request, person):
         return render_to_response('person_feedback.html',
                                   {'person': p,
                                    'res_groups': rg,
-                                   'form': form})
+                                   'form': form},
+                                  context_instance=RequestContext(request))
 
 
 

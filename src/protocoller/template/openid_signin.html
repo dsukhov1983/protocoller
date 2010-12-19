@@ -2,62 +2,25 @@
 {% load i18n %}
 
 {% block content %}
+<form action="{% url  socialauth_openid_login %}" method="get" id="openid_form">
+  <input type="hidden" name="action" value="verify" />
 
-<h2>Login (with javascript)</h2>
-<form class="openid" method="post" action="/openid/login/"> 
-  <div><ul class="providers"> 
-  <li class="openid" title="OpenID"><img src="/media/img/openidW.png" alt="icon" /> 
-  <span><strong>http://{your-openid-url}</strong></span></li> 
-  <li class="direct" title="Google"> 
-		<img src="/media/img/googleW.png" alt="icon" /><span>https://www.google.com/accounts/o8/id</span></li> 
-  <li class="direct" title="Yahoo"> 
-		<img src="/media/img/yahooW.png" alt="icon" /><span>http://yahoo.com/</span></li> 
-  <li class="username" title="AOL screen name"> 
-		<img src="/media/img/aolW.png" alt="icon" /><span>http://openid.aol.com/<strong>username</strong></span></li> 
-  <li class="username" title="MyOpenID user name"> 
-		<img src="/media/img/myopenid.png" alt="icon" /><span>http://<strong>username</strong>.myopenid.com/</span></li> 
-  <li class="username" title="Flickr user name"> 
-		<img src="/media/img/flickr.png" alt="icon" /><span>http://flickr.com/<strong>username</strong>/</span></li> 
-  <li class="username" title="Technorati user name"> 
-		<img src="/media/img/technorati.png" alt="icon" /><span>http://technorati.com/people/technorati/<strong>username</strong>/</span></li> 
-  <li class="username" title="Wordpress blog name"> 
-		<img src="/media/img/wordpress.png" alt="icon" /><span>http://<strong>username</strong>.wordpress.com</span></li> 
-  <li class="username" title="Blogger blog name"> 
-		<img src="/media/img/blogger.png" alt="icon" /><span>http://<strong>username</strong>.blogspot.com/</span></li> 
-  <li class="username" title="LiveJournal blog name"> 
-		<img src="/media/img/livejournal.png" alt="icon" /><span>http://<strong>username</strong>.livejournal.com</span></li> 
-  <li class="username" title="ClaimID user name"> 
-		<img src="/media/img/claimid.png" alt="icon" /><span>http://claimid.com/<strong>username</strong></span></li> 
-  <li class="username" title="Vidoop user name"> 
-		<img src="/media/img/vidoop.png" alt="icon" /><span>http://<strong>username</strong>.myvidoop.com/</span></li> 
-  <li class="username" title="Verisign user name"> 
-		<img src="/media/img/verisign.png" alt="icon" /><span>http://<strong>username</strong>.pip.verisignlabs.com/</span></li> 
-  </ul></div> 
-  <fieldset> 
-  <label for="openid_username">Enter your <span>Provider user name</span></label> 
-  <div><span></span><input type="text" name="openid_username" /><span></span> 
-  <input type="submit" value="Login" /></div> 
-  </fieldset> 
-  <fieldset> 
-  <label for="openid_identifier">Enter your <a class="openid_logo" href="http://openid.net">OpenID</a></label> 
-  <div><input type="text" name="openid_identifier" /> 
-  <input type="submit" value="Login" /></div> 
-  </fieldset> 
+  <fieldset>
+    <legend>Войти или создать новый аккаунт</legend>
+    
+    <div id="openid_choice">
+      <p>Пожайлуста, выберите вашего аккаунт-провайдера:</p>
+      <div id="openid_btns"></div>
+    </div>
+    
+    <div id="openid_input_area">
+      <input id="openid_identifier" name="openid_identifier" type="text" value="http://" />
+      <input id="openid_submit" type="submit" value="Войти"/>
+    </div>
+    <noscript>
+      <p>OpenID это сервис который позволяет вам входить в разные веб-сайты пользуясь одной учетной записью.
+        Узнайте <a href="http://openid.net/what/">больше о OpenID</a> и <a href="http://openid.net/get/">как получить OpenID аккаунт</a>.</p>
+    </noscript>
+  </fieldset>
 </form>
-
-<br />
-<h2>Additional Images</h2>
-<img src="/media/img/flickrW.png" alt="icon" />
-<img src="/media/img/myspaceW.png" alt="icon" />
-<img src="/media/img/myopenidW.png" alt="icon" />
-<img src="/media/img/facebookW.png" alt="icon" /><br />
-
-<p>Visit <a href="http://jvance.com/pages/jQueryOpenIdPlugin.xhtml">jQuery OpenID Plugin Homepage</a> for updates.</p>
-
-<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://creativecommons.org//media/img/public/somerights20.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-Share Alike 3.0 Unported License</a>.</p>
-
-
-<script type="text/javascript" src="/media/js/jquery.openid.js"></script>
-<script type="text/javascript">  $(function() { $("form.openid:eq(0)").openid(); });</script>
-
 {% endblock %}

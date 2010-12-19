@@ -47,8 +47,8 @@ class SportEvent(models.Model):
     standing = models.TextField(default = '', null = True)
     state = models.IntegerField(choices = STATE_TYPES, default = STATE_NEW)
     last_change = models.DateTimeField(auto_now = True, 
-                                       default = datetime.datetime.now(),
-                                       editable = False)
+                                      default = datetime.datetime.now(),
+                                      editable = False)
     created_by = models.ForeignKey(User, null = True, editable = False)
 
     def __unicode__(self):

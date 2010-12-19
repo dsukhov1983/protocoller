@@ -67,17 +67,13 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'openid_consumer.middleware.OpenIDMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 )
 
-AUTHENTICATION_BACKENDS = (
-    'django_openid_auth.auth.OpenIDBackend',
-    'django.contrib.auth.backends.ModelBackend',
-)
 
 OPENID_CREATE_USERS = True
 OPENID_UPDATE_DETAILS_FROM_SREG = True
-LOGIN_URL = '/openid/login/'
-LOGIN_REDIRECT_URL = '/'
 
 ROOT_URLCONF = 'protocoller.urls'
 
@@ -97,12 +93,67 @@ INSTALLED_APPS = (
     'protocoller.miner',
     'django.contrib.admin',
     'pytils',
-    'django_openid_auth',
-    'django.contrib.markup'
+    'django.contrib.markup',
+    'south',
+    'socialauth',
+    'openid_consumer',
 )
 
-OPENID_SREG = {"requred": "nickname, email",
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
+
+OPENID_SREG = {"requred": "nickname, email, fullname",
                "optional":"postcode, country",
-               "policy_url": "http://example.com/policy"}
+               "policy_url": ""}
+
+#example should be something more like the real thing, i think
+OPENID_AX = [{"type_uri": "http://axschema.org/contact/email",
+              "count": 1,
+              "required": True,
+              "alias": "email"},
+             {"type_uri": "http://axschema.org/schema/fullname",
+              "count":1 ,
+              "required": False,
+              "alias": "fname"}]
+
+OPENID_AX_PROVIDER_MAP = {'Google': {'email': 'http://axschema.org/contact/email',
+                                     'firstname': 'http://axschema.org/namePerson/first',
+                                     'lastname': 'http://axschema.org/namePerson/last'},
+                          'Default': {'email': 'http://axschema.org/contact/email',
+                                      'fullname': 'http://axschema.org/namePerson',
+                                      'nickname': 'http://axschema.org/namePerson/friendly'}
+                          }
+
+TWITTER_CONSUMER_KEY = 'Nqm35m6800IKFYBhrnJocQ'
+TWITTER_CONSUMER_SECRET = 'pTuRoC2lf1IBC80q4YIh0ZqTdTJNMe1o1nw7jMbQxA'
+TWITTER_REQUEST_TOKEN_URL = 'http://twitter.com/oauth/request_token'
+TWITTER_ACCESS_TOKEN_URL = 'http://twitter.com/oauth/access_token'
+TWITTER_AUTHORIZATION_URL = 'http://twitter.com/oauth/authorize'
+
+
+FACEBOOK_APP_ID = '171106619588637'
+FACEBOOK_API_KEY = 'c002be0240ddd8903c21d59dcfc8f42e'
+FACEBOOK_SECRET_KEY = '575540f1d0b8ec62f39815a4e3b8761a'
+
+LINKEDIN_CONSUMER_KEY = ''
+LINKEDIN_CONSUMER_SECRET = ''
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'socialauth.auth_backends.OpenIdBackend',
+)
+
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "socialauth.context_processors.facebook_api_key",
+    "django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.contrib.messages.context_processors.messages",
+    "django.core.context_processors.request"
+    )
 
 

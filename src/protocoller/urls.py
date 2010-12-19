@@ -9,13 +9,13 @@ admin.autodiscover()
 urlpatterns = patterns(
     'protocoller.miner.views',    
     (r'^$', 'comp_list_view'),
-#    (r'^index.html$', 'comp_list_view', {}, 'comp_list_view'),
-    (r'^protocols$', 'comp_list_view'),
-    (r'events$', 'calendar_view'),
-    (r'event/add$', 'edit_sport_event_view'),
-    (r'event/edit/(?P<event_id>\d+)$', 'edit_sport_event_view'),
-    (r'event/(?P<event_id>\d+)$', 'sport_event_view'),
-    (r'sportsmen$', 'sportsmen_view'),
+    (r'^index.html$', 'comp_list_view', {}, 'comp_list_view'),
+    (r'^protocols/$', 'comp_list_view'),
+    (r'events/$', 'calendar_view'),
+    (r'event/add/$', 'edit_sport_event_view'),
+    (r'event/edit/(?P<event_id>\d+)/$', 'edit_sport_event_view'),
+    (r'event/(?P<event_id>\d+)/$', 'sport_event_view'),
+    (r'sportsmen/$', 'sportsmen_view'),
     (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
     (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',
      'comp_list_view'),
@@ -32,7 +32,8 @@ urlpatterns = patterns(
     (r'^person_fb/(?P<person>\d+)$', 'feedback_person',
      {}, 'feedback_person'),
     (r'^place/(?P<name>\w+)$', 'place_view', {}, 'place'),
-    (r'^logout$', 'logout_view'),
+    (r'^login/$', 'login_view', {}, 'login'),
+    (r'^logout/$', 'logout_view', {}, 'logout'),
     (r'^about$', 'about'),
         
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
@@ -43,12 +44,11 @@ urlpatterns = patterns(
     (r'^admin/(.*)', admin.site.root),
 )
 
+
 urlpatterns += patterns(
-    'django_openid_auth.views',
-    url(r'^openid/login/$', 'login_begin', name='openid-login', 
-        kwargs = dict(template_name = 'openid_signin.html')),
-    url(r'^openid/complete/$', 'login_complete', name='openid-complete'),
-)
+    '',
+    (r'^accounts/', include('socialauth.urls')),
+    )
 
 
 if settings.DEBUG:
