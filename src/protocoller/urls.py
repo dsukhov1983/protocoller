@@ -47,7 +47,13 @@ urlpatterns = patterns(
 
 urlpatterns += patterns(
     '',
-    (r'^accounts/', include('socialauth.urls')),
+    (r'^accounts/openid/$', 'socialauth.views.openid_login', {}, 'socialauth_openid_login'),
+    (r'^accounts/openid/complete/$', 'openid_consumer.views.complete', {},
+     'socialauth_openid_complete'),
+    (r'^accounts/openid/done/$', 'socialauth.views.openid_done', {}, 'socialauth_openid_done'),
+    (r'^accounts/openid/signout/$', 'openid_consumer.views.signout', {},
+     'socialauth_openid_sognout'),
+    (r'^accounts/', include('registration.urls')),
     )
 
 

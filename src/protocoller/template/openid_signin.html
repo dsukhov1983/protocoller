@@ -1,4 +1,4 @@
-{% extends "base_generic.html" %}
+{% extends "base.html" %}
 {% load i18n %}
 
 {% block content %}
@@ -23,4 +23,5 @@
     </noscript>
   </fieldset>
 </form>
+<p>Или же Вы можете <a href="{% url registration_register %}">зарегистрироваться</a> на этом сайте.</p>
 {% endblock %}

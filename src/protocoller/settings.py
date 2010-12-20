@@ -59,7 +59,7 @@ SECRET_KEY = 'ta^4n6q(n50s7%)^nx-3u^i@l+owel-veww#!&8yf_r7bsd((g'
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
+#    'django.template.loaders.app_directories.load_template_source',
 #     'django.template.loaders.eggs.load_template_source',
 )
 
@@ -97,6 +97,7 @@ INSTALLED_APPS = (
     'south',
     'socialauth',
     'openid_consumer',
+    'registration',
 )
 
 LOGIN_REDIRECT_URL = '/'
@@ -155,5 +156,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "django.core.context_processors.request"
     )
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+#django-registration settings
+ACCOUNT_ACTIVATION_DAYS = 10
 
 
