@@ -51,29 +51,6 @@ def date2season(dt):
         return "%s/%s"%(y-1, y)
     else:
         return "%s/%s"%(y, y+1)
-
-
-
-def index(request):
-    comp_list = models.SportEvent.objects.select_related().all().order_by('-date')
-
-    date_groups = itertools.groupby(comp_list,
-                                    lambda c:c.date)
-
-    comp_groups = []
-
-    for szn, dg in itertools.groupby(date_groups,
-                                     lambda d:date2season(d[0])):
-        
-        dg = [(d, list(l)) for d,l in dg]
-        comp_groups.append((szn, dg))            
-
-    
-    return render_to_response('index.html',
-                              {'comp_groups': comp_groups,
-                               'sample_search':get_random_search(),
-                               'event_summary': get_event_summary()},
-                              context_instance = RequestContext(request))
     
 
 

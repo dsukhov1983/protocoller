@@ -17,7 +17,7 @@
     </script>
     <title>{% block title %}Протоколы лыжных соревнований{% endblock %}</title>
 </head>
-
+{% load pretty_print %}
 
 <body> 
   
@@ -32,7 +32,8 @@
       </td>
       <td>
         {% if user.is_authenticated %}
-        <p>{{ user.first_name }} {{ user.last_name }}<a href="{% url logout %}">Выйти</a></p>
+        {% print_user user %}
+        <a href="{% url logout %}">Выйти</a>
         {% else %}
         <p><a href="{% url login %}">Авторизуйтесь</a></p>
         {% endif %}</td>

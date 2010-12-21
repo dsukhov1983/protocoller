@@ -34,9 +34,6 @@ def print_time(result):
         return result.time.strftime('%M:%S')
 
 
-
-
-
 @register.simple_tag
 def time_diff(t1, t2):
 
@@ -64,6 +61,47 @@ def time_diff(t1, t2):
         return td.strftime('+%M:%S')+rel_td
     else:
         return td.strftime('+%M:%S')+rel_td
+
+
+# list of pairs (keyword, iconname)
+PROVIDER_INFO = (('ya.ru', 'yandex.ico.gif'),
+                 ('google.com', 'google.ico.gif'),
+                 ('rambler', 'rambler.ico.gif'),
+                 ('livejournal', 'livejournal.ico.gif'),
+                 ('flickr', 'flickr.ico.gif'),
+                 ('blogger', 'blogger.ico.gif'),
+                 )
+
+
+@register.simple_tag
+def print_user(user):
+    """Красиво форматирует имя пользователя в зависимости от типа учетной записи
+    добавляет иконку соответствующего провайдера
+    """
+    def is_openid_user(user):
+        return hasattr(user, 'openid_profiles') and \
+            len(user.openid_profiles.all()) > 0
+
+    def get_user_icon(user):
+        openid_key = user.openid_profiles.all()[0].openid_key
+        for key, icon in PROVIDER_INFO:
+            if openid_key.find(key) != -1:
+                return icon
+        return 'openid.ico.gif'
+
+    if is_openid_user(user):
+        return '<user><img class="userpic" src="/media/img/fi/%s"/><name>%s</name></user>' % (
+            get_user_icon(user), user.openid_profiles.all()[0].nickname)
+    else:
+        return "<user><name>%s</name></user>" % user.username
+
+   
+
+    
+    
+    
+
+
 
 
 
