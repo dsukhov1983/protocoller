@@ -293,3 +293,37 @@ class PersonFeedback(models.Model):
     contact_name = models.CharField(max_length=30)
     
     
+
+
+
+class RegistrationInfo(models.Model):
+    """Данные, которые оставляет пользователь при регистрации на 
+    соревнование. Предполагается, что он регистрирует не только себя, но 
+    и других.
+    """
+    name = models.CharField("Имя", max_length = 20, default = "", null = True)
+    surname = models.CharField("Фамилия", max_length=30, db_index=True)
+    year = models.IntegerField("Год рождения", null=True, blank=True, db_index=True)
+    sex = models.IntegerField("Пол", choices=SEX_TYPES, default=UNKNOWN)
+    rank = models.IntegerField("Звание", choices=RANK_TYPES, default=NR)
+    club = models.CharField("Клуб", max_length=30, default='',
+                            null=True, blank=True)
+    city = models.CharField("Город", max_length=30, default='', null=True,
+                            blank=True, db_index=True)
+
+    by_user = models.ForeignKey(User, null = True, editable = False, 
+                                related_name = 'registrations')
+    sport_event = models.MenyToManyField(SportEvent, through = 'RegistrationMembership')
+
+
+class RegistrationMembership(models.Model):
+    
+    info = models.ForeignKey(RegistrationInfo)
+    sport_event = models.ForeignKey(SportEvent)
+    competition = models.ForeignKey(Competition)
+    date = models.DateTimeField(auto_now = True)
+
+
+
+
+
