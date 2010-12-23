@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% load pytils_dt %}
+{% load pretty_print %}
+
+
+
+{% block content %}
+<div>
+  {% for p in places %}
+  <div>
+    <a href="{% url place p.get_id %}">{{ p.name }}</a>
+  </div>
+  {% endfor %}
+</div>
+    
+{% endblock %}
