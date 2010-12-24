@@ -62,7 +62,7 @@ def about(request):
 
 def protocol(request, comp_id):
     competition = get_object_or_404(models.Competition,
-                                    id=comp_id)
+                                    id = comp_id)
 
     if competition.rating == models.GROUP_RATING:
         return redirect('protocol_by_groups', comp_id=comp_id)
@@ -139,9 +139,49 @@ def person_results(request, person_id):
                                'person': person},
                               context_instance=RequestContext(request))
 
-def place_view(request, name):
-    place = get_object_or_404(models.Place, link_name = name)
+def places_view(request):
+    per_page = 10
+    page = int(request.GET.get('page', [1])[0])
+    places = models.Place.objects.all()[(page -1)*per_page : page*per_page]
+    return render_to_response('places.html', locals(),
+                              context_instance = RequestContext(request))
+
+def place_view(request, name = None, id = None):
+    if name:
+        place = get_object_or_404(models.Place, link_name = name)
+    else:
+        place = get_object_or_404(models.Place, id = id)
     return render_to_response('place.html', dict(place = place),
+                              context_instance = RequestContext(request))
+
+class PlaceForm(forms.ModelForm):
+    class Meta:
+        model = models.Place
+
+
+@login_required
+def edit_place_view(request, name = None, id = None):
+    if request.method == 'POST': # If the form has been submitted...
+        form = PlaceForm(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            place = form.save(commit = False)
+            place.created_by = request.user
+            place.save()
+            return render_to_response(
+                'place.html', locals(),
+                context_instance = RequestContext(request))
+    else:
+        if name:
+            place = get_object_or_404(models.Place, link_name = name)
+        elif id:
+            place = get_object_or_404(models.Place, id = id)
+        else:
+            place = models.Place()
+
+        form = PlaceForm(instance = place)
+        
+    return render_to_response('add_place.html',
+                              dict(form = form),
                               context_instance = RequestContext(request))
     
 
@@ -418,7 +458,7 @@ def comp_list_view(request, year = None, month = None):
                               context_instance = RequestContext(request))
 
 
-def calendar_view(request, year = None, month = None):
+def events_view(request, year = None, month = None):
     events = models.SportEvent.objects.filter(date__gte = datetime.datetime.now())\
         .select_related()
     return render_to_response('calendar.html',

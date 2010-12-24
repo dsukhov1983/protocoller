@@ -1,10 +1,98 @@
 {% extends "base.html" %}
 {% load i18n %}
 
+{% block extrahead %}
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ==" type="text/javascript"></script>
+<script type="text/javascript">
+        var map, geoResult, place;
+
+        // Создание обработчика для события window.onLoad
+        YMaps.jQuery(function () {
+            // Создание экземпляра карты и его привязка к созданному контейнеру
+            map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
+
+            // Установка для карты ее центра и масштаба
+            map.setCenter(new YMaps.GeoPoint(37.64, 55.76), 10);
+
+            // Добавление элементов управления
+            map.addControl(new YMaps.Zoom());
+
+            if($('#id_location').val() != ''){
+                console.log('initializing');
+                console.log($('#id_location').val());
+                var loc = $('#id_location').val().split(',');
+                place = new YMaps.Placemark(new YMaps.GeoPoint(loc[0], loc[1]), 
+                                            {draggable: true});
+                map.addOverlay(place);
+                YMaps.Events.observe(place, place.Events.DragEnd, function (obj) {
+                    $('#id_location').val(obj.getGeoPoint());    
+                });
+            }
+            
+
+            // При щелчке на карте показывается балун со значениями координат 
+            // указателя мыши и масштаба
+            YMaps.Events.observe(map, map.Events.Click, function (map, mEvent) {
+                $('#id_location').val(mEvent.getGeoPoint());
+                                
+                if(place != null){
+                      console.log('not null');
+                      place.setGeoPoint(mEvent.getGeoPoint());
+                }else{
+                      console.log('is null');
+                      place = new YMaps.Placemark(mEvent.getGeoPoint(), {draggable: true});
+                      map.addOverlay(place);
+                      YMaps.Events.observe(place, place.Events.DragEnd, function (obj) {
+                        $('#id_location').val(obj.getGeoPoint());    
+                      });
+                }
+            });
+  
+        });
+
+        // Функция для отображения результата геокодирования
+        // Параметр value - адрес объекта для поиска
+        function showAddress (value) {
+            // Удаление предыдущего результата поиска
+            map.removeOverlay(geoResult);
+
+            // Запуск процесса геокодирования
+            var geocoder = new YMaps.Geocoder(value, {results: 1, boundedBy: map.getBounds()});
+
+            // Создание обработчика для успешного завершения геокодирования
+            YMaps.Events.observe(geocoder, geocoder.Events.Load, function () {
+                // Если объект был найден, то добавляем его на карту
+                // и центрируем карту по области обзора найденного объекта
+                if (this.length()) {
+                    geoResult = this.get(0);
+                    map.addOverlay(geoResult);
+                    map.setBounds(geoResult.getBounds());
+                }else {
+                    alert("Ничего не найдено")
+                }
+            });
+
+            // Процесс геокодирования завершен неудачно
+            YMaps.Events.observe(geocoder, geocoder.Events.Fault, function (geocoder, error) {
+                alert("Произошла ошибка: " + error);
+            })
+        }
+</script>
+{% endblock %}
+
 {% block content %}
 <form action="{% url add_place %}" method="POST">
 {{ form.as_p }}
 <input type="submit" value="Submit" />
 </form>
+<form action="#" onsubmit="showAddress(this.address.value);return false;">
+  <p>
+    <input type="text" id="address" style="width:525px;" value="Москва" />
+    <input type="submit" value="Искать" />
+  </p>
+  <div id="YMapsID" style="width:600px;height:400px"></div>
+</form>
+
+
 
 {% endblock %}

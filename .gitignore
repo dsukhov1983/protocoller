@@ -9,3 +9,5 @@ eggs
 parts
 src/*.egg-info
 src/.ropeproject
+*~
+

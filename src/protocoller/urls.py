@@ -8,20 +8,32 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     'protocoller.miner.views',    
+
     (r'^$', 'comp_list_view'),
     (r'^index.html$', 'comp_list_view', {}, 'comp_list_view'),
-    (r'^protocols/$', 'comp_list_view'),
-    (r'events/$', 'calendar_view'),
-    (r'event/add/$', 'edit_sport_event_view'),
+    
+
+    (r'events/$', 'events_view'),
+    (r'events/add/$', 'edit_sport_event_view'),
     (r'event/edit/(?P<event_id>\d+)/$', 'edit_sport_event_view'),
     (r'event/(?P<event_id>\d+)/$', 'sport_event_view'),
-    (r'sportsmen/$', 'sportsmen_view'),
-    (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
-    (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',
-     'comp_list_view'),
+
+    (r'^protocols/$', 'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
     (r'^protocol/(?P<comp_id>\d+)/groups$', 'protocol_by_groups',
      {}, 'protocol_by_groups'),
+    
+    (r'^places/$', 'places_view', {}, 'places'),
+    (r'^places/add/$', 'edit_place_view', {}, 'add_place'),
+    (r'^place/(?P<id>\d+)/$', 'place_view', {}, 'place'),
+    (r'^place/(?P<name>\w+)/$', 'place_view', {}, 'place'),
+    (r'^place/(?P<id>\d+)/edit/$', 'edit_place_view', {}, 'edit_place'),
+    (r'^place/(?P<name>\w+)/edit/$', 'edit_place_view', {}, 'edit_place'),
+    
+    
+    (r'sportsmen/$', 'sportsmen_view'),
+    (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
+    (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',  'comp_list_view'),
     (r'^person/(?P<person_id>\d+)/results$', 'person_results',
      {}, 'person_results'),
     (r'^search$', 'search'),
@@ -31,7 +43,7 @@ urlpatterns = patterns(
     (r'^do_compare$', 'do_compare'),
     (r'^person_fb/(?P<person>\d+)$', 'feedback_person',
      {}, 'feedback_person'),
-    (r'^place/(?P<name>\w+)$', 'place_view', {}, 'place'),
+    
     (r'^login/$', 'login_view', {}, 'login'),
     (r'^logout/$', 'logout_view', {}, 'logout'),
     (r'^about$', 'about'),

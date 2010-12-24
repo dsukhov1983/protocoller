@@ -19,16 +19,23 @@ RATING_TYPES = (
 
 class Place(models.Model):
 
-    name = models.CharField(max_length = 50)
+    name = models.CharField('Название', max_length = 50)
     link_name = models.CharField(max_length = 20, default = '', 
-                                 db_index = True)
-    link = models.URLField(null = True, blank = True)
-    location = models.CharField(max_length = 200, null = True,
+                                 db_index = True,
+                                 help_text = 'короткое название для ссылок')
+    link = models.URLField('Адрес сайта', null = True, blank = True)
+    location = models.CharField('Местоположение', max_length = 200, null = True,
                                 blank = True)
-    description = models.TextField(default = '')
+    description = models.TextField('Описание', default = '', null = True)
+    address = models.CharField('Адрес', max_length=250, default = '', null = True)
+    created_by = models.ForeignKey(User, null = True, editable = False,
+                                   db_index = True, verbose_name = 'Кем создан')
 
     def __unicode__(self):
         return self.name
+
+    def get_id(self):
+        return self.link_name or self.id
 
 
 class SportEvent(models.Model):
@@ -43,6 +50,7 @@ class SportEvent(models.Model):
     place = models.ForeignKey(Place, null=True, blank=True)
     name = models.CharField(max_length=250)
     date = models.DateField(db_index=True)
+    end_date = models.DateField(null = True)
     description = models.TextField(default = '', null = True)
     standing = models.TextField(default = '', null = True)
     state = models.IntegerField(choices = STATE_TYPES, default = STATE_NEW)
@@ -50,13 +58,13 @@ class SportEvent(models.Model):
                                       default = datetime.datetime.now(),
                                       editable = False)
     created_by = models.ForeignKey(User, null = True, editable = False)
+    registration_open = models.BooleanField(default = False)
 
     def __unicode__(self):
         return "%s %s"%(self.name, self.date.year)
 
 
 class Competition(models.Model):
-
 
     (CLASSIC_STYLE, FREE_STYLE, DUATHLON) = range(3)
     STYLE_CHOICES = (
@@ -88,6 +96,7 @@ class Competition(models.Model):
                                        default = datetime.datetime.now(),
                                        editable = False)
     created_by = models.ForeignKey(User, null = True, editable = False)
+    start_time = models.TimeField(null = True)
 
     def __unicode__(self):
         s = u"%s %s км, %s, %s" % (self.name,                              
@@ -294,8 +303,6 @@ class PersonFeedback(models.Model):
     
     
 
-
-
 class RegistrationInfo(models.Model):
     """Данные, которые оставляет пользователь при регистрации на 
     соревнование. Предполагается, что он регистрирует не только себя, но 
@@ -313,14 +320,14 @@ class RegistrationInfo(models.Model):
 
     by_user = models.ForeignKey(User, null = True, editable = False, 
                                 related_name = 'registrations')
-    sport_event = models.MenyToManyField(SportEvent, through = 'RegistrationMembership')
+    sport_event = models.ManyToManyField(SportEvent, through = 'RegistrationMembership')
 
 
 class RegistrationMembership(models.Model):
-    
+    """Связывает регистрационные данные и соревнование"""
     info = models.ForeignKey(RegistrationInfo)
     sport_event = models.ForeignKey(SportEvent)
-    competition = models.ForeignKey(Competition)
+    competition = models.ForeignKey(Competition, null = True)
     date = models.DateTimeField(auto_now = True)
 
 
