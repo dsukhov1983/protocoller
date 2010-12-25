@@ -7,7 +7,6 @@
         var map, place;
 
         function init_map(point){
-            console.log('init_map');
             var mapContainer = YMaps.jQuery("#YMapsID");
             map = new YMaps.Map(mapContainer[0]);
             mapContainer.css("display", "");
@@ -26,8 +25,7 @@
         }
 
         function create_placemark(point){
-            console.log('create_placemark');
-            place = new YMaps.Placemark(point);
+            place = new YMaps.Placemark(point, {draggable: true});
             map.addOverlay(place);
             YMaps.Events.observe(place, place.Events.DragEnd, function (obj){
                     update_form_fields(obj.getGeoPoint());
@@ -50,14 +48,12 @@
 
         YMaps.jQuery(function() {
                 if($('#id_location').val() != ''){
-                    console.log($('#id_location').val());
                     //создадим карту и отметим место на ней
                     var loc = $('#id_location').val().split(',');
                     var point = new YMaps.GeoPoint(loc[0], loc[1]);
                     init_map(point);
                     create_placemark(point);
                 }else{
-                    console.log('show link');
                     //покажем ссылку для открытия карты
                     YMaps.jQuery("#id_map_show_link").css("display", "");
                 }
@@ -65,7 +61,6 @@
                 
         function showMap () {
             YMaps.load(function() {
-                console.log('show_map');
                 // При щелчке на карте показывается балун со значениями координат 
                 // указателя мыши и масштаба
                 var mapContainer = YMaps.jQuery("#YMapsID");
@@ -78,7 +73,13 @@
 {% endblock %}
 
 {% block content %}
+{% if place.id %}
+<form action="{% url edit_place place.id %}" method="POST">
+{% else %}
 <form action="{% url add_place %}" method="POST">
+{% endif %}
+{% csrf_token %}
+{{ form.media }}
 {{ form.as_p }}
 <input type="submit" value="Submit" />
 </form>

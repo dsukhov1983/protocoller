@@ -59,7 +59,11 @@ admin.site.register(models.Result, ResultAdmin)
 
 admin.site.register(models.ImportState)
 
-admin.site.register(models.Place)
+
+
+class PlaceAdmin(admin.ModelAdmin):
+    list_display = ('id', 'slug', 'name')
+admin.site.register(models.Place, PlaceAdmin)
 
 
 class PersonFeedbackAdmin(admin.ModelAdmin):

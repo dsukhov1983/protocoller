@@ -164,6 +164,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #django-registration settings
 ACCOUNT_ACTIVATION_DAYS = 10
 
-
 #Yandex maps API key
 YANDEX_MAPS_API_KEY = 'AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ=='
+
+#MARKITUP
+MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})
+MARKITUP_SET = 'markitup/sets/markdown'
+MARKITUP_SKIN = 'markitup/skins/markitup'
+JQUERY_URL = "http://localhost:8000/media/js/jquery-1.4.4.min.js"

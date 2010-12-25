@@ -12,6 +12,7 @@ from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.template import RequestContext
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from markitup.widgets import MarkItUpWidget
 from protocoller.miner import models
 
 
@@ -148,7 +149,7 @@ def places_view(request):
 
 def place_view(request, name = None, id = None):
     if name:
-        place = get_object_or_404(models.Place, link_name = name)
+        place = get_object_or_404(models.Place, slug = name)
     else:
         place = get_object_or_404(models.Place, id = id)
     return render_to_response('place.html', dict(place = place),
@@ -157,31 +158,43 @@ def place_view(request, name = None, id = None):
 class PlaceForm(forms.ModelForm):
     class Meta:
         model = models.Place
+        widgets = {
+            'description': MarkItUpWidget(),
+            }
 
 
 @login_required
 def edit_place_view(request, name = None, id = None):
-    if request.method == 'POST': # If the form has been submitted...
-        form = PlaceForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            place = form.save(commit = False)
-            place.created_by = request.user
-            place.save()
-            return render_to_response(
+    new_object = False
+    if name:
+        place = get_object_or_404(models.Place, slug = name)
+    elif id:
+        place = get_object_or_404(models.Place, id = id)
+    else:
+        new_object = True
+        print "new"
+        place = models.Place()
+
+    if request.method == 'POST':
+        form = PlaceForm(request.POST, instance = place) 
+        if form.is_valid(): 
+            if new_object:
+                place = form.save(commit = False)
+                place.created_by = request.user
+                place.save()
+            else:
+                form.save()
+            return redirect(place)
+
+        render_to_response(
                 'place.html', locals(),
                 context_instance = RequestContext(request))
     else:
-        if name:
-            place = get_object_or_404(models.Place, link_name = name)
-        elif id:
-            place = get_object_or_404(models.Place, id = id)
-        else:
-            place = models.Place()
-
+        
         form = PlaceForm(instance = place)
         
     return render_to_response('add_place.html',
-                              dict(form = form),
+                              locals(),
                               context_instance = RequestContext(request))
     
 

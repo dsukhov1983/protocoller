@@ -66,6 +66,9 @@ urlpatterns += patterns(
     (r'^accounts/openid/signout/$', 'openid_consumer.views.signout', {},
      'socialauth_openid_sognout'),
     (r'^accounts/', include('registration.urls')),
+    
+    #markitup
+    url(r'^markitup/', include('markitup.urls'))
     )
 
 

@@ -2,6 +2,7 @@
 import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from markitup.fields import MarkupField
 
 (MALE, FEMALE, UNKNOWN) = range(3)
 SEX_TYPES = (
@@ -20,13 +21,13 @@ RATING_TYPES = (
 class Place(models.Model):
 
     name = models.CharField('Название', max_length = 50)
-    link_name = models.CharField(max_length = 20, default = '', 
-                                 db_index = True,
-                                 help_text = 'короткое название для ссылок')
+    slug = models.CharField(max_length = 20, default = '', 
+                            db_index = True, unique = True,
+                            help_text = 'короткое название для ссылок')
     link = models.URLField('Адрес сайта', null = True, blank = True)
     location = models.CharField('Местоположение', max_length = 200, null = True,
                                 blank = True)
-    description = models.TextField('Описание', default = '', null = True)
+    description = MarkupField('Описание', default = '', null = True)
     address = models.CharField('Адрес', max_length=250, default = '', null = True)
     created_by = models.ForeignKey(User, null = True, editable = False,
                                    db_index = True, verbose_name = 'Кем создан')
@@ -36,6 +37,9 @@ class Place(models.Model):
 
     def get_id(self):
         return self.link_name or self.id
+
+    def get_absolute_url(self):
+        return "/place/%s" % (self.slug or self.id)
 
 
 class SportEvent(models.Model):
