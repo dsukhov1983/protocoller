@@ -98,6 +98,7 @@ INSTALLED_APPS = (
     'socialauth',
     'openid_consumer',
     'registration',
+    'markitup',   
 )
 
 LOGIN_REDIRECT_URL = '/'
