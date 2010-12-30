@@ -7,11 +7,26 @@
 
 {% block content %}
 <div>
-  {% for p in places %}
+  {% for p in places.object_list %}
   <div>
     <a href="{% url place p.get_id %}">{{ p.name }}</a>
   </div>
   {% endfor %}
+  <div class="pagination">
+    <span class="step-links">
+      {% if places.has_previous %}
+      <a href="?page={{ places.previous_page_number }}">Предыдущая</a>
+      {% endif %}
+
+      <span class="current">
+        Страница {{ places.number }} из {{ places.paginator.num_pages }}.
+      </span>
+
+      {% if places.has_next %}
+      <a href="?page={{ places.next_page_number }}">Следующая</a>
+      {% endif %}
+    </span>
+  </div>
 </div>
     
 {% endblock %}

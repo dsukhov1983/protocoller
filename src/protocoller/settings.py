@@ -46,7 +46,7 @@ DATE_FORMAT = 'N j, Y'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'http://localhost:8000/media/'
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -64,11 +64,13 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+ #   'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'openid_consumer.middleware.OpenIDMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    
 )
 
 
@@ -99,6 +101,8 @@ INSTALLED_APPS = (
     'openid_consumer',
     'registration',
     'markitup',   
+    'uni_form',
+#    'debug_toolbar',
 )
 
 LOGIN_REDIRECT_URL = '/'
@@ -155,7 +159,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
-    "django.core.context_processors.request"
+    "django.core.context_processors.request",
+    "protocoller.miner.context_processors.maps_api_key"
     )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -170,5 +175,24 @@ YANDEX_MAPS_API_KEY = 'AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAA
 #MARKITUP
 MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})
 MARKITUP_SET = 'markitup/sets/markdown'
-MARKITUP_SKIN = 'markitup/skins/markitup'
-JQUERY_URL = "http://localhost:8000/media/js/jquery-1.4.4.min.js"
+#MARKITUP_SKIN = 'markitup/skins/markitup'
+JQUERY_URL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
+
+#django-debug-toolbar
+INTERNAL_IPS = ('127.0.0.1',)
+DEBUG_TOOLBAR_PANELS = (
+    'debug_toolbar.panels.version.VersionDebugPanel',
+    'debug_toolbar.panels.timer.TimerDebugPanel',
+    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
+    'debug_toolbar.panels.headers.HeaderDebugPanel',
+    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
+    'debug_toolbar.panels.template.TemplateDebugPanel',
+    'debug_toolbar.panels.sql.SQLDebugPanel',
+    'debug_toolbar.panels.signals.SignalDebugPanel',
+    'debug_toolbar.panels.logger.LoggingPanel',
+)
+TEMPLATE_DEBUG=True
+
+
+#MAPS API
+MAPS_API_KEY = "AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ=="

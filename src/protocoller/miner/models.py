@@ -27,16 +27,17 @@ class Place(models.Model):
     link = models.URLField('Адрес сайта', null = True, blank = True)
     location = models.CharField('Местоположение', max_length = 200, null = True,
                                 blank = True)
-    description = MarkupField('Описание', default = '', null = True)
-    address = models.CharField('Адрес', max_length=250, default = '', null = True)
+    description = MarkupField('Описание', default = '', null = True, blank = True)
+    address = models.CharField('Адрес', max_length=250, default = '', null = True,
+                               blank = True)
     created_by = models.ForeignKey(User, null = True, editable = False,
                                    db_index = True, verbose_name = 'Кем создан')
 
     def __unicode__(self):
-        return self.name
+        return "%s %s" % (self.get_id(), self.name)
 
     def get_id(self):
-        return self.link_name or self.id
+        return self.slug or self.id
 
     def get_absolute_url(self):
         return "/place/%s" % (self.slug or self.id)
@@ -51,12 +52,11 @@ class SportEvent(models.Model):
         (STATE_HIDDEN, u'скрыт'),
         )
 
-    place = models.ForeignKey(Place, null=True, blank=True)
-    name = models.CharField(max_length=250)
-    date = models.DateField(db_index=True)
-    end_date = models.DateField(null = True)
-    description = models.TextField(default = '', null = True)
-    standing = models.TextField(default = '', null = True)
+    place = models.ForeignKey(Place, null=True, verbose_name = 'Место проведения')
+    name = models.CharField('Название', max_length=250)
+    date = models.DateField('Дата', db_index=True)
+    end_date = models.DateField('Дата окончания', null = True)
+    description = MarkupField('Описание', default = '', null = True, blank = True)
     state = models.IntegerField(choices = STATE_TYPES, default = STATE_NEW)
     last_change = models.DateTimeField(auto_now = True, 
                                       default = datetime.datetime.now(),
@@ -66,6 +66,9 @@ class SportEvent(models.Model):
 
     def __unicode__(self):
         return "%s %s"%(self.name, self.date.year)
+
+    def get_absolute_url(self):
+        return "/event/%s" % self.id
 
 
 class Competition(models.Model):

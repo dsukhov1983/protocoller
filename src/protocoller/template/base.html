@@ -3,12 +3,18 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-    <link rel="stylesheet" href="/media/css/style.css" />
-    <link rel="stylesheet" type="text/css" media="screen" href="/media/css/openid.css" />
-    <script type="text/javascript" src="/media/js/jquery-1.4.4.min.js"></script>
-    <script src="/media/js/jquery.placeholder-1.0.1.js" type="text/javascript"></script>
-    <script type="text/javascript" src="/media/js/openid-jquery.js"></script>
-    <script type="text/javascript" src="/media/js/openid-jquery-ru.js"></script>
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/style.css" />
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}css/openid.css" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}uni_form/uni-form.css" type="text/css" />
+    <link rel="stylesheet" href="{{ MEDIA_URL }}css/blue.uni-form.css" type="text/css" />
+    
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script src="{{ MEDIA_URL }}js/jquery.placeholder-1.0.1.js" type="text/javascript"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/openid-jquery.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}js/openid-jquery-ru.js"></script>
+    <!-- note that there's also blue.uni-form.css and dark.uni-form.css available if you want to try changing defaults up -->
+    <script src="{{ MEDIA_URL }}uni_form/uni-form.jquery.js" type="text/javascript"></script>
+
     <script type="text/javascript">
       $(document).ready(function() {
       openid.img_path = '/media/img/';

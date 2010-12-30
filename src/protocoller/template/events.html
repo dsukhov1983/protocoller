@@ -4,11 +4,11 @@
 {% load pretty_print %}
 
 {% block content %}
-<a href="event/add">Добавить соревнование</a>
+<a href="{% url add_event %}">Добавить соревнование</a>
 <div class="retro-list">
   <ul>
     {% for event in events %}
-    <li><a href="/event/{{ event.id }}">{{ event.date|ru_strftime:"%d %B %Y" }} {{ event.name }} {{ event.place|default:"" }}</a></li>
+    <li><a href="{% url event event.id %}">{{ event.date|ru_strftime:"%d %B %Y" }} {{ event.name }} {{ event.place|default:"" }}</a></li>
     {% endfor %}
   </ul>
 </div>

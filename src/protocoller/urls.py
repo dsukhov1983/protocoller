@@ -13,10 +13,10 @@ urlpatterns = patterns(
     (r'^index.html$', 'comp_list_view', {}, 'comp_list_view'),
     
 
-    (r'events/$', 'events_view'),
-    (r'events/add/$', 'edit_sport_event_view'),
-    (r'event/edit/(?P<event_id>\d+)/$', 'edit_sport_event_view'),
-    (r'event/(?P<event_id>\d+)/$', 'sport_event_view'),
+    (r'events/$', 'events_view', {}, 'events'),
+    (r'events/add/$', 'edit_event_view', {}, 'add_event'),
+    (r'event/edit/(?P<event_id>\d+)/$', 'edit_event_view', {}, 'edit_event'),
+    (r'event/(?P<event_id>\d+)/$', 'event_view', {}, 'event'),
 
     (r'^protocols/$', 'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
@@ -25,10 +25,8 @@ urlpatterns = patterns(
     
     (r'^places/$', 'places_view', {}, 'places'),
     (r'^places/add/$', 'edit_place_view', {}, 'add_place'),
-    (r'^place/(?P<id>\d+)/$', 'place_view', {}, 'place'),
-    (r'^place/(?P<name>\w+)/$', 'place_view', {}, 'place'),
-    (r'^place/(?P<id>\d+)/edit/$', 'edit_place_view', {}, 'edit_place'),
-    (r'^place/(?P<name>\w+)/edit/$', 'edit_place_view', {}, 'edit_place'),
+    (r'^place/(?P<id>[\w\d\-]+)/$', 'place_view', {}, 'place'),
+    (r'^place/(?P<id>[\w\d\-]+)/edit/$', 'edit_place_view', {}, 'edit_place'),
     
     
     (r'sportsmen/$', 'sportsmen_view'),

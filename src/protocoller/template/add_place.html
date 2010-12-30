@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block extrahead %}
-<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ==" type="text/javascript"></script>
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key={{ MAPS_API_KEY }}" type="text/javascript"></script>
 <script type="text/javascript">
         var map, place;
 
@@ -79,9 +79,11 @@
 <form action="{% url add_place %}" method="POST">
 {% endif %}
 {% csrf_token %}
+{% load uni_form_tags %} 
+
 {{ form.media }}
-{{ form.as_p }}
-<input type="submit" value="Submit" />
+{{ form|as_uni_form }}
+<input type="submit" value="Сохранить" />
 </form>
 <a id="id_map_show_link" href="#" onclick="showMap();return false;">Указать местоположение</a>
 <div id="YMapsID" style="width:600px;height:400px;display:none"></div>

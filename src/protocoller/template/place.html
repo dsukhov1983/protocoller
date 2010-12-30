@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block extrahead %}
-<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ==" type="text/javascript"></script>
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key={{ MAPS_API_KEY }}" type="text/javascript"></script>
 {% if place.location %}
 <script type="text/javascript">
         YMaps.jQuery(function() {
@@ -22,6 +22,7 @@
 {% load markup %}
 
 <div>
+  <div><a href="{% url edit_place place.get_id %}">Изменить</a></div>
   <p>{{ place.name }}</p>
   <p>{{ place.address }}</p>
   {% if place.location %}

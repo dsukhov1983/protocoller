@@ -141,17 +141,32 @@ def person_results(request, person_id):
                               context_instance=RequestContext(request))
 
 def places_view(request):
-    per_page = 10
-    page = int(request.GET.get('page', [1])[0])
-    places = models.Place.objects.all()[(page -1)*per_page : page*per_page]
-    return render_to_response('places.html', locals(),
+    try:
+        page = int(request.GET.get('page', [1])[0])
+    except ValueError:
+        page = 1
+    paginator = Paginator(models.Place.objects.all(), 20)
+
+    # If page request (9999) is out of range, deliver last page of results.
+    try:
+        places = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        places = paginator.page(paginator.num_pages)
+
+    return render_to_response('places.html', 
+                              dict(places = places),
                               context_instance = RequestContext(request))
 
-def place_view(request, name = None, id = None):
-    if name:
-        place = get_object_or_404(models.Place, slug = name)
-    else:
-        place = get_object_or_404(models.Place, id = id)
+
+
+def get_place_or_404(id):
+    try:
+        return get_object_or_404(models.Place, id = int(id))
+    except ValueError:
+        return get_object_or_404(models.Place, slug = id)
+
+def place_view(request, id = None):
+    place = get_place_or_404(id)
     return render_to_response('place.html', dict(place = place),
                               context_instance = RequestContext(request))
 
@@ -160,19 +175,16 @@ class PlaceForm(forms.ModelForm):
         model = models.Place
         widgets = {
             'description': MarkItUpWidget(),
+            'location': forms.HiddenInput(),
             }
 
-
 @login_required
-def edit_place_view(request, name = None, id = None):
+def edit_place_view(request, id = None):
     new_object = False
-    if name:
-        place = get_object_or_404(models.Place, slug = name)
-    elif id:
-        place = get_object_or_404(models.Place, id = id)
+    if id:
+        place = get_place_or_404(id)
     else:
         new_object = True
-        print "new"
         place = models.Place()
 
     if request.method == 'POST':
@@ -185,12 +197,7 @@ def edit_place_view(request, name = None, id = None):
             else:
                 form.save()
             return redirect(place)
-
-        render_to_response(
-                'place.html', locals(),
-                context_instance = RequestContext(request))
     else:
-        
         form = PlaceForm(instance = place)
         
     return render_to_response('add_place.html',
@@ -474,7 +481,7 @@ def comp_list_view(request, year = None, month = None):
 def events_view(request, year = None, month = None):
     events = models.SportEvent.objects.filter(date__gte = datetime.datetime.now())\
         .select_related()
-    return render_to_response('calendar.html',
+    return render_to_response('events.html',
                               dict(events = events),
                               context_instance = RequestContext(request))
 
@@ -487,38 +494,55 @@ def sportsmen_view(request, year = None, month = None):
 
 
 class SportEventForm(forms.ModelForm):
+    date = forms.DateField(input_formats = ('%d.%m.%Y',))
+
     class Meta:
         model = models.SportEvent
         fields = ('place', 'date', 'name',
-                  'description', 'standing')
+                  'description')
+        widgets = dict(
+            date = forms.DateInput(format = '%d.%m.%Y'),
+            description = MarkItUpWidget(),
+            )
+
+    class Media:
+        js = ('js/jquery.ui.datepicker-ru.js', 
+              "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js")
+        
+        css = dict(
+            all = ("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/redmond/jquery-ui.css",)
+        )
     
 
 
 @login_required
-def edit_sport_event_view(request, event_id = None):
-    if request.method == 'POST': # If the form has been submitted...
-        form = SportEventForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            event = form.save(commit = False)
-            event.created_by = request.user
-            event.save()
-            return render_to_response(
-                'sport_event.html',
-                dict(event = event), 
-                context_instance = RequestContext(request))
+def edit_event_view(request, event_id = None):
+    if event_id:
+        new_object = False
+        event = get_object_or_404(models.SportEvent, id = event_id)
     else:
-        if event_id:
-            event = get_object_or_404(models.SportEvent, id = event_id)
-            form = SportEventForm(instance = event)
-        else:
-            form = SportEventForm() # An unbound form
+        new_object = True
+        event = models.SportEvent()
+
+    if request.method == 'POST': 
+        form = SportEventForm(request.POST, instance = event) 
+        if form.is_valid():
+            if new_object:
+                event = form.save(commit = False)
+                event.created_by = request.user
+                event.save()
+            else:
+                form.save()
+            return redirect(event)
+    else:
+        form = SportEventForm(instance = event)
 
     return render_to_response('add_sport_event.html',
-                              dict(form = form),
+                              locals(),
                               context_instance = RequestContext(request))
 
 
-def sport_event_view(request, event_id):
+def event_view(request, event_id):
     event = get_object_or_404(models.SportEvent, id = event_id)
     return render_to_response('sport_event.html',
                               dict(event = event), 
