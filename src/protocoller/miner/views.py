@@ -486,13 +486,6 @@ def events_view(request, year = None, month = None):
                               context_instance = RequestContext(request))
 
 
-def sportsmen_view(request, year = None, month = None):
-    return render_to_response('sportsmen.html',
-                              context_instance = RequestContext(request))
-
-
-
-
 class SportEventForm(forms.ModelForm):
     date = forms.DateField(input_formats = ('%d.%m.%Y',))
 
@@ -546,4 +539,48 @@ def event_view(request, event_id):
     event = get_object_or_404(models.SportEvent, id = event_id)
     return render_to_response('sport_event.html',
                               dict(event = event), 
+                              context_instance = RequestContext(request))
+
+
+class EventRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = models.RegistrationInfo
+        widgets = {
+            'sport_event': forms.HiddenInput(),
+            }
+
+def register_on_event_view(request, event_id):
+    event = get_object_or_404(models.SportEvent, id = event_id)
+    
+    form = None
+    avail_regs, done_regs = [], []
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            form = EventRegistrationForm(request.POST)
+            if form.is_valid():
+                reg_info = form.save()
+                reg_mem = models.RegistrationMembership(info = reg_info,
+                                                        sport_event = event)
+                reg_mem.save()
+                form = EventRegistrationForm()
+        else:
+            form = EventRegistrationForm()
+        avail_regs = models.RegistrationInfo.objects.filter(
+            by_user = request.user).exclude(sport_event = event)
+        done_regs = models.RegistrationInfo.objects.filter(
+            by_user = request.user,
+            sport_event = event)
+        
+    reg_list = models.RegistrationInfo.objects.filter(sport_event = event)
+    return render_to_response(
+        'event_registration.html',
+        locals(), 
+        context_instance = RequestContext(request))
+    
+
+    
+
+
+def sportsmen_view(request, year = None, month = None):
+    return render_to_response('sportsmen.html',
                               context_instance = RequestContext(request))

@@ -17,6 +17,7 @@ urlpatterns = patterns(
     (r'events/add/$', 'edit_event_view', {}, 'add_event'),
     (r'event/edit/(?P<event_id>\d+)/$', 'edit_event_view', {}, 'edit_event'),
     (r'event/(?P<event_id>\d+)/$', 'event_view', {}, 'event'),
+    (r'event/(?P<event_id>\d+)/register/$', 'register_on_event_view', {}, 'event_registration'),
 
     (r'^protocols/$', 'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),

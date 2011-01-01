@@ -8,7 +8,7 @@ from markitup.fields import MarkupField
 SEX_TYPES = (
     (MALE, u'муж'),
     (FEMALE, u'жен'),
-    (UNKNOWN, 'U'),
+    (UNKNOWN, 'неизвестно'),
     ) 
 
 (ABS_RATING, GROUP_RATING, BOTH_RATING) = range(3)
@@ -315,19 +315,23 @@ class RegistrationInfo(models.Model):
     соревнование. Предполагается, что он регистрирует не только себя, но 
     и других.
     """
+    surname = models.CharField("Фамилия", max_length = 30, db_index = True)
     name = models.CharField("Имя", max_length = 20, default = "", null = True)
-    surname = models.CharField("Фамилия", max_length=30, db_index=True)
-    year = models.IntegerField("Год рождения", null=True, blank=True, db_index=True)
+    year = models.IntegerField("Год рождения", db_index=True)
     sex = models.IntegerField("Пол", choices=SEX_TYPES, default=UNKNOWN)
     rank = models.IntegerField("Звание", choices=RANK_TYPES, default=NR)
-    club = models.CharField("Клуб", max_length=30, default='',
-                            null=True, blank=True)
-    city = models.CharField("Город", max_length=30, default='', null=True,
-                            blank=True, db_index=True)
+    club = models.CharField("Клуб", max_length=30, default='', blank = True)
+    city = models.CharField("Город", max_length=30, default = '', blank=True, db_index=True)
 
     by_user = models.ForeignKey(User, null = True, editable = False, 
                                 related_name = 'registrations')
-    sport_event = models.ManyToManyField(SportEvent, through = 'RegistrationMembership')
+    sport_event = models.ManyToManyField(SportEvent, through = 'RegistrationMembership',
+                                         editable = False)
+
+    def full_name(self):
+        return " ".join(filter(None,
+                               [self.surname, self.name]))
+
 
 
 class RegistrationMembership(models.Model):

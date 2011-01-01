@@ -5,7 +5,8 @@
 {% load markup %}
 
 {% block content %}
-<a href="/event/edit/{{ event.id }}">Изменить</a>
+<a href="{% url event_registration event.id %}">Регистрация</a>
+<a href="{% url edit_event event.id %}">Изменить</a>
 <div class="comp-header">
   <p class="date">{{ event.date|ru_strftime:"%d %B %Y" }}</p>
   <p class="event">{{ name }}</p>
