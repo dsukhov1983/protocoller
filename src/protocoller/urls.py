@@ -18,7 +18,11 @@ urlpatterns = patterns(
     (r'event/edit/(?P<event_id>\d+)/$', 'edit_event_view', {}, 'edit_event'),
     (r'event/(?P<event_id>\d+)/$', 'event_view', {}, 'event'),
     (r'event/(?P<event_id>\d+)/register/$', 'register_on_event_view', {}, 'event_registration'),
-
+    (r'event/(?P<event_id>\d+)/subscribe/(?P<reg_id>)/$', 
+     'subscribe_on_event_view', {}, 'event_subscribe'),
+    (r'event/(?P<event_id>\d+)/unsubscribe/(?P<reg_id>)/$', 
+     'unsubscribe_from_event_view', {}, 'event_unsubscribe'),
+    
     (r'^protocols/$', 'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
     (r'^protocol/(?P<comp_id>\d+)/groups$', 'protocol_by_groups',

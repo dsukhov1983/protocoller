@@ -578,7 +578,47 @@ def register_on_event_view(request, event_id):
         context_instance = RequestContext(request))
     
 
+@login_required
+def subscribe_on_event_view(request, event_id, reg_id):
+    reg_info = get_object_or_404(models.RegistrationInfo, id = reg_id,
+                                 by_user = request.user)
+    event = get_object_or_404(models.SportEvent, id = event_id)
     
+    mem = models.RegistrationMembership(info = reg_info,
+                                        sport_event = event)
+    mem.save()
+    reg_list = models.RegistrationInfo.objects.filter(sport_event = event)
+    avail_regs = models.RegistrationInfo.objects.filter(
+        by_user = request.user).exclude(sport_event = event)
+    done_regs = models.RegistrationInfo.objects.filter(
+        by_user = request.user,
+        sport_event = event)
+    return render_to_response(
+        'event_registration.html',
+        locals(), 
+        context_instance = RequestContext(request))
+    
+
+@login_required
+def unsubscribe_on_event_view(request, event_id, reg_id):
+    reg_info = get_object_or_404(models.RegistrationInfo, id = reg_id,
+                                 by_user = request.user)
+    event = get_object_or_404(models.SportEvent, id = event_id)
+    
+    mem = get_object_or_404(models.RegistrationMembership,
+                            info = reg_info,
+                            sport_event = event)
+    mem.delete()
+    reg_list = models.RegistrationInfo.objects.filter(sport_event = event)
+    avail_regs = models.RegistrationInfo.objects.filter(
+        by_user = request.user).exclude(sport_event = event)
+    done_regs = models.RegistrationInfo.objects.filter(
+        by_user = request.user,
+        sport_event = event)
+    return render_to_response(
+        'event_registration.html',
+        locals(), 
+        context_instance = RequestContext(request))
 
 
 def sportsmen_view(request, year = None, month = None):

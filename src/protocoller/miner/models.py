@@ -317,7 +317,7 @@ class RegistrationInfo(models.Model):
     """
     surname = models.CharField("Фамилия", max_length = 30, db_index = True)
     name = models.CharField("Имя", max_length = 20, default = "", null = True)
-    year = models.IntegerField("Год рождения", db_index=True)
+    year = models.IntegerField("Год рождения", null = True, db_index=True)
     sex = models.IntegerField("Пол", choices=SEX_TYPES, default=UNKNOWN)
     rank = models.IntegerField("Звание", choices=RANK_TYPES, default=NR)
     club = models.CharField("Клуб", max_length=30, default='', blank = True)
@@ -336,6 +336,7 @@ class RegistrationInfo(models.Model):
 
 class RegistrationMembership(models.Model):
     """Связывает регистрационные данные и соревнование"""
+    unique_together = (('info', 'sport_event'),)
     info = models.ForeignKey(RegistrationInfo)
     sport_event = models.ForeignKey(SportEvent)
     competition = models.ForeignKey(Competition, null = True)
