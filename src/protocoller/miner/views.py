@@ -468,7 +468,7 @@ def comp_list_view(request, year = None, month = None):
         dg = [(d, list(l)) for d,l in dg]
         comp_groups.append((szn, dg))            
         
-    return render_to_response('index.html',
+    return render_to_response('protocols.html',
                               {'comp_groups': comp_groups,
                                'cl_page': comp_list,
                                'sample_search':get_random_search(),
@@ -600,7 +600,7 @@ def subscribe_on_event_view(request, event_id, reg_id):
     
 
 @login_required
-def unsubscribe_on_event_view(request, event_id, reg_id):
+def unsubscribe_from_event_view(request, event_id, reg_id):
     reg_info = get_object_or_404(models.RegistrationInfo, id = reg_id,
                                  by_user = request.user)
     event = get_object_or_404(models.SportEvent, id = event_id)

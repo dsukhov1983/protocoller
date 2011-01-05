@@ -34,7 +34,7 @@ class Place(models.Model):
                                    db_index = True, verbose_name = 'Кем создан')
 
     def __unicode__(self):
-        return "%s %s" % (self.get_id(), self.name)
+        return self.name
 
     def get_id(self):
         return self.slug or self.id

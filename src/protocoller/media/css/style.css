@@ -1,373 +1,42 @@
-body{
-width:100%;
-}
-
-#page_table{
-width:100%;
-}
-
-#page-left {
-width:12%;
-vertical-align:top;
-}
-
-#content{
-width:68%;
-vertical-align:top;
-}
-
-#page-right {
-width:16%;
-vertical-align:top;
-}
-
-#search{
-padding-bottom:1em;
-width:100%;
+body {
+    font: normal medium Trebuchet MS, Tahoma, sans-serif;
 }
 
 #menu{
-margin-left:12%;
-padding-bottom:8px;
+    font: normal 85% Trebuchet MS, Tahoma, sans-serif;
 }
 
-#main{
-overflow:hidden;
-width:100%;
-vertical-align:top;
+#menu ul{
+    padding: 0;
+    margin: 0;
+    list-style: none outside none;
 }
 
-#footer{
-padding:10px;
+#menu li{
+    display: inline;
 }
 
-.menu a{
-color:#1A3DC1;
-font-size:small;
-padding-left:3px;
-padding-right:3px;
-}
-
-.actions a{
-color:#1A3DC1;
-#font-size:small;
-margin-bottom:0.5em;
-display:block;
-}
-
-.hint a{
-color:#1A3DC1;
+#menu ul li a {
+    padding: 10px;
 }
 
 
-body {
-font-family:Trebuchet MS,Tahoma,sans-serif;
-font-size:medium;
-font-size-adjust:none;
-font-style:normal;
-font-variant:normal;
-font-weight:normal;
-line-height:normal;
-padding:0; 
-margin:0 auto;
+span.glass i {
+    background-image: url("/media/img/search.png");
+    display:block;
+    font-size:0;
+    height:16px;
+    width:16px;
 }
 
-
-.emptySearch{
-width: 100%;
+#search-form span.glass {
+    display: block;
+    position: absolute;
+    right: 0;
+    padding:5px 2px 4px;
+    cursor:pointer;
 }
 
-.date {
-color:#6979AA;
-#font-size:70%;
-line-height:100%;
-}
-
-.placeholder {
-    color: gray;
-} 
-
-
-.place{
-float:right;
-color:#007766;
-}
-
-
-.title{
-font-size:1.1em;
-}
-
-.person{
-padding-bottom:1em;
-}
-
-.person a{
-display: inline;
-}
-
-.comp_list{
-display:block;
-padding-bottom:2em;
-}
-
-.competition p {
-display:inline;
-
-}
-
-.competition{
-display:block;
-text-align:left;
-padding-bottom:1em;
-}
-
-.season{
-color:#354274;
-}
-
-
-.event{
-color:#354274;
-font-size:large;
-font-style:normal;
-font-variant:normal;
-font-weight:bold;
-}
-
-
-.even {
-background-color: #CDCDD8;
-}
-
-
-table.protocol {
-border-collapse:collapse;
-margin-bottom:2em;
-width:100%;
-}
-
-tr.head {
-border-bottom:1px solid black;
-border-color:black;
-border-width:1px;
-}
-
-td{
-padding-left:2px;
-padding-right:2px;
-}
-
-th.group{
-color:#6979AA;
-font-weight: bold;
-text-align:left;
-padding-bottom:10px;
-padding-top:20px;
-}
-
-th.subgroup{
-font-weight: normal;
-text-align:left;
-padding-bottom:10px;
-padding-top:20px;
-}
-
-
-.sampleSearch{
-font-size:0.85em;
-padding-top:0.5em;
-}
-
-
-
-.pseudolink{
-color:#1A3DC1;
-display:inline;
-border-bottom:1px dashed #4F3D2B;
-cursor:pointer;
-text-decoration:none;
-}
-
-
-form.feedback_form{
-margin-top:0.5em;
-}
-
-form label { 
-display: block;  /* block float the labels to left column, set a width */
-float: left; 
-width: 150px; 
-text-align: right; 
-}
-
-div.formfield{
-margin-bottom:0.5em;
-}
-
-
-#stylized{
-border:solid 2px #b7ddf2;
-background:#ebf4fb;
-margin-top:1em;
-}
-#stylized h1 {
-font-size:14px;
-font-weight:bold;
-margin-bottom:8px;
-}
-#stylized p{
-font-size:11px;
-color:#666666;
-margin-bottom:20px;
-border-bottom:solid 1px #b7ddf2;
-padding-bottom:10px;
-}
-#stylized label{
-display:block;
-text-align:right;
-width:140px;
-float:left;
-}
-#stylized .small{
-color:#666666;
-display:block;
-font-size:11px;
-font-weight:normal;
-text-align:right;
-width:140px;
-}
-
-#stylized input, select{
-font-size:12px;
-padding:4px 2px;
-border:solid 1px #aacfe4;
-width:200px;
-margin:2px 0 0.5em 0.5em;
-}
-
-#stylized button{
-margin-left:150px;
-text-align:center;
-line-height:31px;
-color:#FFFFFF;
-font-size:11px;
-font-weight:bold;
-}
-
-#stylized fieldset{
-border:none;
-border-top:solid 1px #b7ddf2;
-}
-
-#stylized legend{
-font-weight:bold;
-}
-
-form .reqMark {
-color:#FF0000;
-padding:0 4px;
-}
-
-ul.errorlist{
-color:red;
-list-style-type: none;
-}
-
-.pager {
-padding:0.8em 40px 1.3em 0;
-clear:left;
-font-family:Arial,sans-serif;
-font-size:1em;
-}
-
-.pager span a, .pager span {
-margin:0 0.2em;
-}
-.pager span {
-color:#999999;
-}
-.pager span {
-margin-right:0.5em;
-}
-
-.pager span i {
-font-size:0.7em;
-}
-
-#content :hover > a.anchor {
-visibility:visible;
-}
-#content a.anchor {
-color:#1A3DC1;
-text-decoration:none;
-visibility:hidden;
-}
-
-.hint{
-font-size:0.8em;
-background:#CEDDFF;
-padding:10px;
-margin-left:10px;
-}
-
-.retro-list{
-padding-left:10px;
-}
-
-.groups{
-padding-left:10px;
-}
-
-
-
-.year-node{
-padding-bottom:5px;
-
-}
-
-.year{
-cursor: pointer;
-color:#3377DD;
-border-bottom:1px dashed;
-display: inline;
-margin-bottom:3px;
-margin-top:3px;
-}
-
-.month-list a{
-font-size:0.8em;
-color:#1A3DC1;
-}
-
-.month-list{
-margin:0px;
-padding:0px;
-}
-
-
-.month-list span{
-color:#666666;
-font-size:0.8em;
-margin-left:0.3em;
-}
-
-
-.month-list li{
-list-style-image:none;
-list-style-position:outside;
-list-style-type:none;
-}
-
-.selected-month{
-color:#000000;
-cursor:auto;
-font-weight:bold;
-font-size:0.8em;
-margin-left:0em;
-}
-
-.selected-year{
-color:#354274;
-font-weight:bold;
+#search-form #search-query{
+    width: 100%;
 }

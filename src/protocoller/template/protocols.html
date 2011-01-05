@@ -3,72 +3,10 @@
 {% load pytils_dt %}
 {% load pretty_print %}
 
-{% block left %}
-
-
-<div class="retro-list">
-{% for year, ml in event_summary %}
-<div class="year-node">
-<p  class="year{% ifequal cur_year year %} selected-year{% endifequal %}"    
-    id="year_{{ year }}">{{ year }}</p>
-<ul class="month-list">
-  <li>
-    <a href="{% url protocoller.miner.views.comp_list_view year %}">
-      все</a>
-  </li>
-  {% for month, cnt in ml %}
-  <li>
-
-    <a href="{% url protocoller.miner.views.comp_list_view year,month.month %}"  {% ifequal month.year cur_year %}
-       {% ifequal month.month cur_month %}
-       class="selected-month"
-       {% endifequal %}
-      {% endifequal %}>
-      {{ month|date:"F" }}</a>
-    <span>{{ cnt }}</span>
-  </li>
-  {% endfor %}
-</ul>
-</div>
-{% endfor %}
-</div>
-<script type="text/javascript">
-$(document).ready(function()
-{
-  //hide the all of the element with class msg_body
-  $(".month-list").hide();
-  {% if cur_year %}
-  $("#year_{{ cur_year }}").next().slideToggle(100)
-  {% endif %}
-  //toggle the componenet with class msg_body
-  $(".year").click(function()
-  {
-    $(this).next(".month-list").slideToggle(600);
-  });
-});
-</script>
-
-{% endblock %}
 
 
 
 {% block content %}
-<form action="/search" method="get" name="search" id="search">
-<input id="query" class="emptySearch" placeholder="Найти спортсмена в протоколах" maxlength="80" value="" name="query" type="text" /> 
- <script type="text/javascript">
-   $(document).ready(function(){ 
-   $('#query').placeholder();
-   });    
- </script>
-<div class="sampleSearch">
-Например, <span class="pseudolink"
-                onclick="$('#query').focus().val('{{ sample_search }}')">
-    {{ sample_search }}
-</span>
-</nobr>
-</div>
-</form>
-
 
 {% for cg, dglist in comp_groups %}
 <div class="season_res">
