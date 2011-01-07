@@ -32,6 +32,23 @@ SAMPLE_SEARCHES=(u'Ильин Василий',
                  u'Хачкованян Карен',
                  u'Долгополов Никита')
 
+
+
+def season(dt):
+    """Возвращает начальный год сезона, которому принадлежит дата
+    Например season('2010-03-14') = 2009
+    За начало сезона примем 1 октября
+    """
+    if dt >= datetime.date(dt.year, 10, 1):
+        return dt.year
+    return dt.year -1
+
+
+def eval_groupby(*args, **kwargs):
+    return [(k, list(l)) for k, l in
+            itertools.groupby(*args, **kwargs)]
+    
+
 def logout_view(request):
     logout(request)
     return redirect('comp_list_view')
@@ -623,4 +640,28 @@ def unsubscribe_from_event_view(request, event_id, reg_id):
 
 def sportsmen_view(request, year = None, month = None):
     return render_to_response('sportsmen.html',
+                              context_instance = RequestContext(request))
+
+
+
+
+def main_view(request):
+    today = datetime.date.today()
+    per_page = 10
+    coming_events = models.SportEvent.objects.filter(
+        Q(date__gte = today, end_date = None)|
+        Q(end_date__gte = today)).order_by('date')
+
+    past_events = models.SportEvent.objects.filter(
+        Q(date__lt = today, end_date = None)|
+        Q(end_date__lt = today)).order_by('-date')
+
+    coming_page, past_page = \
+        [Paginator(l, per_page).page(1) for l in (coming_events, past_events)]
+    coming_groups, past_groups = [
+        eval_groupby(l.object_list, lambda o: o.date) 
+        for l in (coming_page, past_page)]
+        
+            
+    return render_to_response('main.html', locals(),
                               context_instance = RequestContext(request))

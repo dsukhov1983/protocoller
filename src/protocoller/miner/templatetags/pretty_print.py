@@ -110,7 +110,13 @@ def print_user(user):
 
    
 
-    
+@register.simple_tag
+def active(request, pattern):
+    """Highlight active menu item in toolbar"""
+    import re
+    if re.search(pattern, request.path):
+        return 'active'
+    return ''
     
     
 

@@ -9,8 +9,8 @@ admin.autodiscover()
 urlpatterns = patterns(
     'protocoller.miner.views',    
 
-    (r'^$', 'comp_list_view'),
-    (r'^index.html$', 'comp_list_view', {}, 'comp_list_view'),
+    (r'^$', 'main_view', {}, 'main'),
+    (r'^index.html$', 'main_view'),
     
 
     (r'events/$', 'events_view', {}, 'events'),

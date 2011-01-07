@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% load pytils_dt %}
+{% load pretty_print %}
+
+{% block content %}
+
+<div class="grid_6 alpha">
+  <h1>Прошедшие</h1>
+  {% for date, events in past_groups %}
+  <div class="event_group">
+    <p class="date">{{ date|ru_strftime:"%d %b" }}
+    </p>
+    {% for event in events %}
+    <div class="event">
+      <div class="place">{{ event.place|default:"" }}</div>
+      <h2>
+        <a href="{% url event event.id %}">{{ event.name }}</a>
+      </h2>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  <div class="pager">
+    {% if past_page.has_next %}
+    <a href="">Предыдущие</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid_6 omega">
+  <h1>Предстоящие</h1>
+  {% for date, events in coming_groups %}
+  <div class="event_group">
+    <p class="date">{{ date|ru_strftime:"%b" }}
+      <span>{{ date|ru_strftime:"%d" }}</span>
+    </p>
+    {% for event in events %}
+    <div class="event">
+      <div class="place">{{ event.place|default:"" }}</div>
+      <div class="title">{{ event.name }}</div>
+      {% for p in event.competitions.all %}
+      <div class="protocol">
+        <a href="{% url protocoller.miner.views.protocol p.id %}" >{{ p }}</a>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  <div class="pager">
+    {% if coming_page.has_next %}
+    <a href="">Следующие</a>
+    {% endif %}
+  </div>
+</div>
+
+
+{% endblock %}

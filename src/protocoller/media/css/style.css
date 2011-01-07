@@ -58,3 +58,25 @@ body {
 #session{
     padding: 10px 0px;
 }
+
+#content h1{
+    font:120% Georgia,serif;
+    text-transform:uppercase;
+}
+
+#content h2{
+    font:100% Georgia,serif;
+}
+
+.place{
+    font:80% Trebuchet MS, Tahoma, sans-serif;
+}
+
+
+.event h2{
+    margin: 3px 0px 10px 0px;
+}
+
+.date{
+    margin: 16px 0px 7px 0px;
+}
