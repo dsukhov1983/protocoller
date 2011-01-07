@@ -23,27 +23,27 @@
 {% load pretty_print %}
 
 <body> 
-  <div id="menu" class="container_12">
-    <form action="{% block search_url %}/search{% endblock %}" id="search-form" method="GET" >
-      <div class="grid_3">
-        <span class="glass"><i> </i></span>
-        <input value="" name="query" type="text" id="search-query"/>
+  <div id="toolbar">
+    <div id="menu" class="container_12">
+      <div class="grid_10">
+        <form action="{% block search_url %}/search{% endblock %}" class="searchform" method="GET" >
+          <input class="searchfield" type="text" value="Поиск..." onfocus="if (this.value == 'Поиск...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Поиск...';}" />
+        </form>
+        <ul>
+          <li><a href="/races">Соревнования</a></li>
+          <li><a href="/places">Трассы</a></li>
+          <li><a href="/sportsmen">Спортсмены</a></li>
+        </ul>
       </div>
-    </form>
-    <div class="grid_7">
-      <ul>
-        <li><a href="/protocols">Протоколы</a></li>
-        <li><a href="/events">Календарь</a></li>
-        <li><a href="/places">Трассы</a></li>
-        <li><a href="/sportsmen">Спортсмены</a></li>
-      </ul>
-    </div>
-    <div class="grid_2">
-      {% if user.is_authenticated %}
-      {% print_user user %}
-      {% else %}
-      <p><a href="{% url login %}">Авторизуйтесь</a></p>
-      {% endif %}
+      <div class="grid_2">
+        <div id="session">
+          {% if user.is_authenticated %}
+          {% print_user user %}
+          {% else %}
+          <p><a href="{% url login %}">Авторизуйтесь</a></p>
+          {% endif %}
+        </div>
+      </div>
     </div>
   </div>
   <div class="container_12">

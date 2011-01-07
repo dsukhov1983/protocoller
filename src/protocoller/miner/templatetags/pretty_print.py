@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import template
+from django.conf import settings
 from datetime import time
 from protocoller.miner import models
 
@@ -90,10 +91,22 @@ def print_user(user):
         return 'openid.ico.gif'
 
     if is_openid_user(user):
-        return '<user><img class="userpic" src="/media/img/fi/%s"/><name>%s</name></user>' % (
-            get_user_icon(user), user.openid_profiles.all()[0].nickname)
+        return """
+<div class="profile">
+<span class="profile-image">
+<img src="%(media_url)simg/fi/%(icon_path)s" />
+</span>
+<span class="profile-name"> %(username)s </span>
+</div>
+""" % dict(media_url = settings.MEDIA_URL,
+           icon_path = get_user_icon(user),
+           username = user.openid_profiles.all()[0].nickname)
     else:
-        return "<user><name>%s</name></user>" % user.username
+        return """
+<div class="profile">
+<span class="profile-name"> %(username)s </span>
+</div>
+""" % dict(username = user.openid_profiles.all()[0].nickname)
 
    
 
