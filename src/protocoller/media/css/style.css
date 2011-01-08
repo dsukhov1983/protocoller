@@ -153,3 +153,48 @@ table.protocol{
 .dsq-2 { color: #c00; font-size: 70% }
 .dsq-reason { color: #c00; font-size: 85%; }
 
+
+.form legend{
+    color: #003366;
+    font-size: 1.3em;
+    font-weight: bold;
+    margin: 1em 0;
+    padding: 0 0.5em;
+}
+
+.form label{
+    float: left;
+    padding: 0 1em;
+    text-align: right;
+    width: 150px;
+}
+
+.form input{
+    border-color:#555555 #CCCCCC #CCCCCC #555555;
+    border-style:solid;
+    border-width:1px;
+    color:#333333;
+    padding:1px;
+    width:200px;
+}
+
+
+.form div{
+    display:block;
+    margin-bottom:0.5em;
+    padding:0;
+}
+
+#fm-submit{
+   clear:both;
+   padding-top:1em;
+   text-align:center; 
+}
+
+#fm-submit input{
+    font-size:100%;
+    padding:2px 1em;
+}
+
+/* Messages */
+.form .errorField{ color: red; margin: 0 0 6px 0; padding: 4px; }

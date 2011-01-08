@@ -51,6 +51,31 @@ def time_diff(t1, t2):
 
     td = time(hour=hour, minute=min, second=sec)
 
+    
+    if td.hour:
+        return td.strftime('+%H:%M:%S')
+    elif td.minute:
+        return td.strftime('+%M:%S')
+    else:
+        return td.strftime('+%M:%S')
+
+
+@register.simple_tag
+def time_diff2(t1, t2):
+
+    s1 = t1.hour*60*60 + t1.minute*60 + t1.second
+    s2 = t2.hour*60*60 + t2.minute*60 + t2.second
+    
+    ds = s1-s2
+
+    if ds <= 0:
+        return ""
+    
+    (min, sec) = divmod(ds, 60)
+    (hour, min) = divmod(min, 60)
+
+    td = time(hour=hour, minute=min, second=sec)
+
     if s2 != 0:
         rel_td = " %.3f"%(float(s1)/float(s2))
     else:
@@ -62,6 +87,7 @@ def time_diff(t1, t2):
         return td.strftime('+%M:%S')+rel_td
     else:
         return td.strftime('+%M:%S')+rel_td
+
 
 
 # list of pairs (keyword, iconname)

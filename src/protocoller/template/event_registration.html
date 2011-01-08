@@ -4,41 +4,61 @@
 {% load pretty_print %}
 
 {% block content %}
-<div>
-  <div class="comp-header">
-  <p class="date">{{ event.date|ru_strftime:"%d %B %Y" }}</p>
-  <p class="event">{{ name }}</p>
-  <p class="place">{{ event.place|default:"" }}</p>
+<div class="grid_2 event">
+  <span class="date">{{ event.date|ru_strftime:"%d %B %Y" }}</span>
+  <h3><a href="{% url place event.place.slug %}">{{ event.place }}</a></h3>
 </div>
+<div class="grid_8">
+  <h1>{{ event.name }}</h1>
+  <h2>Предварительная регистрация</h2>
+</div>
+<div class="clear"></div>
+
 {% if user.is_authenticated %}
+<div class="grid_8 form">
   <form action="{% url event_registration event.id %}" method="POST">
     {% csrf_token %}
     {% load uni_form_tags %}
     {{ form|as_uni_form }}
-    <input type="submit" value="Добавить" />
+    <div id="fm-submit">
+      <input type="submit" value="Добавить" />
+    </div>
   </form>
+</div>
+<div class="clear"></div>
 {% endif %}
- <table>
-   <tr class="head">
-     <th>№</th>
-     <th>Фамилия Имя</th>
-     <th>Пол</th>
-     <th>Год</th>
-     <th>Квалификация</th>
-     <th>Город</th>
-     <th>Клуб</th>
-   </tr>
-{% for r in reg_list %}
-   <tr>
-     <td>{{ forloop.counter }}</td>
-     <td>{{ r.full_name }}</td>
-     <td>{{ r.get_sex_display }}</td>
-     <td>{{ r.year }}</td>
-     <td>{{ r.get_rank_display }}</td>
-     <td>{{ r.city }}</td>
-     <td>{{ r.club }}</td>
-   </tr>
-{% endfor %}
+<div class="grid_10">
+    <table class="protocol">
+    <thead>
+      <tr class="head">
+        <th align="left">№</th>
+        <th>Фамилия Имя</th>
+        <th>Пол</th>
+        <th>Год</th>
+        <th>
+          <span class="widener">
+            <span class="full">Звание</span>
+            <span class="short">Зв.</span>
+          </span>
+        </th>
+        <th>Город</th>
+        <th>Клуб</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in reg_list %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ r.full_name }}</td>
+        <td>{{ r.get_sex_display }}</td>
+        <td>{{ r.year }}</td>
+        <td>{{ r.get_rank_display }}</td>
+        <td>{{ r.city }}</td>
+        <td>{{ r.club }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
 </div>
     
 {% endblock %}

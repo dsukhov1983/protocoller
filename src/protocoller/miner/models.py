@@ -55,14 +55,14 @@ class SportEvent(models.Model):
     place = models.ForeignKey(Place, null=True, verbose_name = 'Место проведения')
     name = models.CharField('Название', max_length=250)
     date = models.DateField('Дата', db_index=True)
-    end_date = models.DateField('Дата окончания', null = True)
+    end_date = models.DateField('Дата окончания', null = True, blank = True)
     description = MarkupField('Описание', default = '', null = True, blank = True)
     state = models.IntegerField(choices = STATE_TYPES, default = STATE_NEW)
     last_change = models.DateTimeField(auto_now = True, 
                                       default = datetime.datetime.now(),
                                       editable = False)
     created_by = models.ForeignKey(User, null = True, editable = False)
-    registration_open = models.BooleanField(default = False)
+    registration_open = models.BooleanField('Регистрация открыта', default = False)
 
     def __unicode__(self):
         return "%s %s"%(self.name, self.date.year)
@@ -325,7 +325,7 @@ class RegistrationInfo(models.Model):
     name = models.CharField("Имя", max_length = 20, default = "", null = True)
     year = models.IntegerField("Год рождения", null = True, db_index=True)
     sex = models.IntegerField("Пол", choices=SEX_TYPES, default=UNKNOWN)
-    rank = models.IntegerField("Звание", choices=RANK_TYPES, default=NR)
+    rank = models.IntegerField("Звание", choices=RANK_TYPES, default=NR, blank = True)
     club = models.CharField("Клуб", max_length=30, default='', blank = True)
     city = models.CharField("Город", max_length=30, default = '', blank=True, db_index=True)
 

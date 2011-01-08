@@ -38,11 +38,11 @@
   </a>
   {% endif %}
   {% if event.registration_open %}
-  <a href="">Заявиться</a>
+  <a href="{% url event_registration event.id %}">Заявиться</a>
   {% endif %}
 </div>
 <div class="clear"></div>
-<div class="grid_9">{{ event.description|markdown }}</div>
+<div class="grid_9">{{ event.description|default:""|markdown }}</div>
 <div>{{ event.standing|markdown}}
 
 {% endblock %}

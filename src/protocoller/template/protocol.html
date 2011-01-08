@@ -47,6 +47,12 @@
             <span class="short">Рез-т</span>
           </span>
         </th>
+        <th>
+          <span class="widener">
+            <span class="full">Отставание</span>
+            <span class="short">Отст.</span>
+          </span>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -64,6 +70,7 @@
         <td>{{ r.person.city|default:"" }}</td>
         <td>{{ r.person.club|default:"" }}</td>
         <td>{% print_time r %}</td>
+        <td>{% time_diff r.time comp.best_result %}</td>
       </tr>
       {% endfor %}
     </tbody>

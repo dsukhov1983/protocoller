@@ -17,7 +17,7 @@ urlpatterns = patterns(
     (r'^events/add/$', 'edit_event_view', {}, 'add_event'),
     (r'^event/(?P<event_id>\d+)/edit/$', 'edit_event_view', {}, 'edit_event'),
     (r'^event/(?P<event_id>\d+)/$', 'event_view', {}, 'event'),
-    (r'^event/(?P<event_id>\d+)/register/$', 'register_on_event_view', {}, 'event_registration'),
+    (r'^event/(?P<event_id>\d+)/registration/$', 'register_on_event_view', {}, 'event_registration'),
     (r'^event/(?P<event_id>\d+)/subscribe/(?P<reg_id>)/$', 
      'subscribe_on_event_view', {}, 'event_subscribe'),
     (r'^event/(?P<event_id>\d+)/unsubscribe/(?P<reg_id>)/$', 
