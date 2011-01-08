@@ -80,3 +80,76 @@ body {
 .date{
     margin: 16px 0px 7px 0px;
 }
+
+.event h3{
+    font:100% Georgia,serif;
+    text-transform:uppercase;
+    margin: 4px 0px 10px 0px;
+}
+
+.event .date{
+    font:85% Georgia,serif;
+}
+
+.event a{
+    text-decoration: none;
+    color: #660066;
+}
+
+.comp a{
+    text-decoration: none;
+    color: #660066;
+}
+
+
+a.counter{
+    color:#333333;
+    display: block;
+    font-size: 11px;
+    text-decoration: none;
+}
+
+a.counter:hover{
+    text-decoration:underline;
+}
+
+span.counter-value{
+    color:#0084B4;
+    display:block;
+    font-size:15px;
+    font-weight:bold;
+    text-decoration: none;
+}
+
+.protocol{
+    font: 80% Arial;
+    line-height: 1.4em;
+}
+
+a.person{
+    text-decoration: none;
+}
+
+.widener .full { position: absolute; background: #fffcdc; z-index: 10; display: none; }
+.widener:hover { background: #fffcdc }
+.widener:hover .full { display: inline; border-top: 1px #fff solid; border-bottom: 1px #fff8b8 solid; margin: -1px -.33em; padding: 0 .33em; }
+.widener:hover .short { displa-: none }
+
+.protocol tbody tr:hover{
+    background: #eef0f4;
+}
+
+table.protocol{
+    border-collapse: collapse;
+}
+
+.protocol td{
+    padding:2px 4px;
+}
+
+.dns { background: #ccc }
+.dnf { background: #c99; color: #600 }
+.dsq { color: #c00; text-decoration: line-through; }
+.dsq-2 { color: #c00; font-size: 70% }
+.dsq-reason { color: #c00; font-size: 85%; }
+

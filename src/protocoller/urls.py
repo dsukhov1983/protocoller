@@ -13,14 +13,14 @@ urlpatterns = patterns(
     (r'^index.html$', 'main_view'),
     
 
-    (r'events/$', 'events_view', {}, 'events'),
-    (r'events/add/$', 'edit_event_view', {}, 'add_event'),
-    (r'event/edit/(?P<event_id>\d+)/$', 'edit_event_view', {}, 'edit_event'),
-    (r'event/(?P<event_id>\d+)/$', 'event_view', {}, 'event'),
-    (r'event/(?P<event_id>\d+)/register/$', 'register_on_event_view', {}, 'event_registration'),
-    (r'event/(?P<event_id>\d+)/subscribe/(?P<reg_id>)/$', 
+    (r'^events/$', 'events_view', {}, 'events'),
+    (r'^events/add/$', 'edit_event_view', {}, 'add_event'),
+    (r'^event/(?P<event_id>\d+)/edit/$', 'edit_event_view', {}, 'edit_event'),
+    (r'^event/(?P<event_id>\d+)/$', 'event_view', {}, 'event'),
+    (r'^event/(?P<event_id>\d+)/register/$', 'register_on_event_view', {}, 'event_registration'),
+    (r'^event/(?P<event_id>\d+)/subscribe/(?P<reg_id>)/$', 
      'subscribe_on_event_view', {}, 'event_subscribe'),
-    (r'event/(?P<event_id>\d+)/unsubscribe/(?P<reg_id>)/$', 
+    (r'^event/(?P<event_id>\d+)/unsubscribe/(?P<reg_id>)/$', 
      'unsubscribe_from_event_view', {}, 'event_unsubscribe'),
     
     (r'^protocols/$', 'comp_list_view'),
@@ -34,7 +34,7 @@ urlpatterns = patterns(
     (r'^place/(?P<id>[\w\d\-]+)/edit/$', 'edit_place_view', {}, 'edit_place'),
     
     
-    (r'sportsmen/$', 'sportsmen_view'),
+    (r'^sportsmen/$', 'sportsmen_view'),
     (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
     (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',  'comp_list_view'),
     (r'^person/(?P<person_id>\d+)/results$', 'person_results',

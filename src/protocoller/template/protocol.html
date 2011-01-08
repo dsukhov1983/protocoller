@@ -4,43 +4,70 @@
 {% load pretty_print %}
 
 {% block content %}
-
-<div class="comp-header">
-  <p class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</p>
-  <p class="event">{{ comp.event.name }}</p>
-  <p class="place">{{ comp.event.place|default:"" }}</p>
-  <p class="name">{{ comp }}</p>
-  
-  {% if alternate %}
-  <p><a href="{% url protocol_by_groups comp.id %}">протокол по группам</a></p>
-  {% endif %}
+<div class="grid_2 event">
+  <span class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</span>
+  <h3><a href="{% url place comp.event.place.slug %}">{{ comp.event.place }}</a></h3>
 </div>
+<div class="grid_8">
+  <h1>{{ comp.event.name }}</h1>
+  <h2>{{ comp }}</h2>
+</div>
+<div class="clear"></div>
 
-<table class="protocol">
-  <tr class="head">
-    <th>М(абс)</th>
-    <th>Номер</th>
-    <th>Фамилия Имя</th>
-    <th>Звание</th>
-    <th>Г.р.</th>
-    <th>Город</th>
-    <th>Клуб</th>
-    <th>Рез-тат</th>
-  </tr>
 
-  {% for r in results %}
-  <tr class="{% cycle odd,even %}">
-    <td>{% print_pos r %}</td>
-    <td>{{ r.number|default:"" }}</td>
-    <td><a href="{% url person_results r.person.id %}">{{ r.person.full_name }}</a></td>
-    <td>{{ r.person.get_rank_display }}</td>
-    <td>{{ r.person.year }}</td>
-    <td>{{ r.person.city|default:"" }}</td>
-    <td>{{ r.person.club|default:"" }}</td>
-    <td>{% print_time r %}</td>
-  </tr>
-  {% endfor %}
-  
-</table>
+<div class="grid_12">
+  <table class="protocol">
+    <thead>
+      <tr class="head">
+        <th align="left">
+          <span class="widener">
+            <span class="full">Место</span>
+            <span class="short">М.</span>
+          </span>
+        </th>
+        <th>Ст.№</th>
+        <th>Фамилия Имя</th>
+        <th>
+          <span class="widener">
+            <span class="full">Звание</span>
+            <span class="short">Зв.</span>
+          </span>
+        </th>
+        <th>
+          <span class="widener">
+            <span class="full">Год</span>
+            <span class="short">Г.р.</span>
+          </span>
+        </th>
+        <th>Город</th>
+        <th>Клуб</th>
+        <th>
+          <span class="widener">
+            <span class="full">Результат</span>
+            <span class="short">Рез-т</span>
+          </span>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in results %}
+      {% if r.pos < 0 %}
+      <tr class="{% print_pos r %}">
+      {% else %}
+      <tr>
+      {% endif %}
+        <td>{% print_pos r %}</td>
+        <td>{{ r.number|default:"" }}</td>
+        <td><a class="person" href="{% url person_results r.person.id %}">{{ r.person.full_name }}</a></td>
+        <td>{{ r.person.get_rank_display }}</td>
+        <td>{{ r.person.year }}</td>
+        <td>{{ r.person.city|default:"" }}</td>
+        <td>{{ r.person.club|default:"" }}</td>
+        <td>{% print_time r %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
     
+  </table>
+</div>
 {% endblock %}

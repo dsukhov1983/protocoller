@@ -106,7 +106,7 @@ def print_user(user):
 <div class="profile">
 <span class="profile-name"> %(username)s </span>
 </div>
-""" % dict(username = user.openid_profiles.all()[0].nickname)
+""" % dict(username = user.username)
 
    
 

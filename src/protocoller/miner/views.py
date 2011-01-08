@@ -554,8 +554,10 @@ def edit_event_view(request, event_id = None):
 
 def event_view(request, event_id):
     event = get_object_or_404(models.SportEvent, id = event_id)
+    regs_count = models.RegistrationMembership.objects.filter(
+        sport_event = event).count()
     return render_to_response('sport_event.html',
-                              dict(event = event), 
+                              locals(), 
                               context_instance = RequestContext(request))
 
 

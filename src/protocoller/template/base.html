@@ -30,7 +30,7 @@
           <input class="searchfield" type="text" value="Поиск..." onfocus="if (this.value == 'Поиск...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Поиск...';}" />
         </form>
         <ul>
-          <li><a href="/races">Соревнования</a></li>
+          <li><a href="/">Соревнования</a></li>
           <li><a href="/places">Трассы</a></li>
           <li><a href="/sportsmen">Спортсмены</a></li>
         </ul>
@@ -47,12 +47,12 @@
     </div>
   </div>
   <div class="container_12">
-    <div class="grid_12" id="content">
+    <div id="content">
       {% block content %}{% endblock %}
     </div>
   </div>
   <div class="container_12">
-    <div class="grid_12" id="footer">
+    <div id="footer">
       {% block footer %}{% endblock %}
     </div>
   </div>

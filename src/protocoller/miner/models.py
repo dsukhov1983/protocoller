@@ -95,7 +95,7 @@ class Competition(models.Model):
     
     style = models.IntegerField(choices=STYLE_CHOICES)
     start_type = models.IntegerField(choices=START_TYPES)
-    distance = models.IntegerField()
+    distance = models.FloatField()
     link = models.URLField(null=True, blank=True)
     rating = models.IntegerField(choices=RATING_TYPES, default=BOTH_RATING)
     best_result = models.TimeField(null=True, blank=True, default="0:0:0")
@@ -103,11 +103,17 @@ class Competition(models.Model):
                                        default = datetime.datetime.now(),
                                        editable = False)
     created_by = models.ForeignKey(User, null = True, editable = False)
-    start_time = models.TimeField(null = True)
+    start_time = models.TimeField(null = True, blank = True)
+    processed = models.BooleanField('обработаны ли протоколы', default = False)
 
     def __unicode__(self):
+        def display_dist(d):
+            if d % 1 == 0.:
+                return "%.0f" % d
+            else:
+                return "%s" %d
         s = u"%s %s км, %s, %s" % (self.name,                              
-                                   self.distance,
+                                   display_dist(self.distance),
                                    self.get_style_display(),
                                    self.get_start_type_display())
         if self.sex != UNKNOWN:
