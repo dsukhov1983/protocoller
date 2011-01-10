@@ -24,48 +24,51 @@
 
 <body> 
   <div id="toolbar">
-    <div id="menu" class="container_12">
-      <div class="grid_10">
-        <form action="{% block search_url %}/search{% endblock %}" class="searchform" method="GET" >
-          <input class="searchfield" type="text" value="Поиск..." onfocus="if (this.value == 'Поиск...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Поиск...';}" />
-        </form>
-        <ul>
+    <div class="container_12">
+      <div id="menu" class="grid_12">
+        <ul class="sf-menu sf-js-enabled">
+          <li>
+            <form action="{% block search_url %}/search{% endblock %}" class="searchform" method="GET" >
+              <input class="searchfield" type="text" value="Поиск..." onfocus="if (this.value == 'Поиск...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Поиск...';}" />
+            </form>
+          </li>
           <li><a href="/">Соревнования</a></li>
           <li><a href="/places">Трассы</a></li>
           <li><a href="/sportsmen">Спортсмены</a></li>
+          <li class="end">
+            {% if user.is_authenticated %}
+            {% print_user user %}
+            <ul>
+              <li><a href="{% url logout %}">Выйти</a></li>
+            </ul>
+            {% else %}
+            <p><a href="{% url login %}">Войти</a></p>
+            {% endif %}
+          </li>
         </ul>
       </div>
-      <div class="grid_2">
-        <div id="session">
-          {% if user.is_authenticated %}
-          {% print_user user %}
-          {% else %}
-          <p><a href="{% url login %}">Авторизуйтесь</a></p>
-          {% endif %}
-        </div>
-      </div>
     </div>
-  </div>
+    </div>
   <div class="container_12">
+    <div class="clear"></div>
     <div id="content">
       {% block content %}{% endblock %}
     </div>
-  </div>
-  <div class="container_12">
+    <div class="clear"></div>
     <div id="footer">
       {% block footer %}{% endblock %}
     </div>
   </div>
-
-<script type="text/javascript">
-  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<script type="text/javascript">
-  try {
-  var pageTracker = _gat._getTracker("UA-8335560-1");
-  pageTracker._trackPageview();
-  } catch(err) {}
-</script>
+  
+  <script type="text/javascript">
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+    try {
+    var pageTracker = _gat._getTracker("UA-8335560-1");
+    pageTracker._trackPageview();
+    } catch(err) {}
+  </script>
 </body>
 </html>

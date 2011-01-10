@@ -1,10 +1,12 @@
 {% extends "registration/registration_base.html" %}
-{% block title %}{% if account %}Activation complete{% else %}Activation problem{% endif %}{% endblock %}
+{% block title %}{% if account %}Учетная запись активирована{% else %}Ошибка при активации{% endif %}{% endblock %}
 {% block content %}
-{% if account %}
-Thanks {{ account }}, activation complete!  You may now <a href='{% url auth_login %}'>login</a> using the username and password you set at registration.
-{% else %}
-Oops &ndash; it seems that your activation key is invalid.  Please check the url again.
-{% endif %}
+<div class="grid_10">
+  {% if account %}
+  Спасибо {{ account }}, активация успешно завершена!  Вы можете <a href='{% url auth_login %}'>войти</a> на сайт, используя указанные имя пользователя и пароль.
+  {% else %}
+  Похоже, что Ваша ссылка для активации некорректная, проверьте ее еще раз.
+  {% endif %}
+</div>
 {% endblock %}
 

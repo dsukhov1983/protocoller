@@ -10,6 +10,7 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django import forms
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.template import RequestContext
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from markitup.widgets import MarkItUpWidget
@@ -51,10 +52,12 @@ def eval_groupby(*args, **kwargs):
 
 def logout_view(request):
     logout(request)
-    return redirect('comp_list_view')
+    return redirect('main')
 
 def login_view(request):
+    form = AuthenticationForm()
     return render_to_response('openid_signin.html', 
+                              locals(),
                               context_instance=RequestContext(request))
 
 

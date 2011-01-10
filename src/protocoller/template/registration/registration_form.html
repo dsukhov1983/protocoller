@@ -1,10 +1,14 @@
 {% extends "registration/registration_base.html" %}
-{% block title %}Register for an account{% endblock %}
+{% block title %}Регистрация{% endblock %}
 {% block content %}
-<table>
-    <form method='post' action=''>{% csrf_token %}
-        {{ form }}
-        <tr><td></td><td><input type="submit" value="Send activation email" /></td>
-    </form>
-</table>
+<div class="grid_10">
+  <h2>Регистрация нового пользователя</h2>
+  <form method='POST' action='' class="form">
+    {% csrf_token %}
+    {% load uni_form_tags %}
+    {{ form|as_uni_form }}
+    
+    <input type="submit" value="Зарегистрироваться" />
+  </form>
+</div>
 {% endblock %}
