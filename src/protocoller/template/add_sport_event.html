@@ -1,22 +1,31 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block content %}
-{% load uni_form_tags %}
-{% if event.id %}
-<form action="{% url edit_event event.id %}" method="POST">
-{% else %}
-<form action="{% url add_event %}" method="POST">
-{% endif %}
-{% csrf_token %}
-{{ form.media }}
-<script>
-    $(function() {
-    $( "#id_date" ).datepicker( $.datepicker.regional[ "ru" ] );
-    });
-</script>
-{{ form|as_uni_form }}
-<input type="submit" value="Сохранить" />
-</form>
+{% block title %}Создать новое соревнование{% endblock %}
 
+{% block content %}
+
+<div class="grid_10">
+  {% if user.is_authenticated %}
+  {% load uni_form_tags %}
+  {% if event.id %}
+  <form action="{% url edit_event event.id %}" method="POST" class="form">
+  {% else %}
+  <form action="{% url add_event %}" method="POST" class="form">
+      {% endif %}
+      {% csrf_token %}
+      {{ form.media }}
+      <script>
+        $(function() {
+        $( "#id_date" ).datepicker( $.datepicker.regional[ "ru" ] );
+        });
+      </script>
+      {{ form|as_uni_form }}
+      <input type="submit" value="Сохранить" />
+    </form>
+    {% else %}
+    Для добавления информации о новом соревновании необходимо 
+    <a href="{% url login %}">авторизоваться</a>.
+    {% endif %}
+</div>
 {% endblock %}

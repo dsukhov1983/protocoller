@@ -29,7 +29,7 @@
 </div>
 
 <div class="grid_6">
-  <h1>Предстоящие</h1>
+  <h1>Предстоящие</h1><a href="{% url add_event %}">Создать соревнование</a>
   {% for date, events in coming_groups %}
   <div class="event_group">
     <p class="date">{{ date|ru_strftime:"%b" }}
