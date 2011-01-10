@@ -9,8 +9,10 @@ body {
     padding: 0;
 }
 
+
 #toolbar {
     background-color:#EEEEEE;
+    display: block;
     height: 40px;
 }
 
@@ -32,21 +34,162 @@ body {
 }
 
 #menu ul li a {
-    padding: 10px;
+    padding: 14px 10px 12px 10px;
     display: block;
 }
 
 
+/* dropdown menus */
+#menu{
+    z-index: 11;
+}
+.sf-menu, .sf-menu * {
+    margin:		0;
+    padding:		0;
+    list-style:		none;
+}
+.sf-menu {
+    line-height:	1.0;
+    font-size:		14px;
+}
+.sf-menu ul {
+    position:		absolute;
+    top:		-999em;
+    width:		10em; /* left offset of submenus need to match (see below) */
+}
+.sf-menu ul li {
+    width:		100%;
+}
+.sf-menu li:hover {
+    visibility:		inherit; /* fixes IE7 'sticky bug' */
+}
+.sf-menu li {
+    float: left;
+    position:		relative;
+}
+.sf-menu a {
+    display:		block;
+    position:		relative;
+/*    height: 20px;
+    color:			#888;
+    border-right:1px solid #fff;*/
+}
+.sf-menu li:hover ul,
+.sf-menu li.sfHover ul {
+    left:		-1px;
+    top:		30px; /* match top ul list item height */
+    z-index:		99;
+}
+ul.sf-menu li:hover li ul,
+ul.sf-menu li.sfHover li ul {
+    top:			-999em;
+}
+ul.sf-menu li li:hover ul,
+ul.sf-menu li li.sfHover ul {
+    left:			10em; /* match ul width */
+    top:			0;
+}
+ul.sf-menu li li:hover li ul,
+ul.sf-menu li li.sfHover li ul {
+    top:			-999em;
+}
+ul.sf-menu li li li:hover ul,
+ul.sf-menu li li li.sfHover ul {
+    left:			10em; /* match ul width */
+    top:			0;
+}
+.sf-menu {
+    float:left;
+    margin-bottom:1em;
+    width:100%;
+ /*   border-top:1px solid #fff;
+    border-bottom:1px solid #fff;
+    background:#e8e8e8;*/
+}
+.sf-menu a {
+    padding:10px 30px;
+    text-decoration:none;
+}
+.sf-menu a:hover
+{
+/*    color:#444;*/
+}
+
+.sf-menu li {
+    background:none;
+}
+.sf-menu li li {
+    background: #EEEEEE;
+}
+.sf-menu li li li,
+.sf-menu li li li li {
+    background: #EEEEEE;
+}
+.sf-menu li:hover, .sf-menu li.sfHover,
+.sf-menu a:focus, .sf-menu a:hover, .sf-menu a:active,
+.sf-menu li.sfHover a
+{
+   /* background:#fff;*/
+    outline:		0;
+}
+.sf-menu LI.current_page_item
+{
+/*    background:#dbdbdb;*/
+}
+.sf-menu a.sf-with-ul {
+    min-width:		1px; /* trigger IE7 hasLayout so spans position accurately */
+}
+
+.sf-menu .sf-sub-indicator
+{
+    display:none;
+}
+/*.sf-menu LI UL .sf-sub-indicator
+{
+    display:inline;
+    float:right;
+    position:absolute;
+    top:10px;
+    right:10px;
+    color:#ccc;
+}*/
+/*
+.sf-menu small
+{
+    display:block;
+    font-size:10px;
+}*/
+.sf-menu li.end
+{
+    position:absolute;
+    right:0px;
+    top:0px;
+}
+.sf-menu li.end a,
+.sf-menu li.end:hover
+{
+    background:none;
+    border:0;
+}
+
+.profile{
+    height: 20px;
+    padding: 10px;
+}
+/*end menu css*/
+
+
 /* search form 
 -------------------------------------- */
+
 .searchform {
     float: left;
-    margin:6px 0 0;
+    padding: 8px;
 }
 .searchform .searchfield {
-    font: normal 13px/100% Arial, Helvetica, sans-serif;
+    font: normal 14px/100% Arial, Helvetica, sans-serif;
     background: #fff;
-    padding: 6px 6px 6px 8px;
+    padding: 4px 6px 4px 6px;
     border: solid 1px #bcbbbb;
     outline: none;
     width: 180px;
@@ -55,6 +198,7 @@ body {
 #session{
     padding: 10px 0px;
 }
+
 
 #content h1{
     font:120% Georgia,serif;
@@ -154,7 +298,6 @@ table.protocol{
 .form legend{
     color: #003366;
     font-size: 1.3em;
-    font-weight: bold;
     margin: 1em 0;
     padding: 0 0.5em;
 }
@@ -182,6 +325,10 @@ table.protocol{
     padding:0;
 }
 
+.form textarea:focus, input:focus {
+        border: 1px solid #900;
+}
+
 #fm-submit{
    clear:both;
    padding-top:1em;
@@ -193,5 +340,26 @@ table.protocol{
     padding:2px 1em;
 }
 
-/* Messages */
+.ctrlHolder{
+    clear: left;
+}
+
 .form .errorField{ color: red; margin: 0 0 6px 0; padding: 4px; }
+
+.form input[type="submit"] {
+    -moz-border-radius:4px 4px 4px 4px;
+    -moz-box-shadow:0 1px 0 #F8F8F8;
+    border-color:#BBBBBB #BBBBBB #999999;
+    border-style:solid;
+    border-width:1px;
+    color:#333333 !important;
+    cursor:pointer;
+    display:inline-block;
+    font:12px/15px Helvetica Neue,Arial,"Lucida Grande",Sans-serif;
+    margin:0;
+    overflow:hidden;
+    padding:5px 9px;
+    text-shadow:0 1px #F0F0F0;
+    width: auto;
+}
+
