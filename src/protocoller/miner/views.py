@@ -13,6 +13,7 @@ from django.template import RequestContext
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.forms.models import modelformset_factory, inlineformset_factory
 from markitup.widgets import MarkItUpWidget
 from protocoller.miner import models
 
@@ -536,6 +537,12 @@ def edit_event_view(request, event_id = None):
     else:
         new_object = True
         event = models.SportEvent()
+        
+    CompFormset = inlineformset_factory(
+        models.SportEvent, models.Competition,
+        fields = ('sex', 'name', 'style', 'start_type', 'distance',
+                  'start_time'))
+    comp_formset = CompFormset()
 
     if request.method == 'POST': 
         form = SportEventForm(request.POST, instance = event) 

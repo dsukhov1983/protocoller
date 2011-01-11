@@ -38,12 +38,9 @@
     {% for event in events %}
     <div class="event">
       <div class="place">{{ event.place|default:"" }}</div>
-      <div class="title">{{ event.name }}</div>
-      {% for p in event.competitions.all %}
-      <div class="protocol">
-        <a href="{% url protocoller.miner.views.protocol p.id %}" >{{ p }}</a>
-      </div>
-      {% endfor %}
+      <h2>
+        <a href="{% url event event.id %}">{{ event.name }}</a>
+      </h2>
     </div>
     {% endfor %}
   </div>

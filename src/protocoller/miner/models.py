@@ -8,7 +8,7 @@ from markitup.fields import MarkupField
 SEX_TYPES = (
     (MALE, u'муж'),
     (FEMALE, u'жен'),
-    (UNKNOWN, 'неизвестно'),
+    (UNKNOWN, '-'),
     ) 
 
 (ABS_RATING, GROUP_RATING, BOTH_RATING) = range(3)
@@ -90,20 +90,20 @@ class Competition(models.Model):
                               related_name="competitions")
     
     
-    sex = models.IntegerField(choices=SEX_TYPES, default=UNKNOWN)
-    name = models.CharField(max_length=250, blank=True)
+    sex = models.IntegerField('Пол', choices=SEX_TYPES, default=UNKNOWN)
+    name = models.CharField('Название', max_length=250, blank=True)
     
-    style = models.IntegerField(choices=STYLE_CHOICES)
-    start_type = models.IntegerField(choices=START_TYPES)
-    distance = models.FloatField()
-    link = models.URLField(null=True, blank=True)
+    style = models.IntegerField('Стиль передвижения', choices=STYLE_CHOICES)
+    start_type = models.IntegerField('Старт', choices=START_TYPES)
+    distance = models.FloatField('Дистанция')
+    link = models.URLField('ссылка', null=True, blank=True)
     rating = models.IntegerField(choices=RATING_TYPES, default=BOTH_RATING)
     best_result = models.TimeField(null=True, blank=True, default="0:0:0")
     last_change = models.DateTimeField(auto_now = True, 
                                        default = datetime.datetime.now(),
                                        editable = False)
     created_by = models.ForeignKey(User, null = True, editable = False)
-    start_time = models.TimeField(null = True, blank = True)
+    start_time = models.TimeField('Время старта', null = True, blank = True)
     processed = models.BooleanField('обработаны ли протоколы', default = False)
 
     def __unicode__(self):

@@ -206,11 +206,11 @@ ul.sf-menu li li li.sfHover ul {
 }
 
 #content h2{
-    font:100% Georgia,serif;
+    font:1.2em Georgia,serif;
 }
 
 .place{
-    font:80% Trebuchet MS, Tahoma, sans-serif;
+    font:0.8em Trebuchet MS, Tahoma, sans-serif;
 }
 
 
@@ -229,17 +229,17 @@ ul.sf-menu li li li.sfHover ul {
 }
 
 .event .date{
-    font:85% Georgia,serif;
+    font:0.85em Georgia,serif;
 }
 
 .event a{
     text-decoration: none;
-    color: #660066;
+/*    color: #660066;*/
 }
 
 .comp a{
     text-decoration: none;
-    color: #660066;
+/*    color: #660066;*/
 }
 
 
