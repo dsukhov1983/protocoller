@@ -93,7 +93,7 @@ class Competition(models.Model):
     sex = models.IntegerField('Пол', choices=SEX_TYPES, default=UNKNOWN)
     name = models.CharField('Название', max_length=250, blank=True)
     
-    style = models.IntegerField('Стиль передвижения', choices=STYLE_CHOICES)
+    style = models.IntegerField('Стиль', choices=STYLE_CHOICES)
     start_type = models.IntegerField('Старт', choices=START_TYPES)
     distance = models.FloatField('Дистанция')
     link = models.URLField('ссылка', null=True, blank=True)

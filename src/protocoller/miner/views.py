@@ -508,7 +508,8 @@ def events_view(request, year = None, month = None):
 
 
 class SportEventForm(forms.ModelForm):
-    date = forms.DateField(input_formats = ('%d.%m.%Y',))
+    date = forms.DateField(label = 'Дата',
+                           input_formats = ('%d.%m.%Y',))
 
     class Meta:
         model = models.SportEvent
@@ -521,7 +522,8 @@ class SportEventForm(forms.ModelForm):
 
     class Media:
         js = ('js/jquery.ui.datepicker-ru.js', 
-              "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js")
+              "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js",
+              "js/jquery.formset.min.js")
         
         css = dict(
             all = ("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/redmond/jquery-ui.css",)
@@ -531,6 +533,13 @@ class SportEventForm(forms.ModelForm):
 
 @login_required
 def edit_event_view(request, event_id = None):
+    def custom_field_callback(field):
+        if field.name in ('distance', 'start_time'):
+            return field.formfield(
+                widget = forms.TextInput(attrs = {'class': 'short-field'}))
+        else:
+            return field.formfield()
+
     if event_id:
         new_object = False
         event = get_object_or_404(models.SportEvent, id = event_id)
@@ -541,7 +550,9 @@ def edit_event_view(request, event_id = None):
     CompFormset = inlineformset_factory(
         models.SportEvent, models.Competition,
         fields = ('sex', 'name', 'style', 'start_type', 'distance',
-                  'start_time'))
+                  'start_time'),
+        formfield_callback = custom_field_callback,
+        can_delete = True, extra = 1)
     comp_formset = CompFormset()
 
     if request.method == 'POST': 

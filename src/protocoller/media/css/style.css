@@ -318,6 +318,10 @@ table.protocol{
     width:200px;
 }
 
+input.short-field {
+    width: 50px;
+}
+
 
 .form div{
     display:block;

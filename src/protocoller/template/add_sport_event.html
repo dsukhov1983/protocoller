@@ -8,6 +8,16 @@
 <div class="grid_10">
   {% if user.is_authenticated %}
   {% load uni_form_tags %}
+  <script type="text/javascript">
+    $(function() {
+    $('.dynamic-form').formset({
+    prefix: '{{ comp_formset.prefix }}',
+    addText: 'Добавить дистанцию',
+    deleteText: 'Удалить',
+    });
+    })
+  </script>
+
   {% if event.id %}
   <form action="{% url edit_event event.id %}" method="POST" class="form">
   {% else %}
@@ -15,22 +25,20 @@
       {% endif %}
       {% csrf_token %}
       {{ form.media }}
-      <script>
-        $(function() {
-        $( "#id_date" ).datepicker( $.datepicker.regional[ "ru" ] );
-        });
-      </script>
       {{ form|as_uni_form }}
-      <table>
+      <table id="id_forms_table">
       {% for cform in comp_formset.forms %}
       {% if forloop.first %}
-      <thead><tr>
+      <thead>
+        <tr>
           {% for field in cform.visible_fields %}
           <th>{{ field.label|capfirst }}</th>
           {% endfor %}
-      </tr></thead>
+        </tr>
+      </thead>
       {% endif %}
-      <tr>
+      <tr class="dynamic-form">
+        {% if cform.instance.pk %}{{ cform.DELETE }}{% endif %}
         {% for field in cform.visible_fields %}
         <td>
           {# Include the hidden fields in the form #}
@@ -46,6 +54,7 @@
       </tr>
       {% endfor %}
       </table>
+      {{ comp_formset.management_form }}
       <input type="submit" value="Сохранить" />
     </form>
     {% else %}
