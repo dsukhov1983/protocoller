@@ -508,15 +508,16 @@ def events_view(request, year = None, month = None):
 
 
 class SportEventForm(forms.ModelForm):
-    date = forms.DateField(label = 'Дата',
-                           input_formats = ('%d.%m.%Y',))
+    date = forms.DateField(
+        label = 'Дата',
+        input_formats = ('%d.%m.%Y',),
+        widget = forms.DateInput(format = '%d.%m.%Y'))
 
     class Meta:
         model = models.SportEvent
         fields = ('place', 'date', 'name',
                   'description')
         widgets = dict(
-            date = forms.DateInput(format = '%d.%m.%Y'),
             description = MarkItUpWidget(),
             )
 
@@ -553,19 +554,22 @@ def edit_event_view(request, event_id = None):
                   'start_time'),
         formfield_callback = custom_field_callback,
         can_delete = True, extra = 1)
-    comp_formset = CompFormset()
 
     if request.method == 'POST': 
         form = SportEventForm(request.POST, instance = event) 
-        if form.is_valid():
+        comp_formset = CompFormset(request.POST, request.FILES,
+            instance = event)
+        if form.is_valid() and comp_formset.is_valid():
             if new_object:
                 event = form.save(commit = False)
                 event.created_by = request.user
                 event.save()
             else:
                 form.save()
+            comp_formset.save()
             return redirect(event)
     else:
+        comp_formset = CompFormset(instance = event)
         form = SportEventForm(instance = event)
 
     return render_to_response('add_sport_event.html',

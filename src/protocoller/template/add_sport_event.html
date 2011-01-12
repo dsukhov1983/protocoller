@@ -25,6 +25,11 @@
       {% endif %}
       {% csrf_token %}
       {{ form.media }}
+      <script>
+        $(function() {
+        $( "#id_date" ).datepicker( $.datepicker.regional[ "ru" ] );
+        });
+      </script>
       {{ form|as_uni_form }}
       <table id="id_forms_table">
       {% for cform in comp_formset.forms %}
