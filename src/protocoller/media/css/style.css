@@ -242,6 +242,11 @@ ul.sf-menu li li li.sfHover ul {
 /*    color: #660066;*/
 }
 
+.comp{
+    background-color: #FFEFC6;
+    padding: 3px;
+}
+
 
 a.counter{
     color:#333333;

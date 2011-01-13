@@ -5,6 +5,7 @@ import operator
 import random
 import datetime
 
+from pytils import translit
 from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django import forms
@@ -192,8 +193,10 @@ def place_view(request, id = None):
                               context_instance = RequestContext(request))
 
 class PlaceForm(forms.ModelForm):
+        
     class Meta:
         model = models.Place
+        fields = ('name', 'link', 'description', 'location')
         widgets = {
             'description': MarkItUpWidget(),
             'location': forms.HiddenInput(),
@@ -211,12 +214,12 @@ def edit_place_view(request, id = None):
     if request.method == 'POST':
         form = PlaceForm(request.POST, instance = place) 
         if form.is_valid(): 
-            if new_object:
-                place = form.save(commit = False)
+            place = form.save(commit = False)
+            place.slug = translit.slugify(place.name)
+            if new_object:                
                 place.created_by = request.user
-                place.save()
-            else:
-                form.save()
+            place.save()
+            
             return redirect(place)
     else:
         form = PlaceForm(instance = place)

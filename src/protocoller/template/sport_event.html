@@ -16,11 +16,11 @@
 <div class="clear"></div>
 <div class="grid_8">
   {% for comp in event.competitions.all %}
-  {% if forloop.first %}<div class="grid_2 alpha comp">
+  {% if forloop.first %}<div class="grid_1 alpha comp">
   {% else %}
-  {% if forloop.last %}<div class="grid_2 omega comp">
+  {% if forloop.last %}<div class="grid_1 omega comp">
   {% else %}
-  <div class="grid_2 comp">
+  <div class="grid_1 comp">
   {% endif %}
   {% endif %}
   {% if comp.processed %}

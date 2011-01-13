@@ -342,7 +342,7 @@ class RegistrationInfo(models.Model):
 
 class RegistrationMembership(models.Model):
     """Связывает регистрационные данные и соревнование"""
-    unique_together = (('info', 'sport_event'),)
+    id = models.AutoField(primary_key=True)
     info = models.ForeignKey(RegistrationInfo)
     sport_event = models.ForeignKey(SportEvent)
     competition = models.ForeignKey(Competition, null = True)

@@ -8,6 +8,7 @@
 <div class="grid_10">
   {% if user.is_authenticated %}
   {% load uni_form_tags %}
+  {% load uni_form_field %}
   <script type="text/javascript">
     $(function() {
     $('.dynamic-form').formset({
@@ -30,7 +31,49 @@
         $( "#id_date" ).datepicker( $.datepicker.regional[ "ru" ] );
         });
       </script>
-      {{ form|as_uni_form }}
+      {% if form.non_field_errors %}
+      <div id="errorMsg">
+        <ul>
+          {{ form.non_field_errors|unordered_list }}
+        </ul>
+      </div>
+      {% endif %}
+      {% for field in form %}
+      {% if field.name == 'place' %}
+      {% if field.is_hidden %}
+      {{ field }}
+      {% else %}
+      <div id="div_{{ field.auto_id }}" class="ctrlHolder{% if field.errors %} error{% endif %}{% if field|is_checkbox %} checkbox{% endif %} {% if field.field.widget.attrs.class %} {{ field.field.widget.attrs.class }}{% endif %}">
+        {% for error in field.errors %}
+        <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="errorField">
+          {{ error }}
+        </p>
+        {% endfor %}
+
+        {% if field|is_checkbox %}
+        {{ field|with_class }}
+        {% endif %}
+
+        {% if field.label %}
+        <label for="{{ field.auto_id }}">
+          {{ field.label }}{% if field.field.required %}<span>*</span>{% endif %}
+        </label>
+        {% endif %}
+
+        {% if not field|is_checkbox %}
+        {{ field|with_class }}
+        {% endif %}
+
+        {% if field.help_text %}
+        <p id="hint_{{ field.auto_id }}" class="formHint">{{ field.help_text|safe }}</p>
+        {% endif %}
+        <a href="{% url add_place %}">создать</a>
+      </div>
+      {% endif %}
+      {% else %}
+      {{ field|as_uni_field }}
+      {% endif %}
+      {% endfor %}
       <table id="id_forms_table">
       {% for cform in comp_formset.forms %}
       {% if forloop.first %}

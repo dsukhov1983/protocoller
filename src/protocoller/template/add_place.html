@@ -74,9 +74,9 @@
 
 {% block content %}
 {% if place.id %}
-<form action="{% url edit_place place.id %}" method="POST">
+<form action="{% url edit_place place.id %}" method="POST" class="form">
 {% else %}
-<form action="{% url add_place %}" method="POST">
+<form action="{% url add_place %}" method="POST" class="form">
 {% endif %}
 {% csrf_token %}
 {% load uni_form_tags %} 
