@@ -325,8 +325,7 @@ class RegistrationInfo(models.Model):
     name = models.CharField("Имя", max_length = 20, default = "", null = True)
     year = models.IntegerField("Год рождения", null = True, db_index=True)
     sex = models.IntegerField("Пол", choices = SEX_TYPES, default = UNKNOWN)
-    rank = models.IntegerField("Звание", choices = RANK_TYPES, default = NR, 
-                               blank = True)
+    rank = models.IntegerField("Звание", choices = RANK_TYPES, default = NR)
     club = models.CharField("Клуб", max_length = 30, default='', blank = True)
     city = models.CharField("Город", max_length = 30, default = '', 
                             blank = True)

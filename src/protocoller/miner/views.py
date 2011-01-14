@@ -598,6 +598,7 @@ class EventRegistrationForm(forms.ModelForm):
             'sport_event': forms.HiddenInput(),
             }
 
+
 def register_on_event_view(request, event_id):
     event = get_object_or_404(models.SportEvent, id = event_id)
     
@@ -607,7 +608,9 @@ def register_on_event_view(request, event_id):
         if request.method == 'POST':
             form = EventRegistrationForm(request.POST)
             if form.is_valid():
-                reg_info = form.save()
+                reg_info = form.save(commit = False)
+                reg_info.by_user = request.user
+                reg_info.save()
                 reg_mem = models.RegistrationMembership(info = reg_info,
                                                         sport_event = event)
                 reg_mem.save()
@@ -616,9 +619,6 @@ def register_on_event_view(request, event_id):
             form = EventRegistrationForm()
         avail_regs = models.RegistrationInfo.objects.filter(
             by_user = request.user).exclude(sport_event = event)
-        done_regs = models.RegistrationInfo.objects.filter(
-            by_user = request.user,
-            sport_event = event)
         
     reg_list = models.RegistrationInfo.objects.filter(sport_event = event)
     return render_to_response(
@@ -636,16 +636,7 @@ def subscribe_on_event_view(request, event_id, reg_id):
     mem = models.RegistrationMembership(info = reg_info,
                                         sport_event = event)
     mem.save()
-    reg_list = models.RegistrationInfo.objects.filter(sport_event = event)
-    avail_regs = models.RegistrationInfo.objects.filter(
-        by_user = request.user).exclude(sport_event = event)
-    done_regs = models.RegistrationInfo.objects.filter(
-        by_user = request.user,
-        sport_event = event)
-    return render_to_response(
-        'event_registration.html',
-        locals(), 
-        context_instance = RequestContext(request))
+    return register_on_event_view(request, event_id)
     
 
 @login_required
@@ -653,20 +644,11 @@ def unsubscribe_from_event_view(request, event_id, reg_id):
     reg_info = get_object_or_404(models.RegistrationInfo, id = reg_id,
                                  by_user = request.user)
     event = get_object_or_404(models.SportEvent, id = event_id)
-    mem = get_object_or_404(models.RegistrationMembership,
-                            info = reg_info,
-                            sport_event = event)
-    mem.delete()
-    reg_list = models.RegistrationInfo.objects.filter(sport_event = event)
-    avail_regs = models.RegistrationInfo.objects.filter(
-        by_user = request.user).exclude(sport_event = event)
-    done_regs = models.RegistrationInfo.objects.filter(
-        by_user = request.user,
-        sport_event = event)
-    return render_to_response(
-        'event_registration.html',
-        locals(), 
-        context_instance = RequestContext(request))
+    for m in models.RegistrationMembership.objects.filter(
+        info = reg_info, sport_event = event):
+        m.delete()
+    
+    return register_on_event_view(request, event_id)
 
 
 def get_reg_info_view(request, event_id):

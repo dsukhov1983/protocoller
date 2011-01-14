@@ -31,27 +31,30 @@
 <div class="clear"></div>
 {% endif %}
 <div class="grid_10">
-  <h2>Список участников</h2>
+  {% if avail_regs %}
+  <h2>Предыдущие регистрации</h2>
+  <p>Вы можете использовать регистрационные данные, которые вводили раньше.</p>
     <table class="protocol">
-    <thead>
-      <tr class="head">
-        <th align="left">№</th>
-        <th>Фамилия Имя</th>
-        <th>Пол</th>
-        <th>Год</th>
-        <th>
-          <span class="widener">
-            <span class="full">Звание</span>
-            <span class="short">Зв.</span>
-          </span>
-        </th>
-        <th>Город</th>
-        <th>Клуб</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for r in reg_list %}
-      <tr>
+      <thead>
+        <tr class="head">
+          <th align="left">№</th>
+          <th>Фамилия Имя</th>
+          <th>Пол</th>
+          <th>Год</th>
+          <th>
+            <span class="widener">
+              <span class="full">Звание</span>
+              <span class="short">Зв.</span>
+            </span>
+          </th>
+          <th>Город</th>
+          <th>Клуб</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in avail_regs %}
+        <tr>
         <td>{{ forloop.counter }}</td>
         <td>{{ r.full_name }}</td>
         <td>{{ r.get_sex_display }}</td>
@@ -59,10 +62,54 @@
         <td>{{ r.get_rank_display }}</td>
         <td>{{ r.city }}</td>
         <td>{{ r.club }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-</table>
+        <td>
+          {% if r.by_user == user %}
+          <a href = "{% url event_subscribe event.id r.id %}">зарегистрировать</a>
+          {% endif %}
+        </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+  <h2>Список участников</h2>
+    <table class="protocol">
+      <thead>
+        <tr class="head">
+          <th align="left">№</th>
+          <th>Фамилия Имя</th>
+          <th>Пол</th>
+          <th>Год</th>
+          <th>
+            <span class="widener">
+              <span class="full">Звание</span>
+              <span class="short">Зв.</span>
+            </span>
+          </th>
+          <th>Город</th>
+          <th>Клуб</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reg_list %}
+        <tr{% if r.by_user == user %} class="hl"{% endif %}>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ r.full_name }}</td>
+        <td>{{ r.get_sex_display }}</td>
+        <td>{{ r.year }}</td>
+        <td>{{ r.get_rank_display }}</td>
+        <td>{{ r.city }}</td>
+        <td>{{ r.club }}</td>
+        <td>
+          {% if r.by_user == user %}
+          <a href = "{% url event_unsubscribe event.id r.id %}">удалить</a>
+          {% endif %}
+        </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 </div>
     
 {% endblock %}

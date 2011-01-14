@@ -298,6 +298,7 @@ table.protocol{
 .dsq { color: #c00; text-decoration: line-through; }
 .dsq-2 { color: #c00; font-size: 70% }
 .dsq-reason { color: #c00; font-size: 85%; }
+.hl {background-color: #FFEFC6;}
 
 
 .form legend{
