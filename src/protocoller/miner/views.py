@@ -124,22 +124,22 @@ def protocol_by_groups(request, comp_id):
         else:
             return 0
     
-    competition = get_object_or_404(models.Competition,
-                                    id=comp_id)
+    competition = get_object_or_404(models.Competition, id = comp_id)
 
     if competition.rating == models.ABS_RATING:
-        return redirect('protocol', comp_id=comp_id)
+        return protocol(request, comp_id)
 
-    results = models.Result.objects.select_related().filter(competition=competition).order_by('group')
+    results = models.Result.objects.filter(
+        competition=competition).order_by('group').select_related()
 
-    rg = itertools.groupby(results,
-                           lambda x:x.group)
+    rg = itertools.groupby(results, lambda x:x.group)
     
-    rg = [(n,sorted(l,cmp=res_in_grp_cmp)) for n,l in rg]
+    rg = [(group, sorted(l, cmp = res_in_grp_cmp)) for group,l in rg]
+    result_groups = [(group, l[0].time, l) for group, l in rg if l]
 
 
     return render_to_response('protocol_groups.html',
-                              {'result_groups': rg,
+                              {'result_groups': result_groups,
                                'comp': competition,
                                'alternate': competition.rating == models.BOTH_RATING
                                },
@@ -680,8 +680,6 @@ def sportsmen_view(request, year = None, month = None):
                               context_instance = RequestContext(request))
 
 
-
-
 def main_view(request):
     today = datetime.date.today()
     per_page = 10
@@ -695,10 +693,14 @@ def main_view(request):
 
     coming_page, past_page = \
         [Paginator(l, per_page).page(1) for l in (coming_events, past_events)]
-    coming_groups, past_groups = [
-        eval_groupby(l.object_list, lambda o: o.date) 
-        for l in (coming_page, past_page)]
-        
+
+    print 
+    coming_groups = [(year, eval_groupby(comps, lambda o:o.date))
+                     for year, comps in eval_groupby(coming_page.object_list, 
+                                                     lambda o: o.date.year)]
+    past_groups = [(year, eval_groupby(comps, lambda o:o.date))
+                     for year, comps in eval_groupby(past_page.object_list, 
+                                                     lambda o: o.date.year)]    
             
     return render_to_response('main.html', locals(),
                               context_instance = RequestContext(request))

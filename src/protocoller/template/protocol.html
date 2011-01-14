@@ -7,8 +7,12 @@
 <div class="grid_2 event">
   <span class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</span>
   <h3><a href="{% url place comp.event.place.slug %}">{{ comp.event.place }}</a></h3>
+  {% if alternate %}
+  <a href="{% url protocol_by_groups comp.id %}">по группам</a>
+  {% endif %}
 </div>
 <div class="grid_8">
+  <h1>Протокол</h1>
   <h1>{{ comp.event.name }}</h1>
   <h2>{{ comp }}</h2>
 </div>

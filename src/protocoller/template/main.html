@@ -7,7 +7,11 @@
 
 <div class="grid_6">
   <h1>Прошедшие</h1>
-  {% for date, events in past_groups %}
+  {% for year, comp_groups in past_groups %}
+  {% if year != today.year %}
+  <h1>{{ year }}</h1>
+  {% endif %}
+  {% for date, events in comp_groups %}
   <div class="event_group">
     <p class="date">{{ date|ru_strftime:"%d %b" }}</p>
     {% for event in events %}
@@ -20,6 +24,7 @@
     {% endfor %}
   </div>
   {% endfor %}
+  {% endfor %}
   <div class="pager">
     {% if past_page.has_next %}
     <a href="">Предыдущие</a>
@@ -29,7 +34,11 @@
 
 <div class="grid_6">
   <h1>Предстоящие</h1><a href="{% url add_event %}">Создать соревнование</a>
-  {% for date, events in coming_groups %}
+  {% for year, comp_groups in coming_groups %}
+  {% if year != today.year %}
+  <h1>{{ year }}</h1>
+  {% endif %}
+  {% for date, events in comp_groups %}
   <div class="event_group">
     <p class="date">{{ date|ru_strftime:"%d %b" }}</p>
     {% for event in events %}
@@ -41,6 +50,7 @@
     </div>
     {% endfor %}
   </div>
+  {% endfor %}
   {% endfor %}
   <div class="pager">
     {% if coming_page.has_next %}

@@ -373,3 +373,16 @@ input.short-field {
     width: auto;
 }
 
+
+ul.plain_list {
+    padding: 0;
+    margin: 0;
+    list-style: none outside none;
+    display:inline;
+}
+
+.plain_list li{
+    float: left;
+    padding: 2px;
+    margin: 0;
+}
