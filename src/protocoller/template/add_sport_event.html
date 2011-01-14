@@ -67,7 +67,7 @@
         {% if field.help_text %}
         <p id="hint_{{ field.auto_id }}" class="formHint">{{ field.help_text|safe }}</p>
         {% endif %}
-        <a href="{% url add_place %}">создать</a>
+        <a href="{% url add_place %}">создать место</a>
       </div>
       {% endif %}
       {% else %}
@@ -86,7 +86,6 @@
       </thead>
       {% endif %}
       <tr class="dynamic-form">
-        {% if cform.instance.pk %}{{ cform.DELETE }}{% endif %}
         {% for field in cform.visible_fields %}
         <td>
           {# Include the hidden fields in the form #}

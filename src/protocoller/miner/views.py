@@ -4,6 +4,7 @@ import itertools
 import operator
 import random
 import datetime
+import csv
 
 from pytils import translit
 from django.db.models import Q
@@ -15,6 +16,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.forms.models import modelformset_factory, inlineformset_factory
+from django.http import HttpResponse
 from markitup.widgets import MarkItUpWidget
 from protocoller.miner import models
 
@@ -518,7 +520,7 @@ class SportEventForm(forms.ModelForm):
 
     class Meta:
         model = models.SportEvent
-        fields = ('place', 'date', 'name',
+        fields = ('place', 'date', 'name', 'registration_open',
                   'description')
         widgets = dict(
             description = MarkItUpWidget(),
@@ -651,7 +653,6 @@ def unsubscribe_from_event_view(request, event_id, reg_id):
     reg_info = get_object_or_404(models.RegistrationInfo, id = reg_id,
                                  by_user = request.user)
     event = get_object_or_404(models.SportEvent, id = event_id)
-    
     mem = get_object_or_404(models.RegistrationMembership,
                             info = reg_info,
                             sport_event = event)
@@ -666,6 +667,30 @@ def unsubscribe_from_event_view(request, event_id, reg_id):
         'event_registration.html',
         locals(), 
         context_instance = RequestContext(request))
+
+
+def get_reg_info_view(request, event_id):
+    event = get_object_or_404(models.SportEvent, id = event_id)
+    reg_info = models.RegistrationMembership.objects.filter(
+        sport_event = event).order_by(
+        'info__surname', 'info__name').select_related()
+    response = HttpResponse(mimetype='text/csv')
+    filename = translit.slugify(event.name) + '_' + str(event.date.year)
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % filename
+
+    writer = csv.writer(response)
+    writer.writerow(['№', 'Фамилия Имя', 'Пол', 'Год', 'Звание', 'Город', 'Клуб'])
+    sex_dict = dict(models.SEX_TYPES)
+    rank_dict = dict(models.RANK_TYPES)
+
+    for i, mem in enumerate(reg_info, 1):
+        info = mem.info
+        writer.writerow(
+            map(lambda s: s.encode('utf-8'),
+                [str(i), info.surname + ' ' + info.name, sex_dict[info.sex],
+                 str(info.year), rank_dict[info.rank], info.city, 
+                 info.club]))
+    return response
 
 
 def sportsmen_view(request, year = None, month = None):

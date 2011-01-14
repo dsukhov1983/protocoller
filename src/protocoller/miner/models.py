@@ -324,10 +324,12 @@ class RegistrationInfo(models.Model):
     surname = models.CharField("Фамилия", max_length = 30, db_index = True)
     name = models.CharField("Имя", max_length = 20, default = "", null = True)
     year = models.IntegerField("Год рождения", null = True, db_index=True)
-    sex = models.IntegerField("Пол", choices=SEX_TYPES, default=UNKNOWN)
-    rank = models.IntegerField("Звание", choices=RANK_TYPES, default=NR, blank = True)
-    club = models.CharField("Клуб", max_length=30, default='', blank = True)
-    city = models.CharField("Город", max_length=30, default = '', blank=True, db_index=True)
+    sex = models.IntegerField("Пол", choices = SEX_TYPES, default = UNKNOWN)
+    rank = models.IntegerField("Звание", choices = RANK_TYPES, default = NR, 
+                               blank = True)
+    club = models.CharField("Клуб", max_length = 30, default='', blank = True)
+    city = models.CharField("Город", max_length = 30, default = '', 
+                            blank = True)
 
     by_user = models.ForeignKey(User, null = True, editable = False, 
                                 related_name = 'registrations')

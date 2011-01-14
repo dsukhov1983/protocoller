@@ -9,8 +9,7 @@
   <h1>Прошедшие</h1>
   {% for date, events in past_groups %}
   <div class="event_group">
-    <p class="date">{{ date|ru_strftime:"%d %b" }}
-    </p>
+    <p class="date">{{ date|ru_strftime:"%d %b" }}</p>
     {% for event in events %}
     <div class="event">
       <div class="place">{{ event.place|default:"" }}</div>
@@ -32,9 +31,7 @@
   <h1>Предстоящие</h1><a href="{% url add_event %}">Создать соревнование</a>
   {% for date, events in coming_groups %}
   <div class="event_group">
-    <p class="date">{{ date|ru_strftime:"%b" }}
-      <span>{{ date|ru_strftime:"%d" }}</span>
-    </p>
+    <p class="date">{{ date|ru_strftime:"%d %b" }}</p>
     {% for event in events %}
     <div class="event">
       <div class="place">{{ event.place|default:"" }}</div>
