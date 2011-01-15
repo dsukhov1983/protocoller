@@ -1,77 +1,75 @@
 {% extends "base.html" %}
-
 {% load pytils_dt %}
 {% load pretty_print %}
-
-{% block content %}
-
-<form action="/search" method="get" id="search" name="search">
-<input id="query" class="emptySearch" placeholder="Найти спортсмена в протоколах" maxlength="80" value="{{ query }}" name="query" type="text" /> 
- <script type="text/javascript">
-   $(document).ready(function(){ 
-   $('#query').placeholder();
-   });    
- </script>
-<div class="sampleSearch">
-Например, <span class="pseudolink"
-                onclick="$('#query').focus().val('{{ sample_search }}')">
-    {{ sample_search }}
-</span>
-</div>
-</form>
-
-{% if persons.object_list %}
-Результаты поиска:
-<div class="search_results">
-  {% for p in persons.object_list %}
-  <div class="person">
-    <a href="{% url person_results p.id %}">
-      <span class="title">{{ p.full_name }} {{ p.get_rank_display }} 
-        {{ p.year }} </span> {{ p.city|default:"" }} {{ p.club|default:"" }}
-    </a>
-  </div>
-  {% endfor %}  
-</div>
-
-{% ifnotequal persons.paginator.num_pages 1 %}
-
-<div class="pager">
-  <span class="step-links">
-        {% if persons.has_previous %}        
-        <a href="?query={{ query }}&page={{ persons.previous_page_number }}">предыдущая</a>
-        {% else %}
-            <span>предыдущая</span>
-        {% endif %}        
-
-        {% if persons.has_next %}
-            <a href="?query={{ query }}&page={{ persons.next_page_number }}">
-              следующая</a>
-        {% else %}
-            <span>следующая</span>
-        {% endif %}
-        <div>
-        {% for p in persons.paginator.page_range %}
-            {% ifequal persons.number p %}
-            <b>{{ p }}</b>
-            {% else %}
-            <a href="?query={{ query }}&page={{ p }}">{{ p }}</a>
-            {% endifequal %}
-        {% endfor %}
-        </div>
-    </span>
-</div>
-{% endifnotequal %}
-{% else %}
- {% if query %}
- Ничего не найдено.
- {% endif %}
-{% endif %}
-
+{% block search_fields %}
+<input id="cl" value="{{ cl }}" name="cl" type="hidden"/>
 {% endblock %}
+{% block content %}
+<div class="grid_8">
+  {% if persons.object_list %}
+  <h2>Результаты поиска</h2>
+  <table class="search_results">
+    <tbody>
+    {% for p in persons.object_list %}
+    <tr class="person">
+      <td>
+        <a href="{% url person p.id %}">{{ p.full_name }} {{ p.get_rank_display }} 
+            {{ p.year }} {{ p.city|default:"" }} {{ p.club|default:"" }}</a>
+      </td>
+      <td>
+        {% if not p.is_in_list %}
+        <a class="pseudolink" 
+           href="{% url search %}?query={{ query }}{% if persons.number > 1 %}&page={{ persons.number }}{% endif %}&cl={% if cl %}{{ cl }},{% endif %}{{ p.id }}">к сравнению</a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}  
+    </tbody>
+  </table>
+  
+  {% ifnotequal persons.paginator.num_pages 1 %}
 
+  <div class="pager">
+    <span class="step-links">
+      {% if persons.has_previous %}        
+      <a href="?query={{ query }}&page={{ persons.previous_page_number }}">предыдущая</a>
+      {% endif %}        
 
-{% block right %}
-<div class="hint">
-Здесь можно найти информацию о спортсмене по его имени и фамилии.
+      {% if persons.has_next %}
+      <a href="?query={{ query }}&page={{ persons.next_page_number }}">
+        следующая</a>
+      {% endif %}
+      <div>
+        {% for p in persons.paginator.page_range %}
+        {% ifequal persons.number p %}
+        <b>{{ p }}</b>
+        {% else %}
+        <a href="?query={{ query }}&page={{ p }}">{{ p }}</a>
+        {% endifequal %}
+        {% endfor %}
+      </div>
+    </span>
+  </div>
+  {% endifnotequal %}
+  {% else %}
+  {% if query %}
+  <h2>Ничего не найдено.</h2>
+  {% endif %}
+  {% endif %}
+ </div>
+<div class="grid_4">
+  {% if compare_list %}
+  <h2>Добавлены к сравнению</h2>
+  <div class="hl_region">
+    <ul class="search_results">
+      {% for p in compare_list %}
+      <li>
+        <a href="{% url person p.id %}">{{ p.full_name }} {{ p.year }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+    <a href="{% url compare %}?cl={{ cl }}">Сравнить</a>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

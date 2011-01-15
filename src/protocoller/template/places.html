@@ -1,15 +1,11 @@
 {% extends "base.html" %}
-
 {% load pytils_dt %}
 {% load pretty_print %}
-
-
-
 {% block content %}
-<div>
+<div class="grid_10">
   {% for p in places.object_list %}
   <div>
-    <a href="{% url place p.get_id %}">{{ p.name }}</a>
+    <h2><a href="{% url place p.get_id %}">{{ p.name }}</a></h2>
   </div>
   {% endfor %}
   <div class="pagination">

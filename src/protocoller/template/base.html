@@ -22,20 +22,20 @@
   {% block extrahead %}{% endblock %}
 </head>
 {% load pretty_print %}
-
 <body> 
   <div id="toolbar">
     <div class="container_12">
       <div id="menu" class="grid_12">
         <ul class="sf-menu sf-js-enabled">
           <li>
-            <form action="{% block search_url %}/search{% endblock %}" class="searchform" method="GET" >
-              <input class="searchfield" type="text" value="Поиск..." onfocus="if (this.value == 'Поиск...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Поиск...';}" />
+            <form action="{% block search_url %}{% url search %}{% endblock %}" class="searchform" method="GET" >
+              <input name="query" class="searchfield" type="text" value="Поиск..." onfocus="if (this.value == 'Поиск...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Поиск...';}" />
+              {% block search_fields %}{% endblock %}
             </form>
           </li>
           <li><a href="/">Соревнования</a></li>
-          <li><a href="/places">Трассы</a></li>
-          <li><a href="/sportsmen">Спортсмены</a></li>
+          <li><a href="{% url places %}">Трассы</a></li>
+          <li><a href="{% url persons %}">Спортсмены</a></li>
           <li class="end">
             {% if user.is_authenticated %}
             {% print_user user %}
@@ -49,7 +49,7 @@
         </ul>
       </div>
     </div>
-    </div>
+  </div>
   <div class="container_12">
     <div class="clear"></div>
     <div id="content">

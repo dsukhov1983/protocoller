@@ -146,22 +146,26 @@ def protocol_by_groups(request, comp_id):
                               context_instance=RequestContext(request))
 
 
-
 def get_person_results(person):
-    results = models.Result.objects.select_related().filter(person=person).order_by('-competition__event__date')
+    results = models.Result.objects.select_related().filter(
+        person=person).order_by('-competition__event__date')
 
-    rg = itertools.groupby(results,
-                           lambda r:date2season(r.competition.event.date))
+    rg = itertools.groupby(
+        results, lambda r:date2season(r.competition.event.date))
 
     rg = [(n,list(l)) for n,l in rg]
     return rg
 
-def person_results(request, person_id):
+
+def persons_view(request, year = None, month = None):
+    return render_to_response('persons.html',
+                              context_instance = RequestContext(request))
+
+
+def person_view(request, person_id):
     person = get_object_or_404(models.Person, id = person_id)
-    rg = get_person_results(person)
-    return render_to_response('summary_results.html',
-                              {'res_groups': rg,
-                               'person': person},
+    res_groups = get_person_results(person)
+    return render_to_response('person.html', locals(),
                               context_instance=RequestContext(request))
 
 def places_view(request):
@@ -169,7 +173,7 @@ def places_view(request):
         page = int(request.GET.get('page', '1'))
     except ValueError:
         page = 1
-    paginator = Paginator(models.Place.objects.all(), 20)
+    paginator = Paginator(models.Place.objects.all().order_by('name'), 20)
 
     try:
         places = paginator.page(page)
@@ -249,9 +253,9 @@ def search_persons(query):
     return persons
     
 
-def search(request):
-    q = request.GET.get('query', '')
-    paginator = Paginator(search_persons(q), 15)
+def search_view(request):
+    query = request.GET.get('query', '')
+    paginator = Paginator(search_persons(query), 15)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -263,104 +267,42 @@ def search(request):
     except (EmptyPage, InvalidPage):
         persons = paginator.page(paginator.num_pages)
 
-    return render_to_response('search_result.html',
-                              {'persons': persons,
-                               'query': q,
-                               'sample_search':get_random_search()},
-                              context_instance=RequestContext(request))
 
-
-def compare(request, add=None, delete=None):
-    q = request.GET.get('query', '')
-    paginator = Paginator(search_persons(q), 10)
-
-    try:
-        page = int(request.GET.get('page', '1'))
-    except ValueError:
-        page = 1
-
-
-    try:
-        persons = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        persons = paginator.page(paginator.num_pages)
-
-
-    csid_list = filter(None, request.GET.get('cl', '').split(','))
-    cid_list = []
-
-    for c in csid_list:
-        try:
-            cid_list.append(int(c))
-        except:
-            pass
-                           
+    cid_list = map(int, filter(None, request.GET.get('cl', '').split(',')))
 
     compare_list = list(models.Person.objects.filter(id__in=cid_list))
-
-    try:
-
-        if add:
-            p = get_object_or_404(models.Person,
-                                  id=int(add))
-            compare_list.append(p)
-
-        if delete:
-            p = get_object_or_404(models.Person,
-                                  id=int(delete))
-            compare_list.remove(p)
-    except ValueError,e:
-        ##TODO: log error
-        print e
-
     cl = ','.join([str(c.id) for c in compare_list])
 
     for p in persons.object_list:
         p.is_in_list = p in compare_list
-
-    return render_to_response('compare.html',
-                              {'persons': persons,
-                               'compare': compare_list,
-                               'query': q,
-                               'cl': cl,
-                               'sample_search':get_random_search()},
+    
+    return render_to_response('search_result.html', locals(),
                               context_instance=RequestContext(request))
-    
-
-def do_compare(request):
-    
-    csid_list = filter(None, request.GET.get('cl', '').split(','))
-    cid_list = []
-
-    for c in csid_list:
-        try:
-            cid_list.append(int(c))
-        except:
-            pass
-
-    compare_list = list(models.Person.objects.filter(id__in=cid_list))
 
     
-    results = models.Result.objects.select_related().filter(person__in=compare_list).order_by('-competition__event__date', 'competition')
+def compare_view(request):
+    cid_list = map(int, filter(None, request.GET.get('cl', '').split(',')))
+    persons = list(models.Person.objects.filter(id__in=cid_list))
 
-    rgl = itertools.groupby(results,
-                           lambda r:date2season(r.competition.event.date))
+    results = models.Result.objects.select_related().filter(
+        person__in = persons).order_by('-competition__event__date', 'competition')
 
-    rgl = [[n,list(l)] for n,l in rgl]
+    season_groups = []
+    for season, results in eval_groupby(results, 
+                                        lambda r: date2season(r.competition.event.date)):
+        comp_res_groups = filter(
+            lambda c: len(c[1])>1,
+            eval_groupby(results, lambda x:x.competition))
+        if not comp_res_groups:
+            continue
+        comp_res_groups = [(c, sorted(rl, key=lambda r: r.time)) 
+                           for c, rl in comp_res_groups]
+        season_groups.append(
+            (season,
+             [(comp, results[0].time, results) for comp, results in comp_res_groups]
+             ))
 
-    for rg in rgl:
-        rg[1] =  itertools.groupby(rg[1],
-                                   lambda x:x.competition)
-    
-        rg[1] = filter(lambda c:len(c[1])>1,
-                       [(c,list(l)) for c,l in rg[1]])
-
-    rgl = filter(lambda e:len(e[1])>0,
-                 rgl)
-
-    return render_to_response('compare_results.html',
-                              {'persons': compare_list,
-                               'res_groups': rgl},
+    return render_to_response('compare_results.html', locals(),
                               context_instance=RequestContext(request))
 
 
@@ -723,11 +665,6 @@ def get_reg_info_view(request, event_id):
                  str(info.year), rank_dict[info.rank], info.city, 
                  info.club]))
     return response
-
-
-def sportsmen_view(request, year = None, month = None):
-    return render_to_response('sportsmen.html',
-                              context_instance = RequestContext(request))
 
 
 def main_view(request):

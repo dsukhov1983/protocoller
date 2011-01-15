@@ -10,8 +10,7 @@ urlpatterns = patterns(
     'protocoller.miner.views',    
 
     (r'^$', 'main_view', {}, 'main'),
-    (r'^index.html$', 'main_view'),
-    
+    (r'^index.html/$', 'main_view'),
 
     (r'^events/$', 'events_view', {}, 'events'),
     (r'^events/add/$', 'edit_event_view', {}, 'add_event'),
@@ -24,10 +23,10 @@ urlpatterns = patterns(
      'subscribe_on_event_view', {}, 'event_subscribe'),
     (r'^event/(?P<event_id>\d+)/unsubscribe/(?P<reg_id>\d+)/$', 
      'unsubscribe_from_event_view', {}, 'event_unsubscribe'),
-    (r'^event/(?P<event_id>\d+)/get/reg_info', 'get_reg_info_view', {}, 
+    (r'^event/(?P<event_id>\d+)/get/reg_info/$', 'get_reg_info_view', {}, 
      'download_reg_info'),
-    (r'^events/past', 'past_events_view', {}, 'past_events'),
-    (r'^events/future', 'future_events_view', {}, 'future_events'),
+    (r'^events/past/$', 'past_events_view', {}, 'past_events'),
+    (r'^events/future/$', 'future_events_view', {}, 'future_events'),
     
     (r'^protocols/$', 'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
@@ -39,23 +38,20 @@ urlpatterns = patterns(
     (r'^place/(?P<id>[\w\d\-]+)/$', 'place_view', {}, 'place'),
     (r'^place/(?P<id>[\w\d\-]+)/edit/$', 'edit_place_view', {}, 'edit_place'),
     
-    
-    (r'^sportsmen/$', 'sportsmen_view'),
+    (r'^persons/$', 'persons_view', {}, 'persons'),
+    (r'^person/(?P<person_id>\d+)/$', 'person_view', {}, 'person'),
+
+    (r'^search$', 'search_view', {}, 'search'),
+    (r'^compare$', 'compare_view', {}, 'compare'),
+
     (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
     (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',  'comp_list_view'),
-    (r'^person/(?P<person_id>\d+)/results$', 'person_results',
-     {}, 'person_results'),
-    (r'^search$', 'search'),
-    (r'^compare$', 'compare', {}, 'compare'),
-    (r'^compare/query/add/(?P<add>\d+)$', 'compare', {}, 'compare_add'),
-    (r'^compare/query/del/(?P<delete>\d+)$', 'compare', {}, 'compare_del'),
-    (r'^do_compare$', 'do_compare'),
-    (r'^person_fb/(?P<person>\d+)$', 'feedback_person',
-     {}, 'feedback_person'),
+    
+    (r'^person_fb/(?P<person>\d+)$', 'feedback_person', {}, 'feedback_person'),
     
     (r'^login/$', 'login_view', {}, 'login'),
     (r'^logout/$', 'logout_view', {}, 'logout'),
-    (r'^about$', 'about'),
+    (r'^about/$', 'about'),
         
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:

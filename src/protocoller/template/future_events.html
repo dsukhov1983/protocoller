@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load pytils_dt %}
+{% load pretty_print %}
+{% block title %}Предстоящие соревнования соревнование{% endblock %}
+{% block content %}
+<div class="grid_10">
+  <h1>Предстоящие соревнования</h1>
+  {% for year, comp_groups in events_groups %}
+  {% if year != today.year %}
+  <h1>{{ year }}</h1>
+  {% endif %}
+  {% for date, events in comp_groups %}
+  <div class="event_group">
+    <p class="date">{{ date|ru_strftime:"%d %b %a" }}</p>
+    {% for event in events %}
+    <div class="event">
+      <div class="place">{{ event.place|default:"" }}</div>
+      <h2>
+        <a href="{% url event event.id %}">{{ event.name }}</a>
+      </h2>
+    </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+  {% endfor %}
+  <div class="pagination">
+    {% if events.number == 2 %}
+    <a href="{% url main %}">Предыдущие</a>
+    {% else %}
+    {% if events.has_previous %}
+    <a href="?page={{ events.next_page_number }}&per_page={{ per_page }}">Предыдущие</a>
+    {% endif %}
+    {% endif %}
+    {% if events.has_next %}
+    <a href="?page={{ events.previous_page_number }}&per_page={{ per_page }}">Следующие</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

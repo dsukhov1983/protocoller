@@ -20,16 +20,19 @@
 
 {% block content %}
 {% load markup %}
-
-<div>
-  <div><a href="{% url edit_place place.get_id %}">Изменить</a></div>
-  <p>{{ place.name }}</p>
+<div class="grid_9">
+  <h1>{{ place.name }}</h1>
   <p>{{ place.address }}</p>
+</div>
+<div class="grid_3">
+  <a href="{% url edit_place place.get_id %}">Изменить</a>
+</div>
+<div class="clear"></div>
+<div class="grid_10">
   {% if place.location %}
   <div id="YMapsID" style="width:600px;height:400px"></div>
   {% endif %}
   <div>{{ place.description|markdown }}</div>
-  
 </div>
 
 {% endblock %}

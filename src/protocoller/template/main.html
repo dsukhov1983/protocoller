@@ -1,10 +1,7 @@
 {% extends "base.html" %}
-
 {% load pytils_dt %}
 {% load pretty_print %}
-
 {% block content %}
-
 <div class="grid_6">
   <h1>Прошедшие</h1>
   {% for year, comp_groups in past_groups %}
@@ -13,13 +10,13 @@
   {% endif %}
   {% for date, events in comp_groups %}
   <div class="event_group">
-    <p class="date">{{ date|ru_strftime:"%d %b %a" }}</p>
+    <div class="date">{{ date|ru_strftime:"%d %b %a" }}</div>
     {% for event in events %}
     <div class="event">
       <div class="place">{{ event.place|default:"" }}</div>
-      <h2>
+      <div>
         <a href="{% url event event.id %}">{{ event.name }}</a>
-      </h2>
+      </div>
     </div>
     {% endfor %}
   </div>
@@ -31,7 +28,6 @@
     {% endif %}
   </div>
 </div>
-
 <div class="grid_6">
   <h1>Предстоящие</h1><a href="{% url add_event %}">Создать соревнование</a>
   {% for year, comp_groups in coming_groups %}
@@ -40,13 +36,13 @@
   {% endif %}
   {% for date, events in comp_groups %}
   <div class="event_group">
-    <p class="date">{{ date|ru_strftime:"%d %b  %a" }}</p>
+    <div class="date">{{ date|ru_strftime:"%d %b  %a" }}</div>
     {% for event in events %}
     <div class="event">
       <div class="place">{{ event.place|default:"" }}</div>
-      <h2>
+      <div>
         <a href="{% url event event.id %}">{{ event.name }}</a>
-      </h2>
+      </div>
     </div>
     {% endfor %}
   </div>
@@ -58,6 +54,4 @@
     {% endif %}
   </div>
 </div>
-
-
 {% endblock %}
