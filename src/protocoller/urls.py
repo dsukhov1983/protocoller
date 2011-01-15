@@ -26,6 +26,8 @@ urlpatterns = patterns(
      'unsubscribe_from_event_view', {}, 'event_unsubscribe'),
     (r'^event/(?P<event_id>\d+)/get/reg_info', 'get_reg_info_view', {}, 
      'download_reg_info'),
+    (r'^events/past', 'past_events_view', {}, 'past_events'),
+    (r'^events/future', 'future_events_view', {}, 'future_events'),
     
     (r'^protocols/$', 'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),

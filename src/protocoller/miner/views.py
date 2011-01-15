@@ -166,12 +166,11 @@ def person_results(request, person_id):
 
 def places_view(request):
     try:
-        page = int(request.GET.get('page', [1])[0])
+        page = int(request.GET.get('page', '1'))
     except ValueError:
         page = 1
     paginator = Paginator(models.Place.objects.all(), 20)
 
-    # If page request (9999) is out of range, deliver last page of results.
     try:
         places = paginator.page(page)
     except (EmptyPage, InvalidPage):
@@ -511,6 +510,57 @@ def events_view(request, year = None, month = None):
                               dict(events = events),
                               context_instance = RequestContext(request))
 
+def past_events_view(request):
+    try:
+        page = int(request.GET.get('page', '1'))
+        per_page = int(request.GET.get('per_page', '10'))
+    except ValueError:
+        page, per_page = 1, 10
+    print request.GET, page, per_page
+    today = datetime.date.today()
+    objects = models.SportEvent.objects.filter(
+        Q(date__lt = today, end_date = None)|
+        Q(end_date__lt = today)).order_by('-date')
+    paginator = Paginator(objects, per_page)
+    try:
+        events = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        events = paginator.page(paginator.num_pages)
+
+    events_groups = [(year, eval_groupby(comps, lambda o:o.date))
+                     for year, comps in eval_groupby(events.object_list, 
+                                                     lambda o: o.date.year)]    
+    
+    return render_to_response('past_events.html', 
+                              locals(),
+                              context_instance = RequestContext(request))
+
+
+
+
+def future_events_view(request):
+    try:
+        page = int(request.GET.get('page', '1'))
+        per_page = int(request.GET.get('per_page', '10'))
+    except ValueError:
+        page, per_page = 1, 10
+    today = datetime.date.today()
+    objects = models.SportEvent.objects.filter(
+        Q(date__gte = today, end_date = None)|
+        Q(end_date__gte = today)).order_by('date')
+    paginator = Paginator(objects, per_page)
+    try:
+        events = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        events = paginator.page(paginator.num_pages)
+    events_groups = [(year, eval_groupby(comps, lambda o:o.date))
+                     for year, comps in eval_groupby(events.object_list, 
+                                                     lambda o: o.date.year)]    
+    return render_to_response('future_events.html', 
+                              locals(),
+                              context_instance = RequestContext(request))
+
+
 
 class SportEventForm(forms.ModelForm):
     date = forms.DateField(
@@ -694,7 +744,6 @@ def main_view(request):
     coming_page, past_page = \
         [Paginator(l, per_page).page(1) for l in (coming_events, past_events)]
 
-    print 
     coming_groups = [(year, eval_groupby(comps, lambda o:o.date))
                      for year, comps in eval_groupby(coming_page.object_list, 
                                                      lambda o: o.date.year)]
