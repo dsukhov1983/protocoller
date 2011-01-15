@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import os
 import datetime
+from pytils import translit
 from django.db import models
 from django.contrib.auth.models import User
 from markitup.fields import MarkupField
@@ -52,6 +54,16 @@ class SportEvent(models.Model):
         (STATE_HIDDEN, u'скрыт'),
         )
 
+
+    def eval_upload_to(instance, filename):
+        ext = ''
+        n = filename.rfind('.')
+        if n:
+            ext = filename[n:]
+        dt = instance.date
+        return os.path.join('upload/protocols/%s/%s' % (dt.year, dt.month),
+                            translit.slugify(instance.name) + ext)
+
     place = models.ForeignKey(Place, null=True, verbose_name = 'Место проведения')
     name = models.CharField('Название', max_length=250)
     date = models.DateField('Дата', db_index=True)
@@ -63,6 +75,7 @@ class SportEvent(models.Model):
                                       editable = False)
     created_by = models.ForeignKey(User, null = True, editable = False)
     registration_open = models.BooleanField('Регистрация открыта', default = False)
+    protocol_file = models.FileField('Протокол', upload_to = 'upload/protocols/%m_%y')
 
     def __unicode__(self):
         return "%s %s"%(self.name, self.date.year)
