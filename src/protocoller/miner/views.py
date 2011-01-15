@@ -209,6 +209,13 @@ class PlaceForm(forms.ModelForm):
 
 @login_required
 def edit_place_view(request, id = None):
+    def set_slug(place, slug):
+        if models.Place.objects.filter(slug = slug).count():
+            set_slug(place, slug + "#")
+        else:
+            place.slug = slug
+            
+
     new_object = False
     if id:
         place = get_place_or_404(id)
@@ -220,7 +227,8 @@ def edit_place_view(request, id = None):
         form = PlaceForm(request.POST, instance = place) 
         if form.is_valid(): 
             place = form.save(commit = False)
-            place.slug = translit.slugify(place.name)
+            set_slug(place, translit.slugify(place.name))
+            
             if new_object:                
                 place.created_by = request.user
             place.save()
