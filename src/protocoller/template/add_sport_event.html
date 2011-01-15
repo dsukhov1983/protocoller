@@ -20,9 +20,9 @@
   </script>
 
   {% if event.id %}
-  <form action="{% url edit_event event.id %}" method="POST" class="form">
+  <form enctype="multipart/form-data" action="{% url edit_event event.id %}" method="POST" class="form">
   {% else %}
-  <form action="{% url add_event %}" method="POST" class="form">
+  <form enctype="multipart/form-data" action="{% url add_event %}" method="POST" class="form">
       {% endif %}
       {% csrf_token %}
       {{ form.media }}

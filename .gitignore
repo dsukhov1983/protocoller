@@ -11,4 +11,4 @@ src/*.egg-info
 src/.ropeproject
 src/protocoller/db/
 *~
-
+src/protocoller/media/upload/*

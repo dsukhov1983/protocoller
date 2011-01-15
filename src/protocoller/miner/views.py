@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
 import itertools
-import operator
 import random
 import datetime
 import csv
@@ -15,7 +14,7 @@ from django.template import RequestContext
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.forms.models import modelformset_factory, inlineformset_factory
+from django.forms.models import inlineformset_factory
 from django.http import HttpResponse
 from markitup.widgets import MarkItUpWidget
 from protocoller.miner import models
@@ -209,13 +208,6 @@ class PlaceForm(forms.ModelForm):
 
 @login_required
 def edit_place_view(request, id = None):
-    def set_slug(place, slug):
-        if models.Place.objects.filter(slug = slug).count():
-            set_slug(place, slug + "#")
-        else:
-            place.slug = slug
-            
-
     new_object = False
     if id:
         place = get_place_or_404(id)
@@ -226,12 +218,10 @@ def edit_place_view(request, id = None):
     if request.method == 'POST':
         form = PlaceForm(request.POST, instance = place) 
         if form.is_valid(): 
-            place = form.save(commit = False)
-            set_slug(place, translit.slugify(place.name))
-            
+            place = form.save()
             if new_object:                
                 place.created_by = request.user
-            place.save()
+                place.save()
             
             return redirect(place)
     else:
@@ -528,7 +518,7 @@ class SportEventForm(forms.ModelForm):
     class Meta:
         model = models.SportEvent
         fields = ('place', 'date', 'name', 'registration_open',
-                  'description')
+                  'description', 'protocol_file')
         widgets = dict(
             description = MarkItUpWidget(),
             )
@@ -568,7 +558,7 @@ def edit_event_view(request, event_id = None):
         can_delete = True, extra = 1)
 
     if request.method == 'POST': 
-        form = SportEventForm(request.POST, instance = event) 
+        form = SportEventForm(request.POST, request.FILES, instance = event) 
         comp_formset = CompFormset(request.POST, request.FILES,
             instance = event)
         if form.is_valid() and comp_formset.is_valid():

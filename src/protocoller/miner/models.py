@@ -5,6 +5,7 @@ from pytils import translit
 from django.db import models
 from django.contrib.auth.models import User
 from markitup.fields import MarkupField
+from itertools import count
 
 (MALE, FEMALE, UNKNOWN) = range(3)
 SEX_TYPES = (
@@ -44,6 +45,24 @@ class Place(models.Model):
     def get_absolute_url(self):
         return "/place/%s" % (self.slug or self.id)
 
+    def save(self, *args, **kwargs):
+        def is_slug_exists(slug, place_id):
+            return Place.objects.filter(slug = slug).exclude(
+                id = place_id).count()
+
+        def set_slug(place, slug):
+            if is_slug_exists(slug, place.id):
+                for i in count(1):
+                    tslug = '%s-%s' % (slug, i)
+                    if not is_slug_exists(tslug, place.id):
+                        place.slug = tslug
+                        return
+            else:
+                place.slug = slug  
+
+        set_slug(self, translit.slugify(self.name))
+        super(Place, self).save(*args, **kwargs)
+
 
 class SportEvent(models.Model):
 
@@ -75,13 +94,22 @@ class SportEvent(models.Model):
                                       editable = False)
     created_by = models.ForeignKey(User, null = True, editable = False)
     registration_open = models.BooleanField('Регистрация открыта', default = False)
-    protocol_file = models.FileField('Протокол', upload_to = 'upload/protocols/%m_%y')
+    protocol_file = models.FileField('Протокол', upload_to = eval_upload_to,
+                                     null = True, blank = True)
 
     def __unicode__(self):
         return "%s %s"%(self.name, self.date.year)
 
     def get_absolute_url(self):
         return "/event/%s" % self.id
+
+    def save(self, *args, **kwargs):
+        try:
+            this = SportEvent.objects.get(id = self.id)
+            if this.protocol_file != self.protocol_file:
+                this.protocol_file.delete(save = False)
+        except: pass
+        super(SportEvent, self).save(*args, **kwargs)
 
 
 class Competition(models.Model):

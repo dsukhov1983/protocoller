@@ -42,7 +42,11 @@
   {% endif %}
 </div>
 <div class="clear"></div>
-<div class="grid_9">{{ event.description|default:""|markdown }}</div>
+<div class="grid_9">
+  {% if event.protocol_file %}
+  <a href="{{ event.protocol_file.url }}">Скачать протокол</a>
+  {% endif %}
+  {{ event.description|default:""|markdown }}</div>
 <div>{{ event.standing|markdown}}
 
 {% endblock %}
