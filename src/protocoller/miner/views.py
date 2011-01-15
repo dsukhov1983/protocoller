@@ -157,7 +157,18 @@ def get_person_results(person):
 
 
 def persons_view(request, year = None, month = None):
-    return render_to_response('persons.html',
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    paginator = Paginator(models.Person.objects.all().order_by(
+            'surname', 'name', 'year'), 40)
+    try:
+        persons = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        persons = paginator.page(paginator.num_pages)
+
+    return render_to_response('persons.html', locals(),
                               context_instance = RequestContext(request))
 
 
@@ -179,8 +190,7 @@ def places_view(request):
     except (EmptyPage, InvalidPage):
         places = paginator.page(paginator.num_pages)
 
-    return render_to_response('places.html', 
-                              dict(places = places),
+    return render_to_response('places.html', locals(),
                               context_instance = RequestContext(request))
 
 

@@ -66,7 +66,7 @@
       {% endif %}
         <td>{% print_pos r %}</td>
         <td>{{ r.number|default:"" }}</td>
-        <td><a class="person" href="{% url person_results r.person.id %}">{{ r.person.full_name }}</a></td>
+        <td><a class="person" href="{% url person r.person.id %}">{{ r.person.full_name }}</a></td>
         <td>{{ r.person.get_rank_display }}</td>
         <td>{{ r.person.year }}</td>
         <td>{{ r.person.city|default:"" }}</td>
@@ -76,7 +76,6 @@
       </tr>
       {% endfor %}
     </tbody>
-    
   </table>
 </div>
 {% endblock %}

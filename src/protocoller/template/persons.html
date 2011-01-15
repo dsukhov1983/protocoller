@@ -1,6 +1,52 @@
 {% extends "base.html" %}
 {% load i18n %}
-
 {% block content %}
-
+<div class="grid_12">
+  <h1>Спортсмены</h1>
+  <table class="protocol">
+    <thead>
+      <tr>
+        <th>Фамилия Имя</th>
+        <th>
+          <span class="widener">
+            <span class="full">Звание</span>
+            <span class="short">Зв.</span>
+          </span>
+        </th>
+        <th>
+          <span class="widener">
+            <span class="full">Год</span>
+            <span class="short">Г.р.</span>
+          </span>
+        </th>
+        <th>Город</th>
+        <th>Клуб</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for person in persons.object_list %}
+      <tr>
+        <td><a class="person" href="{% url person person.id %}">{{ person.full_name }}</a></td>
+        <td>{{ person.get_rank_display }}</td>
+        <td>{{ person.year }}</td>
+        <td>{{ person.city|default:"" }}</td>
+        <td>{{ person.club|default:"" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pagination">
+    <span class="step-links">
+      {% if persons.has_previous %}
+      <a href="?page={{ persons.previous_page_number }}">Предыдущая</a>
+      {% endif %}
+      <span class="current">
+        Страница {{ persons.number }} из {{ persons.paginator.num_pages }}.
+      </span>
+      {% if persons.has_next %}
+      <a href="?page={{ persons.next_page_number }}">Следующая</a>
+      {% endif %}
+    </span>
+  </div>
+</div>
 {% endblock %}
