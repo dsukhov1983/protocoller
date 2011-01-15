@@ -281,6 +281,13 @@ def search_view(request):
 
     
 def compare_view(request):
+    def cmp_res(r1, r2):
+        if r1.time and r2.time:
+            return r1.time > r2.time
+        if r1.pos > 0 or r2.pos > 0:
+            return r1.pos < r2.pos
+        return r1.pos_in_grp < r2.pos_in_grp
+    
     cid_list = map(int, filter(None, request.GET.get('cl', '').split(',')))
     persons = list(models.Person.objects.filter(id__in=cid_list))
 
@@ -295,7 +302,7 @@ def compare_view(request):
             eval_groupby(results, lambda x:x.competition))
         if not comp_res_groups:
             continue
-        comp_res_groups = [(c, sorted(rl, key=lambda r: r.time)) 
+        comp_res_groups = [(c, sorted(rl, cmp_res)) 
                            for c, rl in comp_res_groups]
         season_groups.append(
             (season,
