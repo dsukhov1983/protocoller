@@ -13,6 +13,9 @@
 <div class="grid_8">
   <h1>{{ event.name }}</h1>
 </div>
+<div class="grid_2">
+  <a href="{% url edit_event event.id %}">Изменить</a>
+</div>
 <div class="clear"></div>
 <div class="grid_8">
   {% for comp in event.competitions.all %}
