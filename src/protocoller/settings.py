@@ -91,6 +91,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.comments',
     'django_evolution',
     'protocoller.miner',
     'django.contrib.admin',

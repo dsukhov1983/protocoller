@@ -111,22 +111,22 @@ def print_user(user):
 
     if is_openid_user(user):
         return """
-<div class="profile">
 <span class="profile-image">
 <img src="%(media_url)simg/fi/%(icon_path)s" />
 </span>
 <span class="profile-name"> %(username)s </span>
-</div>
 """ % dict(media_url = settings.MEDIA_URL,
            icon_path = get_user_icon(user),
            username = user.openid_profiles.all()[0].nickname)
     else:
         return """
-<div class="profile">
 <span class="profile-name"> %(username)s </span>
-</div>
 """ % dict(username = user.username)
 
+@register.simple_tag
+def print_fio(user):
+    """Печатает имя и фамилию пользователя"""
+    return '.'.join(filter(None, [user.first_name, user.last_name]))
    
 
 @register.simple_tag

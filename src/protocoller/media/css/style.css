@@ -429,3 +429,30 @@ ul.plain_list {
     display:inline;
     text-decoration:none;
 }
+
+#add_comment #id_comment{
+    width: 100%;
+}
+
+.buttons{
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.userName{
+    color: #234B7B;
+}
+
+.commentDate{
+    color:#666666;
+}
+
+ol.commentsList{
+    list-style:none outside none;
+    padding-left: 0;
+}
+
+li.comment{
+    margin-bottom:1em;
+    margin-top:1em;
+}

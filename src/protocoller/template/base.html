@@ -38,7 +38,9 @@
           <li><a href="{% url persons %}">Спортсмены</a></li>
           <li class="end">
             {% if user.is_authenticated %}
+            <div class="profile">
             {% print_user user %}
+            </div>
             <ul>
               <li><a href="{% url logout %}">Выйти</a></li>
             </ul>

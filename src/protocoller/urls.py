@@ -71,9 +71,8 @@ urlpatterns += patterns(
     (r'^accounts/openid/signout/$', 'openid_consumer.views.signout', {},
      'socialauth_openid_sognout'),
     (r'^accounts/', include('registration.urls')),
-    
-    #markitup
-    url(r'^markitup/', include('markitup.urls'))
+    url(r'^markitup/', include('markitup.urls')), #markitup
+    (r'^comments/', include('django.contrib.comments.urls')), #comments
     )
 
 

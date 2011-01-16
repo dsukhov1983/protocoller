@@ -51,5 +51,44 @@
   {% endif %}
   {{ event.description|default:""|markdown }}</div>
 <div>{{ event.standing|markdown}}
+<div class="clear"></div>
+<div class="grid_8">
+  {% load comments %}
+  {% get_comment_count for event as comment_count %}
+  {% if comment_count > 0 %}
+  <h2 class="commentsHeader">Комментарии: {{ comment_count }}</h2>
+  {% get_comment_list for event as comment_list %}
+  <ol class="commentsList">
+  {% for comment in comment_list %}
+  <li class="comment">
+    <div class="meta">
+      <div class="userName">{% print_fio comment.user %}{% print_user comment.user %}</div>
+      <div class="commentDate">{{ comment.submit_date|distance_of_time }}</div>
+    </div>
+    <div class="usertext">{{ comment.comment }}</div>
+  </li>
+  {% endfor %}
+  </ol>
+  {% endif %}
+  {% get_comment_form for event as comment_form %}
+  <div id="add_comment">
+    {% if user.is_authenticated %}
+    <h2>Добавить комментарий</h2>
+    <form action="{% comment_form_target %}" method="post">
+      {% csrf_token %}
+      {{ comment_form.content_type }}
+      {{ comment_form.object_pk }}
+      {{ comment_form.timestamp }}
+      {{ comment_form.security_hash }}
+      {{ comment_form.comment }}
+      <div class="buttons">
+           <input type="submit" value="Отправить" />
+      </div>
+    </form>
+    {% else %}
+    <p>Чтобы добавить комментарий Вам нужно <a href="{%url login %}">Войти</a>.</p>
+    {% endif %}
+  </div>
+</div>
 
 {% endblock %}
