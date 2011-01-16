@@ -9,13 +9,13 @@
   <h3><a href="{% url place event.place.slug %}">{{ event.place }}</a></h3>
 </div>
 <div class="grid_8">
-  <h1>{{ event.name }}</h1>
+  <h1><a href="{% url event event.id %}">{{ event.name }}</a></h1>
   <h2>Предварительная регистрация</h2>
 </div>
 <div class="clear"></div>
 
-{% if user.is_authenticated %}
 <div class="grid_8 form">
+  {% if user.is_authenticated %}
   <form action="{% url event_registration event.id %}" method="POST">
     {% csrf_token %}
     {% load uni_form_tags %}
@@ -24,12 +24,15 @@
       <input type="submit" value="Добавить" />
     </div>
   </form>
+  {% else %}
+  <p>Для того, чтобы добавить данные для регистрации Вам необходимо <a href="{%url login %}">Войти</a>.</p>
+  {% endif %}
 </div>
 <div class="grid_4">
 <a href="{% url download_reg_info event_id %}">Скачать список</a>
 </div>
 <div class="clear"></div>
-{% endif %}
+
 <div class="grid_10">
   {% if avail_regs %}
   <h2>Предыдущие регистрации</h2>
