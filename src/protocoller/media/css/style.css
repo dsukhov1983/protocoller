@@ -245,6 +245,8 @@ ul.sf-menu li li li.sfHover ul {
 .comp{
     background-color: #FFEFC6;
     padding: 3px;
+    margin-top: 0.5em;
+    margin-bottom: 1em;
 }
 
 
@@ -430,6 +432,10 @@ ul.plain_list {
     text-decoration:none;
 }
 
+#add_comment{
+    margin-top: 1em;
+}
+
 #add_comment #id_comment{
     width: 100%;
 }
@@ -456,3 +462,4 @@ li.comment{
     margin-bottom:1em;
     margin-top:1em;
 }
+

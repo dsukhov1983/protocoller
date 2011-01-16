@@ -524,6 +524,8 @@ class SportEventForm(forms.ModelForm):
         label = 'Дата',
         input_formats = ('%d.%m.%Y',),
         widget = forms.DateInput(format = '%d.%m.%Y'))
+    place = forms.ModelChoiceField(queryset = models.Place.objects.all(
+            ).order_by('name'))
 
     class Meta:
         model = models.SportEvent

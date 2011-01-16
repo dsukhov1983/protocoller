@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-import os
 import sys
 import datetime
-import logging
 import itertools
 import csv
-from lxml import html
 
-from functools import partial
+from lxml import html
 
 from protocoller.miner import models
 from protocoller.miner import search_tree
+from protocoller.miner.html_parser import ST
 
 
 comparer = search_tree.SmartComparer()
@@ -20,130 +18,6 @@ RESULT_VARIANTS = (
     (models.DNF, [u'dnf', u'сош', u'не фин']),
     (models.DQF, [u'dqf', u'диск', u'рез. аннул.', u'снят'])
     )
-
-
-# A simple HTML table parser. It turns tables (including nested tables) into arrays
-# Nigel Sim <nigel.sim@gmail.com>
-# http://simbot.wordpress.com
-from HTMLParser import HTMLParser
-import re, string, os
-from string import lower
-
-class Table(list):
-    pass
-	
-class Row(list):
-    pass
-
-class Cell(object):
-    def __init__(self):
-        self.data = None
-        return
-    def append(self,item):
-        if self.data != None:
-	    print "Overwriting %s"%self.data
-        self.data = item
-
-# Get the item on the top of a stack
-def top(x):
-    return x[len(x)-1]
-
-class TableParser(HTMLParser):
-    def __init__(self, parser=None):
-        """
-	The parser is a method which will be passed the doc at the end
-	of the parsing. Useful if TableParser is within an inner loop and
-	you want to automatically process the document. If it is omitted then
-	it will do nothing
-	"""
-        self._tag = None
-	self._buf = None
-	self._attrs = None
-	self.doc = None # Where the document will be stored
-	self._stack = None
-	self._parser = parser
-	self.reset()
-        return
-
-    def reset(self):
-        HTMLParser.reset(self)
-	self.doc = []
-	self._stack = [self.doc]
-	self._buf = ''
-
-    def close(self):
-        HTMLParser.close(self)
-	if self._parser != None:
-	    self._parser(self.doc)
-
-    def handle_starttag(self, tag, attrs):
-        self._tag = tag
-	self._attrs = attrs
-	if lower(tag) == 'table':
-	    self._buf = ''
-            self._stack.append(Table())
-	elif lower(tag) == 'tr':
-	    self._buf = ''
-            self._stack.append(Row())
-	elif lower(tag) == 'td':
-	    self._buf = ''
-            self._stack.append(Cell())
-	
-        #print "Encountered the beginning of a %s tag" % tag
-
-    def handle_endtag(self, tag):
-	if lower(tag) == 'table':
-	    t = None
-	    while not isinstance(t, Table):
-                t = self._stack.pop()
-	    r = top(self._stack)
-            r.append(t)
-
-	elif lower(tag) == 'tr':
-	    t = None
-	    while not isinstance(t, Row):
-                t = self._stack.pop()
-	    r = top(self._stack)
-            r.append(t)
-
-	elif lower(tag) == 'td':
-	    c = None
-	    while not isinstance(c, Cell):
-                c = self._stack.pop()
-	    t = top(self._stack)
-	    if isinstance(t, Row):
-	        # We can not currently have text and other table elements in the same cell. 
-		# Table elements get precedence
-	        if c.data == None:
-                    t.append(self._buf)
-		else:
-		    t.append(c.data)
-	    else:
-	        print "Cell not in a row, rather in a %s"%t
-        self._tag = None
-        #print "Encountered the end of a %s tag" % tag
-
-    def handle_data(self, data):
-        self._buf += data
-
-
-class ST:
-
-    def __init__(self, func, name):
-        """
-        @param func:str-> atr value
-        @param name attr name
-        """
-        self.func = func
-        self.name = name
-
-    def __call__(self, obj, val):
-        try:
-            setattr(obj, self.name, self.func(val))
-        except Exception, e:
-            print "Error till parsing field %s for obj %r: %s" %(
-                self.name, obj, e)
-            
         
 
 def format_name(val):
@@ -157,7 +31,6 @@ def name_surname(obj, val, delimiter=' '):
 
 def sex_parse(obj, val):
     val = val.strip().lower()
-
     if val in ('ж', 'жен'):
         obj.sex = models.FEMALE
     elif val in ('м', 'муж'):
@@ -167,33 +40,30 @@ def sex_parse(obj, val):
 
 
 def int_parse(val):
-    if val:
+    try:
         return int(val)
-    else:
+    except:
         return 0
+
 
 def str_parse(val):
     return unicode(val).strip().capitalize()
 
 
-
 def result_parse(val):
     val = val.strip().lower()
-    
     for (code, nl) in RESULT_VARIANTS:
         for n in nl:
             if val.find(n) == 0:
                 return code
-
     try:
         return int(val)
-    except Exception, e:
+    except:
         return 0
 
 
 def time_parse(obj, val):
     val = val.strip().lower()
-
     rp = result_parse(val)
     if rp:
         obj.pos = rp
@@ -208,42 +78,34 @@ def time_parse(obj, val):
             d = datetime.datetime.strptime(val, fmt)
             obj.time = datetime.time(d.hour, d.minute, d.second)
             return
-        except Exception, e:
+        except:
             pass
 
     print "Failed to parse date %s"%val
     obj.time = datetime.time()
 
 
-
-
 def rank_parse(val):
     val = val.strip().lower()
-
     for t, v in models.RANK_TYPES:
         if val == v:
             return t
     return models.NR
 
-def parser_func(rec, func_map, defaults={}):
-    """parses plain record by giving description"""
-    
-    res = models.RawResult()
 
-    for id, tp in func_map.items():        
-        _parse_map[tp](res, rec[id])
+def parse_list(rlist, fields, defaults = {}):
+    def raw2Result(rec, fields, defaults = {}):
+        res = models.RawResult()
+        for field, val in zip(fields, rec):
+            _parse_map[field](res, val)
+        for name, value in defaults.items():
+            setattr(res, name, value)    
+        return res
 
-    for name, value in defaults.items():
-        setattr(res, name, value)    
-
-    return res
-
-def parse_list(rlist, func_map, defaults={}):
-
-    return [parser_func(r, func_map, defaults) for r in rlist]
+    return [raw2Result(r, fields, defaults) for r in rlist]
 
 (POS, NUM, GROUP, POS_IN_GROUP, NAME, SURNAME, NAME_SURNAME,
- YEAR, SEX, RANK, CLUB, CITY, TIME, QUALIF_RANK) = range(14)
+ YEAR, SEX, RANK, CLUB, CITY, TIME, QUALIF_RANK, IGNORE) = range(15)
 
 _parse_map = {
     POS: ST(result_parse, 'pos'),
@@ -259,35 +121,21 @@ _parse_map = {
     QUALIF_RANK: ST(rank_parse, 'qualif_rank'),
     CLUB: ST(str_parse, 'club'),
     CITY: ST(str_parse, 'city'),
-    TIME: time_parse}
+    TIME: time_parse,
+    IGNORE: lambda obj, val: None}
     
-
-func_map = { 0: POS,
-             1: NUM,
-             3: NAME_SURNAME,
-             4: YEAR,
-             5: RANK,
-             6: CITY,
-             7: CLUB,
-             8: TIME,
-             11: QUALIF_RANK}
-
-
 equivalence_sets = (u'ао', u'её', u'оё', u'зс', u'гк', u'бп', u'ий', u'бп',
                     u'щш')
 
 _equiv_map = {}
-
 for s in equivalence_sets:
     for c in s:
-        _equiv_map[c] = _equiv_map.get(c,[]) + list(s)
+        _equiv_map[c] = _equiv_map.get(c, []) + list(s)
 
 def fuzy_equal(a, b):
-
     if a == b or \
        b in _equiv_map.get(a, []):
         return True
-
     return False
 
 def levenshtein(a,b):
@@ -312,69 +160,50 @@ def levenshtein(a,b):
     return current[n]
 
 
-
-
 def combinations(iter1, iter2):
-
     iter2 = tuple(iter2)
-
     for i in iter1:
         for j in iter2:
             yield (i,j)
 
+
 def measure(a, b):
     res = 0
     res += 2*levenshtein(a.surname, b.surname)
-    
-    
     res += levenshtein(a.name or "", b.name or "")
-
     if a.year and b.year:
         res += levenshtein(str(a.year), str(b.year))
      
-    # alist = filter(None, [a.city, a.club])
-#     blist = filter(None, [b.city, b.club])
-
-#     if alist and blist:
-#         res += min([levenshtein(x,y) for x,y in combinations(alist, blist)])
-
     return res
 
     
-THRESHOLD = 4 #recognize threshold
-
-
+THRESHOLD = 4 #порог для поиска похожих Person
 all_persons = list(models.Person.objects.all())
 
-def find_best_result(comp_id):
+def find_best_result(comp):
     try:
-        comp = models.Competition.objects.get(id=comp_id)
-        br = models.Result.objects.get(competition=comp, pos=1)
+        br = models.Result.objects.get(competition = comp, pos = 1)
         comp.best_result = br.time
         print br.time
         comp.save()
         return
     except Exception,e:
-        print "failed to find best result for %s: %s"%(comp_id,e)
-
+        print "failed to find best result: %s" % e
     try:
-        comp = models.Competition.objects.get(id=comp_id)
-        br = models.Result.objects.filter(competition=comp).exclude(pos__lt=0).exclude(pos_in_grp__lt=0).order_by('time')[0]
+        br = models.Result.objects.filter(competition = comp).exclude(
+            pos__lt = 0).exclude(pos_in_grp__lt = 0).order_by('time')[0]
         comp.best_result = br.time
         print br.time
         comp.save()
         return
-    except Exception,e:
-        print "failed to find best result for %s: %s"%(comp_id,e)
-        
+    except Exception, e:
+        print "failed to find best result: %s" % e
         
 
 def reload_persons():
     global all_persons
     all_persons = list(models.Person.objects.all())
     print "loaded %s persons" % len(all_persons)
-
-
 
 
 def new_person_from_rec(result, rec):
@@ -391,13 +220,12 @@ def new_person_from_rec(result, rec):
     result.person = prs
     result.save()
     all_persons.append(prs)
-    print "+"
+    print "+",
     sys.stdout.flush() 
 
 
 def analyse_result(rec):
     print "processing %r" % rec
-    
     result = models.Result(number = rec.number,
                            pos = rec.pos,
                            group = rec.group,
@@ -420,34 +248,27 @@ def analyse_result(rec):
             result.save()
             return None
             
-
     global all_persons
-    
     srl = sorted(filter(lambda v: v[1]<= THRESHOLD,
                         [(r, measure(rec, r)) for r in all_persons]),
                  lambda a,b: cmp(a[1], b[1]))
-
     if srl:
         return (result, rec, srl)
-        
     new_person_from_rec(result, rec)
     return None
 
 
 def resolve(result, rec, srl):
-        
-    print "_______________________"
+    print "*" * 80
     print "r = %r" % rec
 
     for pos, (person, measure) in enumerate(srl):
         print "[%s] %r ~ %s" % (pos, person, measure)
 
-
     choice = None
     while True:
         try:
             choice = input("choose person ('n' for new): ")
-
             if choice == 'n':
                 new_person_from_rec(result, rec)
                 return
@@ -464,63 +285,44 @@ def resolve(result, rec, srl):
     
 
 def process_rlist(rlist):
-
     for r in rlist:
         r.save()
     
     for r in filter(None, map(analyse_result, rlist)):
         resolve(*r)        
 
-
     
 def process_rlist_new(rlist):
     for r in rlist:
         r.save()
-
     comparer.process_rlist(rlist)
 
 
 def parse_bitza_format(raw):
-    """
-    @param raw: BeautifulSoup match object
-    """
-
+    """ @param raw: BeautifulSoup match object"""
     col = raw.findAll('td')
-
     pos = col[0].string
     num = col[1].string
-
     sname = col[2].contents[0]
     name = col[2].contents[2]
-
     year = col[3].string
-
     city = col[4].contents[0]
-
     club = col[5].string
-
     time = col[9].string
-
     return (pos, num, sname, name, year, city, club, time)
     
-
-
     
 def link_results():
-
     rl = models.Result.objects.filter(raw_result=None)
-
     for r in rl:
         try:
-            rr = models.RawResult.objects.filter(competition = r.competition,
-                                               number = r.number)[0]
+            rr = models.RawResult.objects.get(
+                competition = r.competition, number = r.number)
             r.raw_result = rr
             r.save()
         except Exception,e:
-            print "Could't find %s, %r, %s: %s"%(r.competition.id,
-                                                 r.person,
-                                                 r.number,
-                                                 e)
+            print "Could't find %s, %r, %s: %s" % (
+                r.competition.id, r.person, r.number, e)
         
     
 def recalculate_pos_in_grp(c_id):
@@ -544,7 +346,6 @@ def recalculate_pos_in_grp(c_id):
 def validate_person_fields(person):
     """compares persons fields with data in raw_result
     """
-
     def validate_attr_data(attr, person, results):
         pval = getattr(person, attr)
         results = filter(lambda r:r.raw_result is not None,
@@ -573,7 +374,6 @@ def validate_person_fields(person):
                         break
                 except Exception, e:
                     print "Failed: %s"%e                
-                         
 
     results = models.Result.objects.filter(person=person)
     if results.count() < 4:
@@ -585,14 +385,12 @@ def validate_person_fields(person):
 
 def guess_competition_rating(comp):
     """finds out the competition rating"""
-
-    res_abs = models.Result.objects.filter(pos__gt=0, competition=comp).count()
-
-    res_groups = models.Result.objects.filter(pos_in_grp__gt=0, competition=comp).count()
-
-  
+    res_abs = models.Result.objects.filter(
+        pos__gt = 0, competition = comp).count()
+    res_groups = models.Result.objects.filter(
+        pos_in_grp__gt = 0, competition = comp).count()
     if not res_abs and not res_groups:
-        print "%s: unknown rating"%comp
+        print "%s: unknown rating" % comp
         return
     elif res_abs and res_groups:
         comp.rating = models.BOTH_RATING
@@ -600,37 +398,30 @@ def guess_competition_rating(comp):
         comp.rating = models.ABS_RATING
     else:
         comp.rating = models.GROUP_RATING
-
     comp.save()
 
 
 def post_process_comp(comp):
     guess_competition_rating(comp)
-    find_best_result(comp.id)
-
+    find_best_result(comp)
+    comp.processed = True
+    comp.save()
 
 
 def find_person_by_surname(surname):
-
     global all_persons
-
     srl = sorted(filter(lambda v: v[1]<= 2,
-                     [(r, levenshtein(r.surname, surname))
-                      for r in all_persons]),
+                        [(r, levenshtein(r.surname, surname))
+                         for r in all_persons]),
                  lambda a,b: cmp(a[1], b[1]))
-
     return srl
-
-
 
 
 def process_me_page(url, **defaults):
     """parse maraphon-electro protocol page
     @param url: protocol page
     """
-
-
-    field_map = {u'Место': defaults.has_key('group') and POS_IN_GRP or POS,
+    field_map = {u'Место': POS_IN_GROUP if defaults.has_key('group') else POS,
                  u'Номер': NUM,
                  u'Имя': NAME_SURNAME,
                  u'Год р.': YEAR,
@@ -638,41 +429,35 @@ def process_me_page(url, **defaults):
                  u'Регион': CITY,
                  u'Результат': TIME} 
 
-    root = html.parse(url,
-                      parser=html.HTMLParser(encoding='cp1251')).getroot()
+    root = html.parse(url, parser = html.HTMLParser(encoding = 'cp1251')).getroot()
     mc = root.get_element_by_id('main_container')
-
     t = mc[0][3]
-
     assert(t.tag == 'table')
-
-    fmap = {}
     head = map(lambda s:s.text.strip(),t[0])
-    for i in range(len(head)):
-        if field_map.has_key(head[i]):
-            m = field_map[head[i]]
-            if m not in fmap.values():
-                fmap[i] = m
+    fields = [field_map.get(f, IGNORE) for f in head]
     rr = map(lambda x:[s.text_content() for s in x], t[1:])
-    mrr = parse_list(rr, fmap, defaults)
-
+    mrr = parse_list(rr, fields, defaults)
     process_rlist_new(mrr)
     post_process_comp(defaults['competition'])
 
 
-
-def process_file(file, fmap, **defaults):
-    def d(v):
+def process_file(path, fields, competition, **defaults):
+    """Читает csv-файл, приводит значения к UNICODE, 
+    @param path: путь к .csv-файлу
+    @param fields: список полей в файле
+    @param defaults: явное задание полей в RawResult
+    """
+    def decode_utf8(v):
         return v.decode('utf-8')
 
-    decode_vals = lambda l:map(d, l)
-        
+    defaults['competition'] = competition
+    decode_vals = lambda l: map(decode_utf8, l)
+    data = map(decode_vals,
+               list(csv.reader(open(path), delimiter = ',', quotechar = '"')))
+    raw_results = parse_list(data, fields, defaults)
+    process_rlist_new(raw_results)
+    post_process_comp(competition)
     
-    rdr = csv.reader(open(file), delimiter=',', quotechar='"')
-    data = list(rdr)
-    pdata = map(decode_vals, data)
-    mrr = parse_list(pdata, fmap, defaults)
-    return mrr
 
     
     
