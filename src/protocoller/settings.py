@@ -4,7 +4,7 @@ import os
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -51,7 +51,7 @@ MEDIA_URL = '/media/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/admin'
+ADMIN_MEDIA_PREFIX = '/media/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'ta^4n6q(n50s7%)^nx-3u^i@l+owel-veww#!&8yf_r7bsd((g'
@@ -64,7 +64,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
- #   'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -103,7 +103,14 @@ INSTALLED_APPS = (
     'registration',
     'markitup',   
     'uni_form',
-#    'debug_toolbar',
+    'debug_toolbar',
+    'perfect404',
+    #sentry apps
+    # don't forget to add the dependencies!
+    'indexer',
+    'paging',
+    'sentry',
+    'sentry.client',
 )
 
 LOGIN_REDIRECT_URL = '/'
@@ -193,7 +200,6 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.logger.LoggingPanel',
 )
 TEMPLATE_DEBUG=True
-
 
 #MAPS API
 MAPS_API_KEY = "AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ=="

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
+handler404 = 'perfect404.views.page_not_found'
 
 urlpatterns = patterns(
     'protocoller.miner.views',    
@@ -73,6 +74,7 @@ urlpatterns += patterns(
     (r'^accounts/', include('registration.urls')),
     url(r'^markitup/', include('markitup.urls')), #markitup
     (r'^comments/', include('django.contrib.comments.urls')), #comments
+    (r'^sentry/', include('sentry.urls')), #sentry
     )
 
 
