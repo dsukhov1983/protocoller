@@ -1,0 +1,36 @@
+diff --git socialauth/auth_backends.py socialauth/auth_backends.py
+index 1f42ca1..2d007e0 100644
+--- socialauth/auth_backends.py
++++ socialauth/auth_backends.py
+@@ -4,6 +4,7 @@ from django.conf import settings
+ import facebook
+ 
+ import urllib
++from itertools import chain
+ from socialauth.lib import oauthtwitter2 as oauthtwitter
+ from socialauth.models import OpenidProfile as UserAssociation, TwitterUserProfile, FacebookUserProfile, LinkedInUserProfile, AuthMeta
+ from socialauth.lib.linkedin import *
+@@ -40,7 +41,8 @@ class OpenIdBackend:
+             if request.openid and request.openid.sreg:
+                 email = request.openid.sreg.get('email')
+                 nickname = request.openid.sreg.get('nickname')
+-                firstname, lastname = request.openid.sreg.get('fullname', ' ').split(' ', 1)
++                firstname, lastname = list(chain(
++                        request.openid.sreg.get('fullname', ' ').split(' ', 1), ['']))[:2]
+             elif request.openid and request.openid.ax:
+                 email = request.openid.ax.getSingle('http://axschema.org/contact/email')
+                 if 'google' in provider:
+@@ -52,10 +54,13 @@ class OpenIdBackend:
+                     ax_schema = OPENID_AX_PROVIDER_MAP['Default']
+                     try:
+                         nickname = request.openid.ax.getSingle(ax_schema['nickname']) #should be replaced by correct schema
+-                        firstname, lastname = request.openid.ax.getSingle(ax_schema['fullname']).split(' ', 1)
++                        firstname, lastname = list(chain(
++                                request.openid.ax.getSingle(ax_schema['fullname']).split(' ', 1),
++                                ['']))[:2]
+                     except:
+                         pass
+ 
++            
+             if nickname is None :
+                 nickname =  ''.join([random.choice('abcdefghijklmnopqrstuvwxyz') for i in xrange(10)])

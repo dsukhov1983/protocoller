@@ -1,0 +1,23 @@
+diff --git openid/message.py openid/message.py
+index 472e517..27e9b74 100644
+--- openid/message.py
++++ openid/message.py
+@@ -263,6 +263,10 @@ class Message(object):
+     def toPostArgs(self):
+         """Return all arguments with openid. in front of namespaced arguments.
+         """
++        def to_utf8(val):
++            if isinstance(val, unicode):
++                return val.encode('utf-8')
++            return val
+         args = {}
+ 
+         # Add namespace definitions to the output
+@@ -277,7 +281,7 @@ class Message(object):
+ 
+         for (ns_uri, ns_key), value in self.args.iteritems():
+             key = self.getKey(ns_uri, ns_key)
+-            args[key] = value.encode('UTF-8')
++            args[key] = to_utf8(value)
+ 
+         return args
