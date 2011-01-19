@@ -44,9 +44,6 @@ urlpatterns = patterns(
 
     (r'^search$', 'search_view', {}, 'search'),
     (r'^compare$', 'compare_view', {}, 'compare'),
-
-    (r'^comp/(?P<year>\d+)$', 'comp_list_view'),
-    (r'^comp/(?P<year>\d+)/(?P<month>\d+)$',  'comp_list_view'),
     
     (r'^person_fb/(?P<person>\d+)$', 'feedback_person', {}, 'feedback_person'),
     

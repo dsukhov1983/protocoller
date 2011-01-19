@@ -85,6 +85,7 @@ def time_diff2(t1, t2):
 
 # list of pairs (keyword, iconname)
 PROVIDER_INFO = (('ya.ru', 'yandex.ico.gif'),
+                 ('yandex.ru', 'yandex.ico.gif'),
                  ('google.com', 'google.ico.gif'),
                  ('rambler', 'rambler.ico.gif'),
                  ('livejournal', 'livejournal.ico.gif'),

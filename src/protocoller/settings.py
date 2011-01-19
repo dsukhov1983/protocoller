@@ -4,7 +4,7 @@ import os
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -92,7 +92,6 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.comments',
-    'django_evolution',
     'protocoller.miner',
     'django.contrib.admin',
     'pytils',
@@ -117,8 +116,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
 
-OPENID_SREG = {"requred": "nickname, email, fullname",
-               "optional":"postcode, country",
+OPENID_SREG = {#"requred": "",
+               "optional":"nickname, email, fullname, postcode, country",
                "policy_url": ""}
 
 #example should be something more like the real thing, i think
