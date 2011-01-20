@@ -176,6 +176,11 @@ ul.sf-menu li li li.sfHover ul {
     height: 20px;
     padding: 10px;
 }
+
+.profile-image img{
+    vertical-align: middle;
+}
+
 /*end menu css*/
 
 
@@ -213,6 +218,9 @@ ul.sf-menu li li li.sfHover ul {
     font:0.8em Trebuchet MS, Tahoma, sans-serif;
 }
 
+.event{
+    margin-top:0.5em;
+}
 
 .event h2{
     margin: 3px 0px 10px 0px;
