@@ -9,6 +9,7 @@ eggs/*
 parts
 src/*.egg-info
 src/.ropeproject
-src/protocoller/db/
+src/protocoller/db/*
+src/protocoller/local_settings.py
 *~
 src/protocoller/media/upload/*

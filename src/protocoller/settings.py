@@ -4,8 +4,7 @@ import os
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+
 
 ADMINS = (
      ('Dmitry Sukhov', 'dmitry.sukhov@gmail.com'),
@@ -64,13 +63,12 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
+  #  'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'openid_consumer.middleware.OpenIDMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    
 )
 
 
@@ -116,8 +114,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
 
-OPENID_SREG = {#"requred": "",
-               "optional":"nickname, email, fullname, postcode, country",
+OPENID_SREG = {"requred": "nickname, email, fullname",
+               "optional":"postcode, country",
                "policy_url": ""}
 
 #example should be something more like the real thing, i think
@@ -170,8 +168,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "protocoller.miner.context_processors.maps_api_key"
     )
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 
 #django-registration settings
 ACCOUNT_ACTIVATION_DAYS = 10
@@ -187,18 +183,6 @@ JQUERY_URL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
 
 #django-debug-toolbar
 INTERNAL_IPS = ('127.0.0.1',)
-DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.version.VersionDebugPanel',
-    'debug_toolbar.panels.timer.TimerDebugPanel',
-    'debug_toolbar.panels.settings_vars.SettingsVarsDebugPanel',
-    'debug_toolbar.panels.headers.HeaderDebugPanel',
-    'debug_toolbar.panels.request_vars.RequestVarsDebugPanel',
-    'debug_toolbar.panels.template.TemplateDebugPanel',
-    'debug_toolbar.panels.sql.SQLDebugPanel',
-    'debug_toolbar.panels.signals.SignalDebugPanel',
-    'debug_toolbar.panels.logger.LoggingPanel',
-)
-TEMPLATE_DEBUG=True
 
 #MAPS API
 MAPS_API_KEY = "AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ=="
