@@ -11,7 +11,7 @@ class Command(BaseCommand):
         from django.db.models.loading import get_models
         loaded_models = get_models()
 
-        from protocoller.miner.models import SportEvent, Competition, Person
+        from protocoller.miner.models import SportEvent, Competition, Person, MALE, FEMALE
         from protocoller.miner.utils import POS, NUM, GROUP, POS_IN_GROUP, NAME, SURNAME,\
             NAME_SURNAME, YEAR, SEX, RANK, CLUB, CITY, TIME, QUALIF_RANK, IGNORE, \
             process_file, process_me_page

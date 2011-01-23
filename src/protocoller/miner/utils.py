@@ -406,6 +406,8 @@ def post_process_comp(comp):
     find_best_result(comp)
     comp.processed = True
     comp.save()
+    comp.event.last_change = datetime.datetime.now()
+    comp.event.save()
 
 
 def find_person_by_surname(surname):

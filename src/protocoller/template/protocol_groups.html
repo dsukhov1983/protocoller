@@ -72,12 +72,12 @@
         <td colspan="8"><h2>Группа {{ group }}<a class="anchor" name="{{ group|urlencode }}" href="#{{ group|urlencode }}">§</h2></td>
       </tr>
       {% for r in results %}
-      {% if r.pos < 0 %}
-      <tr class="{% print_pos r %}">
+      {% if r.pos_in_grp < 0 %}
+      <tr class="{% print_grp_pos r %}">
       {% else %}
       <tr>
       {% endif %}
-        <td>{% print_pos r %}</td>
+        <td>{% print_grp_pos r %}</td>
         <td>{{ r.number|default:"" }}</td>
         <td><a class="person" href="{% url person r.person.id %}">{{ r.person.full_name }}</a></td>
         <td>{{ r.person.get_rank_display }}</td>

@@ -299,11 +299,6 @@ table.protocol{
     padding:2px 4px;
 }
 
-.dns { background: #ccc }
-.dnf { background: #c99; color: #600 }
-.dsq { color: #c00; text-decoration: line-through; }
-.dsq-2 { color: #c00; font-size: 70% }
-.dsq-reason { color: #c00; font-size: 85%; }
 .hl {background-color: #FFEFC6;}
 
 
