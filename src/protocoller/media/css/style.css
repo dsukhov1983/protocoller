@@ -466,3 +466,11 @@ li.comment{
     margin-top:1em;
 }
 
+:hover > a.anchor {
+    visibility:visible;
+}
+a.anchor {
+    color:#1A3DC1;
+    text-decoration:none;
+    visibility:hidden;
+}

@@ -23,7 +23,7 @@
   <ul class="plain_list">
     <li>Группы:</li>
     {% for group, br, results in result_groups %}
-    <li><a class="anchor" name="{{ group|urlencode }}" href="#{{ group|urlencode }}">{{ group }}</a></li>
+    <li><a href="#{{ group|urlencode }}">{{ group }}</a></li>
     {% endfor %}
   </ul>
   
