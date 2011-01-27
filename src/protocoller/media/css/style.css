@@ -474,3 +474,7 @@ a.anchor {
     text-decoration:none;
     visibility:hidden;
 }
+
+#content img{
+    max-width: 960px;
+}
