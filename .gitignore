@@ -1,8 +1,6 @@
 *.pyc
 *.pyo
 .installed.cfg
-rsync.sh
-distribute.sh
 bin
 develop-eggs
 dist

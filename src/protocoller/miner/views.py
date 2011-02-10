@@ -675,11 +675,11 @@ def get_reg_info_view(request, event_id):
     sex_dict = dict(models.SEX_TYPES)
     rank_dict = dict(models.RANK_TYPES)
 
-    for i, mem in enumerate(reg_info, 1):
+    for i, mem in enumerate(reg_info):
         info = mem.info
         writer.writerow(
             map(lambda s: s.encode('utf-8'),
-                [str(i), info.surname + ' ' + info.name, sex_dict[info.sex],
+                [str(i + 1), info.surname + ' ' + info.name, sex_dict[info.sex],
                  str(info.year), rank_dict[info.rank], info.city, 
                  info.club]))
     return response
