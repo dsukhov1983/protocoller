@@ -14,6 +14,7 @@ from django.template import RequestContext
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.comments.models import Comment
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse
 from markitup.widgets import MarkItUpWidget
@@ -707,4 +708,17 @@ def main_view(request):
                                                      lambda o: o.date.year)]    
             
     return render_to_response('main.html', locals(),
+                              context_instance = RequestContext(request))
+
+
+
+def activity_view(request):
+    """Формирует страницу с информацией о последней активности на сервисе"""
+    num = 5
+    comments = Comment.objects.order_by('-submit_date')[:num]
+    places = models.Place.objects.order_by('-last_change')[:num]
+    events = models.SportEvent.objects.order_by('-last_change')[:num]
+    feedbacks = models.PersonFeedback.objects.order_by('-last_change')[:num]
+    regs = models.RegistrationMembership.objects.order_by('-date')[:num]
+    return render_to_response('activity.html', locals(),
                               context_instance = RequestContext(request))

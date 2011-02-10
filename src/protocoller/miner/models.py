@@ -35,6 +35,9 @@ class Place(models.Model):
                                blank = True)
     created_by = models.ForeignKey(User, null = True, editable = False,
                                    db_index = True, verbose_name = 'Кем создан')
+    last_change = models.DateTimeField(auto_now = True, 
+                                      default = datetime.datetime.now(),
+                                      editable = False)
 
     def __unicode__(self):
         return self.name
@@ -98,7 +101,7 @@ class SportEvent(models.Model):
                                      null = True, blank = True)
 
     def __unicode__(self):
-        return "%s %s"%(self.name, self.date.year)
+        return self.name
 
     def get_absolute_url(self):
         return "/event/%s" % self.id
@@ -215,6 +218,9 @@ class Person(models.Model):
             self.city = p.city
         if p.rank < self.rank:
             self.rank = p.rank
+
+    def get_absolute_url(self):
+        return "/person/%s" % self.id
 
 
 (DNS, DNF, DQF) = range(-3, 0)
@@ -348,12 +354,17 @@ class PersonFeedback(models.Model):
                             blank=True, db_index=True)
 
     wrong_results = models.ManyToManyField(Result, blank=True)
+    
 
 
     comment = models.TextField("Комментарий", blank=True)
 
     contact_email = models.EmailField()
     contact_name = models.CharField(max_length=30)
+    last_change = models.DateTimeField(auto_now = True, 
+                                       default = datetime.datetime.now(),
+                                       editable = False)
+    
     
     
 
@@ -379,6 +390,10 @@ class RegistrationInfo(models.Model):
     def full_name(self):
         return " ".join(filter(None,
                                [self.surname, self.name]))
+
+    def __unicode__(self):
+        return ' '.join([self.surname, self.name, self.get_rank_display(), 
+                         unicode(self.year), self.club, self.city])
 
 
 

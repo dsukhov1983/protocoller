@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load pytils_dt %}
+{% load pretty_print %}
+{% block content %}
+{% if comments %}
+<div class="grid_6">
+  <ul>
+    <h2>Комментарии</h2>
+    {% for comment in comments %}
+    <li>
+      <cite>{% print_user comment.user %}</cite>
+      <div class="a_time">{{ comment.submit_date|distance_of_time }}</div>
+      <div><a href="{{ comment.content_object.get_absolute_url }}">{{ comment.content_object }}</a></div>
+      <p>{{ comment.comment }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if places %}
+<div class="grid_6">
+  <ul>
+    <h2>Места катания</h2>
+    {% for place in places %}
+    <li>
+      {% if place.created_by %}
+      <cite>{% print_user place.created_by %}</cite>
+      {% endif %}
+      <div class="a_time">{{ place.last_change|distance_of_time }}</div>
+      <p><a href="{{ place.get_absolute_url }}">{{ place }}</a></p>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if events %}
+<div class="grid_6">
+  <ul>
+    <h2>Соревнования</h2>
+    {% for event in events %}
+    <li>
+      {% if event.created_by %}
+      <cite>{% print_user event.created_by %}</cite>
+      {% endif %}
+      <div class="a_time">{{ event.last_change|distance_of_time }}</div>
+      <p><a href="{{ event.get_absolute_url }}">{{ event }}</a></p>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if regs %}
+<div class="grid_6">
+  <ul>
+    <h2>Предварительная регистрация</h2>
+    {% for reg in regs %}
+    <li>
+      <cite>{% print_user reg.info.by_user %}</cite>
+      <div class="a_time">{{ reg.date|distance_of_time }}</div>
+      <div><a href="{{ reg.sport_event.get_absolute_url }}">{{ event }}</a></div>
+      <p>{{ reg.info }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if feedbacks %}
+<div class="grid_6">
+  <ul>
+    <h2>Обратная связь</h2>
+    {% for fb in feedbacks %}
+    <li>
+      <cite>{{ fb.contact_name }} {{ fb.contact_email }}</cite>
+      <div class="a_time">{{ fb.last_change|distance_of_time }}</div>
+      <div><a href="{{ fb.person.get_absolute_url }}">{{ fb.person }}</a></div>
+      <p>{{ fb.comment }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+
+{% endblock %}

@@ -478,3 +478,9 @@ a.anchor {
 #content img{
     max-width: 960px;
 }
+
+
+.a_time{
+    display: inline;
+    text-align: right;
+}

@@ -50,6 +50,8 @@ urlpatterns = patterns(
     (r'^login/$', 'login_view', {}, 'login'),
     (r'^logout/$', 'logout_view', {}, 'logout'),
     (r'^about/$', 'about'),
+
+    (r'^activity/$', 'activity_view'),
         
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
