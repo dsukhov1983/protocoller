@@ -184,12 +184,14 @@ def places_view(request):
         page = int(request.GET.get('page', '1'))
     except ValueError:
         page = 1
-    paginator = Paginator(models.Place.objects.all().order_by('name'), 20)
+    places = models.Place.objects.filter(
+        location__isnull = False).exclude(location = '')
 
-    try:
-        places = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        places = paginator.page(paginator.num_pages)
+    all_places = list(models.Place.objects.all().order_by('name'))
+    places_cnt = len(all_places)
+    parts = 4
+    places_parts = [all_places[i*places_cnt/parts:(i+1)*places_cnt/parts] 
+                    for i in range(parts)]
 
     return render_to_response('places.html', locals(),
                               context_instance = RequestContext(request))

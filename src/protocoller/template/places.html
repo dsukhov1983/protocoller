@@ -1,30 +1,59 @@
 {% extends "base.html" %}
+
+{% block extrahead %}
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key={{ MAPS_API_KEY }}" type="text/javascript"></script>
+<script type="text/javascript">
+    function create_placemark(lon_lat, name, desc, style){
+        var loc = lon_lat.split(',');
+        var placemark = new YMaps.Placemark(new YMaps.GeoPoint(loc[0], loc[1]),
+                                            {style: style});
+        placemark.name = name;
+        placemark.description = desc;
+        YMaps.Events.observe(placemark, placemark.Events.Click, 
+                             function(placemark, pEvent){
+            placemark.openBalloon('test', {maxWidth: 200});
+            return False;
+            });
+        return placemark;
+    }   
+
+    YMaps.jQuery(function () {
+        var map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
+        map.setCenter(new YMaps.GeoPoint(37.64, 55.76), 10);
+        map.addControl(new YMaps.SearchControl());
+        map.enableScrollZoom();
+
+        var s = new YMaps.Style();
+        s.iconStyle = new YMaps.IconStyle();
+        s.iconStyle.href = "{{ MEDIA_URL }}/img/favicon.ico";
+        s.iconStyle.size = new YMaps.Point(32, 32);
+        s.balloonContentStyle = new YMaps.BalloonContentStyle(
+            new YMaps.Template("<div style=\"color:green\">$[description]</div>")
+           );
+
+    
+        {% for place in places %}
+        map.addOverlay(create_placemark('{{ place.location }}', 'name', 'desc', s));
+        {% endfor %}
+    })
+</script>
+{% endblock %}
+
 {% load pytils_dt %}
 {% load pretty_print %}
 {% block content %}
-<div class="grid_8">
-  {% for p in places.object_list %}
-  <div>
-    <h2><a href="{% url place p.get_id %}">{{ p.name }}</a></h2>
-  </div>
+<div class="grid_12">
+  <p><a href="{% url add_place %}">Создать трассу</a></p>
+  
+  <div id="YMapsID" style="width:960px;height:640px"></div>
+</div>
+<div class="clear"></div>
+{% for places in places_parts %}
+<div class="grid_3">
+  {% for place in places %}
+  <div><a href="{{ place.get_absolute_url }}">{{ place }}</a>
+    {% if not place.location %}<span style="color:red">*</span>{% endif %}</div>
   {% endfor %}
-  <div class="pagination">
-    <span class="step-links">
-      {% if places.has_previous %}
-      <a href="?page={{ places.previous_page_number }}">Предыдущая</a>
-      {% endif %}
-
-      <span class="current">
-        Страница {{ places.number }} из {{ places.paginator.num_pages }}.
-      </span>
-
-      {% if places.has_next %}
-      <a href="?page={{ places.next_page_number }}">Следующая</a>
-      {% endif %}
-    </span>
-  </div>
 </div>
-<div class="grid_4">
-  <a href="{% url add_place %}">Создать трассу</a>
-</div>
+{% endfor %}
 {% endblock %}
