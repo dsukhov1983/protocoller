@@ -11,7 +11,7 @@
         placemark.description = desc;
         YMaps.Events.observe(placemark, placemark.Events.Click, 
                              function(placemark, pEvent){
-            placemark.openBalloon('test', {maxWidth: 200});
+            placemark.openBalloon(name, {maxWidth: 200});
             return False;
             });
         return placemark;
@@ -33,7 +33,7 @@
 
     
         {% for place in places %}
-        map.addOverlay(create_placemark('{{ place.location }}', 'name', 'desc', s));
+        map.addOverlay(create_placemark('{{ place.location }}', '{{ place.name }}', '', s));
         {% endfor %}
     })
 </script>

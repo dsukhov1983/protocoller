@@ -23,6 +23,9 @@
 <div class="grid_9">
   <h1>{{ place.name }}</h1>
   <p>{{ place.address }}</p>
+  {% if place.link %}
+  <p>Сайт: <a href="{{ place.link }}">{{ place.link }}</a></p>
+  {% endif %}
 </div>
 <div class="grid_3">
   <a href="{% url edit_place place.get_id %}">Изменить</a>

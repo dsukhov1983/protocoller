@@ -12,6 +12,8 @@
             mapContainer.css("display", "");
             map.setCenter(point, 10);
             map.addControl(new YMaps.Zoom());
+            map.addControl(new YMaps.SearchControl());
+            map.enableScrollZoom();
 
             YMaps.Events.observe(map, map.Events.Click, function (map, mEvent) {
                 update_form_fields(mEvent.getGeoPoint());
@@ -84,7 +86,7 @@
 {{ form.media }}
 {{ form|as_uni_form }}
 <a id="id_map_show_link" href="#" onclick="showMap();return false;">Указать местоположение</a>
-<div id="YMapsID" style="width:600px;height:400px;display:none"></div>
+<div id="YMapsID" style="width:800px;height:600px;display:none"></div>
 <input type="submit" value="Сохранить" />
 </form>
 {% endblock %}
