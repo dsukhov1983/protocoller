@@ -62,7 +62,7 @@
     <div class="event">
       {% if event.image %}
       {% thumbnail event.image "75" as im %}
-      <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" class="float: left"/>
+      <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"/>
       {% endthumbnail %}
       {% endif %}
       <h4 class="place">{{ event.place|default:"" }}</h4>

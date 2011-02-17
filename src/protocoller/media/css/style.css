@@ -215,7 +215,7 @@ ul.sf-menu li li li.sfHover ul {
 }
 
 .place{
-    font:0.8em Trebuchet MS, Tahoma, sans-serif;
+    font:0.9em Trebuchet MS, Tahoma, sans-serif;
 }
 
 .event_group{
@@ -232,7 +232,12 @@ ul.sf-menu li li li.sfHover ul {
 }
 
 .event h5{
-    margin-bottom: 0.5em;
+    margin-bottom: 0em;
+}
+
+.event img{
+    float:left;
+    padding: 3px;
 }
 
 /* .date{ */
@@ -500,5 +505,5 @@ a.anchor {
 }
 
 h4.place{
-    margin-bottom:0.5em;
+    margin-bottom:0em;
 }
