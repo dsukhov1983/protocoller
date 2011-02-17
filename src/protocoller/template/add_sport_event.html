@@ -23,90 +23,90 @@
   <form enctype="multipart/form-data" action="{% url edit_event event.id %}" method="POST" class="form">
   {% else %}
   <form enctype="multipart/form-data" action="{% url add_event %}" method="POST" class="form">
-      {% endif %}
-      {% csrf_token %}
-      {{ form.media }}
-      <script>
-        $(function() {
-        $( "#id_date" ).datepicker( $.datepicker.regional[ "ru" ] );
-        });
-      </script>
-      {% if form.non_field_errors %}
-      <div id="errorMsg">
-        <ul>
-          {{ form.non_field_errors|unordered_list }}
-        </ul>
-      </div>
-      {% endif %}
-      {% for field in form %}
-      {% if field.name == 'place' %}
-      {% if field.is_hidden %}
-      {{ field }}
-      {% else %}
-      <div id="div_{{ field.auto_id }}" class="ctrlHolder{% if field.errors %} error{% endif %}{% if field|is_checkbox %} checkbox{% endif %} {% if field.field.widget.attrs.class %} {{ field.field.widget.attrs.class }}{% endif %}">
-        {% for error in field.errors %}
-        <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="errorField">
-          {{ error }}
-        </p>
-        {% endfor %}
+  {% endif %}
+  {% csrf_token %}
+  {{ form.media }}
+  <script>
+    $(function() {
+    $( "#id_date" ).datepicker( $.datepicker.regional[ "ru" ] );
+    });
+  </script>
+  {% if form.non_field_errors %}
+  <div id="errorMsg">
+    <ul>
+      {{ form.non_field_errors|unordered_list }}
+    </ul>
+  </div>
+  {% endif %}
+  {% for field in form %}
+  {% if field.name == 'place' %}
+  {% if field.is_hidden %}
+  {{ field }}
+  {% else %}
+  <div id="div_{{ field.auto_id }}" class="ctrlHolder{% if field.errors %} error{% endif %}{% if field|is_checkbox %} checkbox{% endif %} {% if field.field.widget.attrs.class %} {{ field.field.widget.attrs.class }}{% endif %}">
+    {% for error in field.errors %}
+    <p id="error_{{ forloop.counter }}_{{ field.auto_id }}" class="errorField">
+      {{ error }}
+    </p>
+    {% endfor %}
 
-        {% if field|is_checkbox %}
-        {{ field|with_class }}
-        {% endif %}
+    {% if field|is_checkbox %}
+    {{ field|with_class }}
+    {% endif %}
 
-        {% if field.label %}
-        <label for="{{ field.auto_id }}">
-          {{ field.label }}{% if field.field.required %}<span>*</span>{% endif %}
-        </label>
-        {% endif %}
+    {% if field.label %}
+    <label for="{{ field.auto_id }}">
+      {{ field.label }}{% if field.field.required %}<span>*</span>{% endif %}
+    </label>
+    {% endif %}
 
-        {% if not field|is_checkbox %}
-        {{ field|with_class }}
-        {% endif %}
+    {% if not field|is_checkbox %}
+    {{ field|with_class }}
+    {% endif %}
 
-        {% if field.help_text %}
-        <p id="hint_{{ field.auto_id }}" class="formHint">{{ field.help_text|safe }}</p>
-        {% endif %}
-        <a href="{% url add_place %}">создать место</a>
-      </div>
-      {% endif %}
-      {% else %}
-      {{ field|as_uni_field }}
-      {% endif %}
-      {% endfor %}
-      <table id="id_forms_table">
-      {% for cform in comp_formset.forms %}
-      {% if forloop.first %}
-      <thead>
-        <tr>
-          {% for field in cform.visible_fields %}
-          <th>{{ field.label|capfirst }}</th>
-          {% endfor %}
-        </tr>
-      </thead>
-      {% endif %}
-      <tr class="dynamic-form">
+    {% if field.help_text %}
+    <p id="hint_{{ field.auto_id }}" class="formHint">{{ field.help_text|safe }}</p>
+    {% endif %}
+    <a href="{% url add_place %}">создать место</a>
+  </div>
+  {% endif %}
+  {% else %}
+  {{ field|as_uni_field }}
+  {% endif %}
+  {% endfor %}
+  <table id="id_forms_table">
+    {% for cform in comp_formset.forms %}
+    {% if forloop.first %}
+    <thead>
+      <tr>
         {% for field in cform.visible_fields %}
-        <td>
-          {# Include the hidden fields in the form #}
-          {% if forloop.first %}
-          {% for hidden in cform.hidden_fields %}
-          {{ hidden }}
-          {% endfor %}
-          {% endif %}
-          {{ field.errors.as_ul }}
-          {{ field }}
-        </td>
+        <th>{{ field.label|capfirst }}</th>
         {% endfor %}
       </tr>
-      {% endfor %}
-      </table>
-      {{ comp_formset.management_form }}
-      <input type="submit" value="Сохранить" />
-    </form>
-    {% else %}
-    Для добавления информации о новом соревновании необходимо 
-    <a href="{% url login %}">авторизоваться</a>.
+    </thead>
     {% endif %}
+    <tr class="dynamic-form">
+      {% for field in cform.visible_fields %}
+      <td>
+        {# Include the hidden fields in the form #}
+        {% if forloop.first %}
+        {% for hidden in cform.hidden_fields %}
+        {{ hidden }}
+        {% endfor %}
+        {% endif %}
+        {{ field.errors.as_ul }}
+        {{ field }}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+  {{ comp_formset.management_form }}
+  <input type="submit" value="Сохранить" />
+  </form>
+  {% else %}
+  Для добавления информации о новом соревновании необходимо 
+  <a href="{% url login %}">авторизоваться</a>.
+  {% endif %}
 </div>
 {% endblock %}

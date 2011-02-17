@@ -4,6 +4,7 @@
 {% load pretty_print %}
 {% load markup %}
 {% load pytils_numeral %}
+{% load thumbnail %}
 
 {% block content %}
 <div class="grid_2 event">
@@ -16,6 +17,7 @@
 <div class="grid_2">
   <a href="{% url edit_event event.id %}">Изменить</a>
 </div>
+
 <div class="clear"></div>
 <div class="grid_8">
   {% for comp in event.competitions.all %}
@@ -35,6 +37,11 @@
   {% endfor %}
 </div>
 <div class="grid_4">
+  {% if event.image %}
+  {% thumbnail event.image "150" as im %}
+    <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" />
+  {% endthumbnail %}
+  {% endif %}
   {% if regs_count > 0 %}
   <a href="" class="counter">
     Заявил{{ regs_count|choose_plural:"ся,ись,ись" }} <span class="counter-value">{{ regs_count }}</span> участник{{ regs_count|choose_plural:",а,ов" }}

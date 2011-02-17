@@ -6,6 +6,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from markitup.fields import MarkupField
 from itertools import count
+from sorl.thumbnail import ImageField
+
 
 (MALE, FEMALE, UNKNOWN) = range(3)
 SEX_TYPES = (
@@ -23,6 +25,13 @@ RATING_TYPES = (
 
 class Place(models.Model):
 
+    def eval_upload_to(instance, filename):
+        ext = ''
+        n = filename.rfind('.')
+        if n:
+            ext = filename[n:]
+        return os.path.join('upload/images/places', instance.slug + ext)
+    
     name = models.CharField('Название', max_length = 50)
     slug = models.CharField(max_length = 20, default = '', 
                             db_index = True, unique = True,
@@ -38,6 +47,10 @@ class Place(models.Model):
     last_change = models.DateTimeField(auto_now = True, 
                                       default = datetime.datetime.now(),
                                       editable = False)
+
+    image = ImageField('Изображение', upload_to = eval_upload_to,
+                       null = True, blank = True)
+
 
     def __unicode__(self):
         return self.name
@@ -77,6 +90,15 @@ class SportEvent(models.Model):
         )
 
 
+    def eval_image_upload_to(instance, filename):
+        ext = ''
+        n = filename.rfind('.')
+        if n:
+            ext = filename[n:]
+        return os.path.join('upload/images/events', 
+                            translit.slugify(instance.name) + ext)
+    
+
     def eval_upload_to(instance, filename):
         ext = ''
         n = filename.rfind('.')
@@ -86,7 +108,8 @@ class SportEvent(models.Model):
         return os.path.join('upload/protocols/%s/%s' % (dt.year, dt.month),
                             translit.slugify(instance.name) + ext)
 
-    place = models.ForeignKey(Place, null=True, verbose_name = 'Место проведения')
+    place = models.ForeignKey(Place, null=True, verbose_name = 'Место проведения',
+                              related_name="events")
     name = models.CharField('Название', max_length=250)
     date = models.DateField('Дата', db_index=True)
     end_date = models.DateField('Дата окончания', null = True, blank = True)
@@ -99,6 +122,9 @@ class SportEvent(models.Model):
     registration_open = models.BooleanField('Регистрация открыта', default = False)
     protocol_file = models.FileField('Протокол', upload_to = eval_upload_to,
                                      null = True, blank = True)
+    image = ImageField('Изображение', upload_to = eval_image_upload_to,
+                       null = True, blank = True)
+
 
     def __unicode__(self):
         return self.name
@@ -180,6 +206,13 @@ RANK_TYPES = (
 
 class Person(models.Model):   
 
+    def eval_upload_to(instance, filename):
+        ext = ''
+        n = filename.rfind('.')
+        if n:
+            ext = filename[n:]
+        return os.path.join('upload/images/persons', str(instance.id) + ext)
+
     name = models.CharField(max_length=20, default="",
                             null=True, db_index=True)
     
@@ -194,6 +227,9 @@ class Person(models.Model):
     nickname = models.CharField(max_length=30, null=True, blank=True)
     link = models.URLField(null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
+    image = ImageField('Изображение', upload_to = eval_upload_to,
+                       null = True, blank = True)
+
 
     def full_name(self):
         return " ".join(filter(None,

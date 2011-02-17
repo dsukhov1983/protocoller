@@ -108,6 +108,7 @@ INSTALLED_APPS = (
     'paging',
     'sentry',
     'sentry.client',
+    'sorl.thumbnail',
 )
 
 LOGIN_REDIRECT_URL = '/'
@@ -188,3 +189,12 @@ INTERNAL_IPS = ('127.0.0.1',)
 MAPS_API_KEY = "AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ=="
 
 SITE_ID = 2
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'miner_cache_table',
+    }
+}
+
+CACHE_BACKEND = 'db://miner_cache_table'

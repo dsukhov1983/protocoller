@@ -218,16 +218,30 @@ ul.sf-menu li li li.sfHover ul {
     font:0.8em Trebuchet MS, Tahoma, sans-serif;
 }
 
+.event_group{
+    margin-bottom: 1em;
+}
+
 .event{
-    margin-top:0.5em;
+    margin-top:1em;
+    overflow: auto;
 }
 
 .event h2{
     margin: 3px 0px 10px 0px;
 }
 
-.date{
-    margin: 16px 0px 7px 0px;
+.event h5{
+    margin-bottom: 0.5em;
+}
+
+/* .date{ */
+/*     margin: 16px 0px 7px 0px; */
+/* } */
+
+
+h3.date{
+    margin-bottom: 0.75em;
 }
 
 .event h3{
@@ -483,4 +497,8 @@ a.anchor {
 .a_time{
     display: inline;
     text-align: right;
+}
+
+h4.place{
+    margin-bottom:0.5em;
 }

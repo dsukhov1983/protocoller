@@ -18,6 +18,8 @@ from django.contrib.comments.models import Comment
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse
 from markitup.widgets import MarkItUpWidget
+from sorl.thumbnail import get_thumbnail
+
 from protocoller.miner import models
 
 
@@ -534,7 +536,7 @@ class SportEventForm(forms.ModelForm):
     class Meta:
         model = models.SportEvent
         fields = ('place', 'date', 'name', 'registration_open',
-                  'description', 'protocol_file')
+                  'description', 'protocol_file', 'image')
         widgets = dict(
             description = MarkItUpWidget(),
             )
