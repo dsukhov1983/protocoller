@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load pytils_dt %}
 {% load pretty_print %}
+{% load thumbnail %}
 {% block title %}Предстоящие соревнования соревнование{% endblock %}
 {% block content %}
 <div class="grid_10">
@@ -14,10 +15,30 @@
     <p class="date">{{ date|ru_strftime:"%d %b %a" }}</p>
     {% for event in events %}
     <div class="event">
-      <div class="place">{{ event.place|default:"" }}</div>
-      <h2>
-        <a href="{% url event event.id %}">{{ event.name }}</a>
-      </h2>
+      {% if event.image %}
+      {% thumbnail event.image "75" as im %}
+      <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"/>
+      {% endthumbnail %}
+      {% endif %}
+      <h4 class="place">{{ event.place|default:"" }}</h4>
+      <h5><a href="{% url event event.id %}">{{ event.name }}</a></h5>
+      <div class="comps">
+        {% for comp in event.competitions.all %}
+        {% if forloop.first %}<div class="grid_1 alpha comp">
+        {% else %}
+        {% if forloop.last %}<div class="grid_1 omega comp">
+        {% else %}
+        <div class="grid_1 comp">
+          {% endif %}
+          {% endif %}
+          {% if comp.processed %}
+          <a href="{% url protocol comp.id %}">{{ comp }}</a>
+          {% else %}
+          <span>{{ comp }}</span>
+          {% endif %}
+        </div>  
+        {% endfor %}
+        </div>
     </div>
     {% endfor %}
   </div>

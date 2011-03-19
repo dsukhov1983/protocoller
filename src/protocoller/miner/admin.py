@@ -24,10 +24,9 @@ admin.site.register(models.Competition, CompetitionAdmin)
 
 
 class SportEventAdmin(admin.ModelAdmin):
-
     date_hierarchy = 'date'
     list_display = ('id', 'name', 'date')
-    #ordering = ('-date',)
+    ordering = ('-date',)
 
 admin.site.register(models.SportEvent, SportEventAdmin)
 
