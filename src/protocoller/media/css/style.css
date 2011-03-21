@@ -441,8 +441,8 @@ ul.plain_list {
     width:90px;
 }
 
-.person a {
-    display:inline;
+a.person {
+#    display:inline;
     text-decoration: none;
 }
 
