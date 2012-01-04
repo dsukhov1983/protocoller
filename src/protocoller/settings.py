@@ -114,6 +114,7 @@ INSTALLED_APPS = (
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
+LOGIN_URL = "/login/"
 
 OPENID_SREG = {"requred": "nickname, email, fullname",
                "optional":"postcode, country",
