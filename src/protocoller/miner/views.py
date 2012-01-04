@@ -23,7 +23,7 @@ from sorl.thumbnail import get_thumbnail
 from protocoller.miner import models
 
 
-SAMPLE_SEARCHES=(u'Ильин Василий',
+SAMPLE_SEARCHES = (u'Ильин Василий',
                  u'Барышников Алексей',
                  u'Климов Михаил',
                  u'Кукрус Андрей',
@@ -40,7 +40,6 @@ SAMPLE_SEARCHES=(u'Ильин Василий',
                  u'Долгополов Никита')
 
 
-
 def season(dt):
     """Возвращает начальный год сезона, которому принадлежит дата
     Например season('2010-03-14') = 2009
@@ -48,37 +47,37 @@ def season(dt):
     """
     if dt >= datetime.date(dt.year, 10, 1):
         return dt.year
-    return dt.year -1
+    return dt.year - 1
 
 
 def eval_groupby(*args, **kwargs):
     return [(k, list(l)) for k, l in
             itertools.groupby(*args, **kwargs)]
-    
+
 
 def logout_view(request):
     logout(request)
     return redirect('main')
 
+
 def login_view(request):
-    form = AuthenticationForm()
-    return render_to_response('openid_signin.html', 
-                              locals(),
+    return render_to_response('openid_signin.html',
+                              dict(form=AuthenticationForm()),
                               context_instance=RequestContext(request))
 
 
 def get_random_search():
     return SAMPLE_SEARCHES[random.randint(0,
-                                          len(SAMPLE_SEARCHES)-1)]
+                                          len(SAMPLE_SEARCHES) - 1)]
+
 
 def date2season(dt):
     """converts datetime to season like 2008/2009"""
     y = dt.year
     if dt.month <= 6:
-        return "%s/%s"%(y-1, y)
+        return "%s/%s" % (y - 1, y)
     else:
-        return "%s/%s"%(y, y+1)
-    
+        return "%s/%s" % (y, y + 1)
 
 
 def about(request):
@@ -86,27 +85,23 @@ def about(request):
                               context_instance=RequestContext(request))
 
 
-
 def protocol(request, comp_id):
     competition = get_object_or_404(models.Competition,
-                                    id = comp_id)
+                                    id=comp_id)
 
     if competition.rating == models.GROUP_RATING:
         return redirect('protocol_by_groups', comp_id=comp_id)
-    
-    results = models.Result.objects.select_related().filter(competition=competition)
 
+    results = models.Result.objects.select_related().filter(competition=competition)
     ores = results.filter(pos__gt=0).order_by('pos')
     other_res = results.filter(pos__lte=0).order_by('pos')
     results = list(ores) + list(other_res)
-
-
     return render_to_response('protocol.html',
                               {'results': results,
                                'comp': competition,
-                               'alternate': competition.rating == models.BOTH_RATING
-                               },
+                               'alternate': competition.rating == models.BOTH_RATING},
                               context_instance=RequestContext(request))
+
 
 def protocol_by_groups(request, comp_id):
 
@@ -125,21 +120,17 @@ def protocol_by_groups(request, comp_id):
             return 1
         else:
             return 0
-    
-    competition = get_object_or_404(models.Competition, id = comp_id)
 
+    competition = get_object_or_404(models.Competition, id=comp_id)
     if competition.rating == models.ABS_RATING:
         return protocol(request, comp_id)
 
     results = models.Result.objects.filter(
         competition=competition).order_by('group').select_related()
 
-    rg = itertools.groupby(results, lambda x:x.group)
-    
-    rg = [(group, sorted(l, cmp = res_in_grp_cmp)) for group,l in rg]
+    rg = itertools.groupby(results, lambda x: x.group)
+    rg = [(group, sorted(l, cmp=res_in_grp_cmp)) for group, l in rg]
     result_groups = [(group, l[0].time, l) for group, l in rg if l]
-
-
     return render_to_response('protocol_groups.html',
                               {'result_groups': result_groups,
                                'comp': competition,
@@ -152,14 +143,13 @@ def get_person_results(person):
     results = models.Result.objects.select_related().filter(
         person=person).order_by('-competition__event__date')
 
-    rg = itertools.groupby(
-        results, lambda r:date2season(r.competition.event.date))
-
-    rg = [(n,list(l)) for n,l in rg]
+    rg = itertools.groupby(results,
+                    lambda r: date2season(r.competition.event.date))
+    rg = [(n, list(l)) for n, l in rg]
     return rg
 
 
-def persons_view(request, year = None, month = None):
+def persons_view(request, year=None, month=None):
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -172,47 +162,47 @@ def persons_view(request, year = None, month = None):
         persons = paginator.page(paginator.num_pages)
 
     return render_to_response('persons.html', locals(),
-                              context_instance = RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 def person_view(request, person_id):
-    person = get_object_or_404(models.Person, id = person_id)
+    person = get_object_or_404(models.Person, id=person_id)
     res_groups = get_person_results(person)
     return render_to_response('person.html', locals(),
                               context_instance=RequestContext(request))
+
 
 def places_view(request):
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
         page = 1
-    places = models.Place.objects.filter(
-        location__isnull = False).exclude(location = '')
+    places = models.Place.objects.filter(location__isnull=False).exclude(location='')
 
     all_places = list(models.Place.objects.all().order_by('name'))
     places_cnt = len(all_places)
     parts = 4
-    places_parts = [all_places[i*places_cnt/parts:(i+1)*places_cnt/parts] 
+    places_parts = [all_places[i * places_cnt / parts:(i + 1) * places_cnt / parts] 
                     for i in range(parts)]
-
     return render_to_response('places.html', locals(),
-                              context_instance = RequestContext(request))
-
+                              context_instance=RequestContext(request))
 
 
 def get_place_or_404(id):
     try:
-        return get_object_or_404(models.Place, id = int(id))
+        return get_object_or_404(models.Place, id=int(id))
     except ValueError:
-        return get_object_or_404(models.Place, slug = id)
+        return get_object_or_404(models.Place, slug=id)
 
-def place_view(request, id = None):
+
+def place_view(request, id=None):
     place = get_place_or_404(id)
-    return render_to_response('place.html', dict(place = place),
-                              context_instance = RequestContext(request))
+    return render_to_response('place.html', dict(place=place),
+                              context_instance=RequestContext(request))
+
 
 class PlaceForm(forms.ModelForm):
-        
+
     class Meta:
         model = models.Place
         fields = ('name', 'link', 'description', 'location')
@@ -221,8 +211,9 @@ class PlaceForm(forms.ModelForm):
             'location': forms.HiddenInput(),
             }
 
+
 @login_required
-def edit_place_view(request, id = None):
+def edit_place_view(request, id=None):
     new_object = False
     if id:
         place = get_place_or_404(id)
@@ -237,7 +228,6 @@ def edit_place_view(request, id = None):
             if new_object:                
                 place.created_by = request.user
                 place.save()
-            
             return redirect(place)
     else:
         form = PlaceForm(instance = place)
@@ -248,21 +238,19 @@ def edit_place_view(request, id = None):
     
 
 def search_persons(query):
-    ql = map(lambda s:s.title(),
+    ql = map(lambda s: s.title(),
              filter(None, query.strip().split(' ')))
-
-    if len(ql)>1:
+    if len(ql) > 1:
         n, s = ql[:2]        
         persons = models.Person.objects.filter(
-            (Q(name__icontains=n) & Q(surname__icontains=s))|
-            (Q(name__icontains=s) & Q(surname__icontains=n)))
+            (Q(name__icontains = n) & Q(surname__icontains = s)) |
+            (Q(name__icontains = s) & Q(surname__icontains = n)))
     elif len(ql) == 1:
         q = ql[0]
         persons = models.Person.objects.filter(
             (Q(name__icontains=q) | Q(surname__icontains=q)))
     else:
         persons = []    
-
     return persons
     
 
@@ -280,15 +268,11 @@ def search_view(request):
     except (EmptyPage, InvalidPage):
         persons = paginator.page(paginator.num_pages)
 
-
     cid_list = map(int, filter(None, request.GET.get('cl', '').split(',')))
-
     compare_list = list(models.Person.objects.filter(id__in=cid_list))
     cl = ','.join([str(c.id) for c in compare_list])
-
     for p in persons.object_list:
         p.is_in_list = p in compare_list
-    
     return render_to_response('search_result.html', locals(),
                               context_instance=RequestContext(request))
 
@@ -311,8 +295,8 @@ def compare_view(request):
     for season, results in eval_groupby(results, 
                                         lambda r: date2season(r.competition.event.date)):
         comp_res_groups = filter(
-            lambda c: len(c[1])>1,
-            eval_groupby(results, lambda x:x.competition))
+            lambda c: len(c[1]) > 1,
+            eval_groupby(results, lambda x: x.competition))
         if not comp_res_groups:
             continue
         comp_res_groups = [(c, sorted(rl, cmp_res)) 
@@ -326,21 +310,18 @@ def compare_view(request):
                               context_instance=RequestContext(request))
 
 
-
 class PersonFeedbackForm(forms.ModelForm):
 
     person = forms.ModelChoiceField(queryset=models.Person.objects.all(),
                                     widget=forms.HiddenInput(),
                                     required=False)
-
     wrong_results = forms.ModelMultipleChoiceField(
         queryset=models.Result.objects.all(),
         widget=forms.HiddenInput(),
         required=False)
                                                    
-
     class Meta:
-        model=models.PersonFeedback
+        model = models.PersonFeedback
 
 
 def feedback_person(request, person):
@@ -362,7 +343,6 @@ def feedback_person(request, person):
                                    'form': form},
                                   context_instance=RequestContext(request))
 
-
     form = PersonFeedbackForm(request.POST)
     form.person = p
 
@@ -373,15 +353,13 @@ def feedback_person(request, person):
         if v and val == 'on':
             wrid_list.append(int(v.group(1)))                               
             
-
     if form.is_valid():
-
         fb = form.save()
         for w in wrid_list:
             try:
                 wr = models.Result.objects.get(id=w)
                 fb.wrong_results.add(wr)
-            except Exception,e:
+            except Exception, e:
                 print e
         fb.save()
         
@@ -400,26 +378,17 @@ def feedback_person(request, person):
                                   context_instance=RequestContext(request))
 
 
-
 def get_event_summary():
-
     months = models.SportEvent.objects.extra(
         select={'month':'strftime("%%Y-%%m",date)'}
         ).order_by('-date').values_list('month')
-
-
     months = map(lambda s:datetime.datetime.strptime(s[0],'%Y-%m'), months)
-
     mc = [(m, len(list(l))) for m, l in itertools.groupby(months)]
-
-    ys = itertools.groupby(mc,
-                           lambda (d,c): d.year)
-
+    ys = itertools.groupby(mc, lambda (d, c): d.year)
     return [(y, list(l)) for y,l in ys]
     
 
-
-def comp_list_view(request, year = None, month = None):
+def comp_list_view(request, year=None, month=None):
     try:
         year = year and int(year)
         month = month and int(month)
@@ -436,19 +405,16 @@ def comp_list_view(request, year = None, month = None):
             if month == 12:
                 end_date = datetime.date(year + 1, 1, 1)
             else:
-                end_date = datetime.date(year, month+1, 1)
+                end_date = datetime.date(year, month + 1, 1)
         else:
             start_date = datetime.date(year, 1, 1)
             end_date = datetime.date(year + 1, 1, 1)
-
         comp_list = comp_list.filter(date__gte = start_date,
                                      date__lt = end_date)
-
     paginator = Paginator(comp_list, 30)
     comp_list = paginator.page(page)
     date_groups = itertools.groupby(comp_list.object_list,
                                     lambda c:c.date)
-    
     comp_groups = []
     for szn, dg in itertools.groupby(date_groups,
                                      lambda d:d[0].year):
@@ -472,6 +438,7 @@ def events_view(request, year = None, month = None):
                               dict(events = events),
                               context_instance = RequestContext(request))
 
+
 def past_events_view(request):
     try:
         page = int(request.GET.get('page', '1'))
@@ -481,23 +448,19 @@ def past_events_view(request):
     print request.GET, page, per_page
     today = datetime.date.today()
     objects = models.SportEvent.objects.filter(
-        Q(date__lt = today, end_date = None)|
+        Q(date__lt = today, end_date = None) |
         Q(end_date__lt = today)).order_by('-date')
     paginator = Paginator(objects, per_page)
     try:
         events = paginator.page(page)
     except (EmptyPage, InvalidPage):
         events = paginator.page(paginator.num_pages)
-
-    events_groups = [(year, eval_groupby(comps, lambda o:o.date))
+    events_groups = [(year, eval_groupby(comps, lambda o: o.date))
                      for year, comps in eval_groupby(events.object_list, 
                                                      lambda o: o.date.year)]    
-    
     return render_to_response('past_events.html', 
                               locals(),
                               context_instance = RequestContext(request))
-
-
 
 
 def future_events_view(request):
@@ -508,20 +471,19 @@ def future_events_view(request):
         page, per_page = 1, 10
     today = datetime.date.today()
     objects = models.SportEvent.objects.filter(
-        Q(date__gte = today, end_date = None)|
+        Q(date__gte = today, end_date = None) |
         Q(end_date__gte = today)).order_by('date')
     paginator = Paginator(objects, per_page)
     try:
         events = paginator.page(page)
     except (EmptyPage, InvalidPage):
         events = paginator.page(paginator.num_pages)
-    events_groups = [(year, eval_groupby(comps, lambda o:o.date))
+    events_groups = [(year, eval_groupby(comps, lambda o: o.date))
                      for year, comps in eval_groupby(events.object_list, 
                                                      lambda o: o.date.year)]    
     return render_to_response('future_events.html', 
                               locals(),
                               context_instance = RequestContext(request))
-
 
 
 class SportEventForm(forms.ModelForm):
@@ -537,19 +499,13 @@ class SportEventForm(forms.ModelForm):
         model = models.SportEvent
         fields = ('place', 'date', 'name', 'registration_open',
                   'description', 'protocol_file', 'image')
-        widgets = dict(
-            description = MarkItUpWidget(),
-            )
+        widgets = dict(description = MarkItUpWidget())
 
     class Media:
         js = ('js/jquery.ui.datepicker-ru.js', 
               "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js",
               "js/jquery.formset.min.js")
-        
-        css = dict(
-            all = ("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/redmond/jquery-ui.css",)
-        )
-    
+        css = dict(all = ("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/redmond/jquery-ui.css",))
 
 
 @login_required
@@ -599,8 +555,8 @@ def edit_event_view(request, event_id = None):
 
 def event_view(request, event_id):
     event = get_object_or_404(models.SportEvent, id = event_id)
-    regs_count = models.RegistrationMembership.objects.filter(
-        sport_event = event).count()
+    regs_count = models.RegistrationMembership.objects\
+                    .filter(sport_event = event).count()
     return render_to_response('sport_event.html',
                               locals(), 
                               context_instance = RequestContext(request))
@@ -632,10 +588,11 @@ def register_on_event_view(request, event_id):
                 form = EventRegistrationForm()
         else:
             form = EventRegistrationForm()
-        avail_regs = models.RegistrationInfo.objects.filter(
-            by_user = request.user).exclude(sport_event = event)
-        
-    reg_list = models.RegistrationInfo.objects.filter(sport_event = event)
+        avail_regs = models.RegistrationInfo.objects\
+                        .filter(by_user=request.user)\
+                        .exclude(sport_event=event)
+    reg_list = models.RegistrationInfo.objects\
+                .filter(sport_event=event)
     return render_to_response(
         'event_registration.html',
         locals(), 
@@ -694,7 +651,7 @@ def main_view(request):
     today = datetime.date.today()
     per_page = 10
     coming_events = models.SportEvent.objects.filter(
-        Q(date__gte = today, end_date = None)|
+        Q(date__gte = today, end_date = None) |
         Q(end_date__gte = today)).order_by('date')
 
     past_events = models.SportEvent.objects.filter(
@@ -713,7 +670,6 @@ def main_view(request):
             
     return render_to_response('main.html', locals(),
                               context_instance = RequestContext(request))
-
 
 
 def activity_view(request):
