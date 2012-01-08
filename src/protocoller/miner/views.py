@@ -682,3 +682,14 @@ def activity_view(request):
     regs = models.RegistrationMembership.objects.order_by('-date')[:num]
     return render_to_response('activity.html', locals(),
                               context_instance = RequestContext(request))
+
+
+def calendar_view(req):
+    today = datetime.date.today()
+    per_page = 10
+    events = models.SportEvent.objects.filter(
+        Q(date__gte = today, end_date = None) |
+        Q(end_date__gte = today)).order_by('date')
+    page = Paginator(events, per_page).page(1)
+    return render_to_response("calendar.html", locals(),
+                              context_instance=RequestContext(req))

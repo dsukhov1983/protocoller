@@ -29,6 +29,8 @@ urlpatterns = patterns(
     (r'^events/past/$', 'past_events_view', {}, 'past_events'),
     (r'^events/future/$', 'future_events_view', {}, 'future_events'),
 
+    (r'^calendar/$', 'calendar_view', {}, 'calendar'),
+
     (r'^protocols/$', 'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
     (r'^protocol/(?P<comp_id>\d+)/groups$', 'protocol_by_groups',
