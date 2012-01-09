@@ -10,8 +10,8 @@ handler404 = 'perfect404.views.page_not_found'
 urlpatterns = patterns(
     'protocoller.miner.views',
 
-    (r'^$', 'main_view', {}, 'main'),
-    (r'^index.html/$', 'main_view'),
+    (r'^$', 'calendar_view', {}, 'main'),
+    (r'^index.html', 'calendar_view'),
 
     (r'^events/$', 'events_view', {}, 'events'),
     (r'^events/add/$', 'edit_event_view', {}, 'add_event'),

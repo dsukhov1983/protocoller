@@ -9,96 +9,60 @@
 {% block content %}
 <a href="{% url add_event %}">Создать соревнование</a>
 {% for event in events %}
-    <div class="grid_2 event">
-        <span class="date">{{ event.date|ru_strftime:"%d %B %Y" }}</span>
-        <h3><a href="{% url place event.place.slug %}">{{ event.place }}</a></h3>
-    </div>
-    <div class="grid_8">
-        <h1>{{ event.name }}</h1>
-    </div>
-    <div class="grid_2">
-      <a href="{% url edit_event event.id %}">Изменить</a>
-    </div>
-
-    <div class="clear"></div>
-    <div class="grid_8">
-      {% for comp in event.competitions.all %}
-      {% if forloop.first %}<div class="grid_1 alpha comp">
-      {% else %}
-      {% if forloop.last %}<div class="grid_1 omega comp">
-      {% else %}
-      <div class="grid_1 comp">
-      {% endif %}
-      {% endif %}
-      {% if comp.processed %}
-      <a href="{% url protocol comp.id %}">{{ comp }}</a>
-      {% else %}
-      <span>{{ comp }}</span>
-      {% endif %}
-      </div>  
-      {% endfor %}
-    </div>
-    <div class="grid_4">
-      {% if event.image %}
-      {% thumbnail event.image "150" as im %}
-        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" />
-      {% endthumbnail %}
-      {% endif %}
-      {% if regs_count > 0 %}
-      <a href="" class="counter">
-        Заявил{{ regs_count|choose_plural:"ся,ись,ись" }} <span class="counter-value">{{ regs_count }}</span> участник{{ regs_count|choose_plural:",а,ов" }}
-      </a>
-      {% endif %}
-      {% if event.registration_open %}
-      <a href="{% url event_registration event.id %}">Заявиться</a>
-      {% endif %}
-    </div>
-    <div class="clear"></div>
-    <div class="grid_9">
-      {% if event.protocol_file %}
-      <a href="{{ event.protocol_file.url }}">Скачать протокол</a>
-      {% endif %}
-      {{ event.description|default:""|markdown }}</div>
-    <div>{{ event.standing|markdown}}
-    <div class="clear"></div>
-    <div class="grid_8">
-      {% load comments %}
-      {% get_comment_count for event as comment_count %}
-      {% if comment_count > 0 %}
-      <h2 class="commentsHeader">Комментарии: {{ comment_count }}</h2>
-      {% get_comment_list for event as comment_list %}
-      <ol class="commentsList">
-      {% for comment in comment_list %}
-      <li class="comment">
-        <div class="meta">
-          <div class="userName">{% print_fio comment.user %}{% print_user comment.user %}</div>
-          <div class="commentDate">{{ comment.submit_date|distance_of_time }}</div>
+    <div class="event">
+        <div class="grid_2">
+            <span class="date">{{ event.date|ru_strftime:"%d %B %Y" }}</span>
+            <h3><a href="{% url place event.place.slug %}">{{ event.place }}</a></h3>
         </div>
-        <div class="usertext">{{ comment.comment }}</div>
-      </li>
-      {% endfor %}
-      </ol>
-      {% endif %}
-      {% get_comment_form for event as comment_form %}
-      <div id="add_comment">
-        {% if user.is_authenticated %}
-        <h2>Добавить комментарий</h2>
-        <form action="{% comment_form_target %}" method="post">
-          {% csrf_token %}
-          <input type="hidden" name="next" value="{{ request.path }}" />
-          {{ comment_form.content_type }}
-          {{ comment_form.object_pk }}
-          {{ comment_form.timestamp }}
-          {{ comment_form.security_hash }}
-          <textarea name="comment" rows="2" id="id_comment" style="width: 95%;"></textarea>
-          <div class="buttons">
-               <input type="submit" value="Отправить" />
-          </div>
-        </form>
-        {% else %}
-        <p>Чтобы добавить комментарий, Вам нужно <a href="{%url login %}">Войти</a>.</p>
-        {% endif %}
-      </div>
+        <div class="grid_8">
+            <h1>{{ event.name }}</h1>
+        </div>
+        <div class="grid_2">
+          <a href="{% url edit_event event.id %}">Изменить</a>
+        </div>
+
+        <div class="clear"></div>
+        <div class="grid_8">
+          {% for comp in event.competitions.all %}
+          {% if forloop.first %}<div class="grid_1 alpha comp">
+          {% else %}
+          {% if forloop.last %}<div class="grid_1 omega comp">
+          {% else %}
+          <div class="grid_1 comp">
+          {% endif %}
+          {% endif %}
+          {% if comp.processed %}
+          <a href="{% url protocol comp.id %}">{{ comp }}</a>
+          {% else %}
+          <span>{{ comp }}</span>
+          {% endif %}
+          </div>  
+          {% endfor %}
+        </div>
+        <div class="grid_4">
+          {% if event.image %}
+          {% thumbnail event.image "150" as im %}
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" />
+          {% endthumbnail %}
+          {% endif %}
+          {% if regs_count > 0 %}
+          <a href="" class="counter">
+            Заявил{{ regs_count|choose_plural:"ся,ись,ись" }} <span class="counter-value">{{ regs_count }}</span> участник{{ regs_count|choose_plural:",а,ов" }}
+          </a>
+          {% endif %}
+          {% if event.registration_open %}
+          <a href="{% url event_registration event.id %}">Заявиться</a>
+          {% endif %}
+        </div>
+        <div class="clear"></div>
+        <div class="grid_9">
+          {% if event.protocol_file %}
+          <a href="{{ event.protocol_file.url }}">Скачать протокол</a>
+          {% endif %}
+          {{ event.description|default:""|markdown }}</div>
+        <div>{{ event.standing|markdown}}
+        <div class="clear"></div>
+        </div>
     </div>
 {% endfor %}
 <div class="pager">
