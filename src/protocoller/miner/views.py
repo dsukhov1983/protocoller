@@ -16,7 +16,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.comments.models import Comment
 from django.forms.models import inlineformset_factory
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from markitup.widgets import MarkItUpWidget
 from sorl.thumbnail import get_thumbnail
 
@@ -684,12 +684,43 @@ def activity_view(request):
                               context_instance = RequestContext(request))
 
 
+def get_next_month(month, year):
+    if month == 12:
+        return 1, year + 1
+    else:
+        return month + 1, year
+
+
+def iter_month_events(year, month):
+    while True:
+        events_exists = models.SportEvent.objects\
+            .filter(date__gte=datetime.date(year, month, 1))\
+            .exists()
+        if not events_exists:
+            return
+        events = models.SportEvent.objects\
+            .filter(date__year=year, date__month=month)\
+            .order_by('date')
+        yield events, month, year
+        month, year = get_next_month(month, year)
+
+
 def calendar_view(req):
     today = datetime.date.today()
-    per_page = 10
-    events = models.SportEvent.objects.filter(
-        Q(date__gte = today, end_date = None) |
-        Q(end_date__gte = today)).order_by('date')
-    page = Paginator(events, per_page).page(1)
-    return render_to_response("calendar.html", locals(),
-                              context_instance=RequestContext(req))
+    return calendar_month_view(req, today.year, today.month)
+
+
+def calendar_month_view(req, year, month):
+    year, month = int(year), int(month)
+    limit = 3
+    total = 0
+    months_events = []
+    for events, imonth, iyear in iter_month_events(year, month):
+        months_events.append(events)
+        total += len(events)
+        if total >= limit:
+            next_month, next_year = get_next_month(imonth, iyear)
+            return render_to_response("calendar.html", locals(),
+                                      context_instance=RequestContext(req))
+    raise Http404
+

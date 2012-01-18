@@ -29,7 +29,7 @@ urlpatterns = patterns(
     (r'^events/past/$', 'past_events_view', {}, 'past_events'),
     (r'^events/future/$', 'future_events_view', {}, 'future_events'),
 
-    (r'^calendar/$', 'calendar_view', {}, 'calendar'),
+    (r'^calendar/(?P<year>\d{4})-(?P<month>\d+)/$', 'calendar_month_view', {}, 'calendar'),
 
     (r'^protocols/$', 'comp_list_view'),
     (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
@@ -59,7 +59,7 @@ urlpatterns = patterns(
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/(.*)', include(admin.site.urls)),
 )
 
 
@@ -74,7 +74,7 @@ urlpatterns += patterns(
     (r'^accounts/', include('registration.urls')),
     url(r'^markitup/', include('markitup.urls')),  # markitup
     (r'^comments/', include('django.contrib.comments.urls')),  # comments
-    (r'^sentry/', include('sentry.urls')),  # sentry
+    (r'^sentry/', include('sentry.web.urls')),  # sentry
     )
 
 

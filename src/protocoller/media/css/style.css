@@ -507,3 +507,7 @@ a.anchor {
 h4.place{
     margin-bottom:0em;
 }
+
+th.sat, th.sun{
+    color:red;
+}

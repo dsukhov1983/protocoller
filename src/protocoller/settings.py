@@ -4,8 +4,6 @@ import os
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
-
-
 ADMINS = (
      ('Dmitry Sukhov', 'dmitry.sukhov@gmail.com'),
 )
@@ -36,11 +34,16 @@ SITE_ID = 1
 # to load the internationalization machinery.
 USE_I18N = True
 
+
+DATE_FORMAT = 'N j, Y'
+
+
+STATIC_ROOT = os.path.join(SITE_ROOT, 'media')
+STATIC_URL = '/media/'
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
-
-DATE_FORMAT = 'N j, Y'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
@@ -109,6 +112,7 @@ INSTALLED_APPS = (
     'sentry',
     'sentry.client',
     'sorl.thumbnail',
+    'gencal'
 )
 
 LOGIN_REDIRECT_URL = '/'
@@ -180,7 +184,7 @@ YANDEX_MAPS_API_KEY = 'AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAA
 #MARKITUP
 MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})
 MARKITUP_SET = 'markitup/sets/markdown'
-#MARKITUP_SKIN = 'markitup/skins/markitup'
+MARKITUP_SKIN = 'markitup/skins/markitup'
 JQUERY_URL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
 
 #django-debug-toolbar
