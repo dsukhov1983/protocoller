@@ -69,7 +69,7 @@
     <tbody>
       {% for group,  group_best_result, results in result_groups %}
       <tr>
-        <td colspan="8"><h2>Группа {{ group }}<a class="anchor" name="{{ group|urlencode }}" href="#{{ group|urlencode }}">§</h2></td>
+        <td colspan="8"><h2>Группа {{ group }}<a class="anchor" name="{{ group|urlencode }}" href="#{{ group|urlencode }}">§</a></h2></td>
       </tr>
       {% for r in results %}
       {% if r.pos_in_grp < 0 %}

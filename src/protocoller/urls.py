@@ -10,8 +10,17 @@ handler404 = 'perfect404.views.page_not_found'
 urlpatterns = patterns(
     'protocoller.miner.views',
 
-    (r'^$', 'calendar_view', {}, 'main'),
-    (r'^index.html', 'calendar_view'),
+    (r'^$', 'protocols_view', {}, 'main'),
+    (r'^index.html', 'protocols_view'),
+
+    (r'^calendar/$', 'calendar_view', {}, 'calendar'),
+    (r'^calendar/(?P<year>\d{4})-(?P<month>\d+)/$', 'calendar_month_view', {}, 'calendar_month'),
+
+    (r'^protocols/$', 'protocols_view', {}, 'protocols'),
+    (r'^protocols/(?P<year>\d{4})-(?P<month>\d+)/$', 'protocols_month_view', {}, 'protocols_month'),
+    (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
+    (r'^protocol/(?P<comp_id>\d+)/groups$', 'protocol_by_groups',
+        {}, 'protocol_by_groups'),
 
     (r'^events/$', 'events_view', {}, 'events'),
     (r'^events/add/$', 'edit_event_view', {}, 'add_event'),
@@ -29,12 +38,6 @@ urlpatterns = patterns(
     (r'^events/past/$', 'past_events_view', {}, 'past_events'),
     (r'^events/future/$', 'future_events_view', {}, 'future_events'),
 
-    (r'^calendar/(?P<year>\d{4})-(?P<month>\d+)/$', 'calendar_month_view', {}, 'calendar'),
-
-    (r'^protocols/$', 'comp_list_view'),
-    (r'^protocol/(?P<comp_id>\d+)$', 'protocol', {}, 'protocol'),
-    (r'^protocol/(?P<comp_id>\d+)/groups$', 'protocol_by_groups',
-     {}, 'protocol_by_groups'),
 
     (r'^places/$', 'places_view', {}, 'places'),
     (r'^places/add/$', 'edit_place_view', {}, 'add_place'),

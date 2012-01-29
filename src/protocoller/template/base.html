@@ -2,9 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head profile="http://www.w3.org/2005/10/profile">
   
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/960.css" />
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/reset.css" />
-  <link rel="stylesheet" href="{{ MEDIA_URL }}css/text.css" />
+  <link rel="stylesheet" href="{{ MEDIA_URL }}css/grid.css" />
   <link rel="stylesheet" href="{{ MEDIA_URL }}css/style.css" />
   <link rel="stylesheet" href="{{ MEDIA_URL }}css/typography.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="{{ MEDIA_URL }}css/openid.css" />
@@ -36,7 +34,8 @@
               {% block search_fields %}{% endblock %}
             </form>
           </li>
-          <li><a href="{% url main %}">Календарь</a></li>
+          <li><a href="{% url main %}">Протоколы</a></li>
+          <li><a href="{% url calendar %}">Календарь</a></li>
           <li><a href="{% url places %}">Трассы</a></li>
           <li><a href="{% url persons %}">Спортсмены</a></li>
           <li class="end">

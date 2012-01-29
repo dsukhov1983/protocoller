@@ -84,6 +84,7 @@ class ListCalendar(LocaleHTMLCalendar):
 
     def __init__(self, cal_items, year=None, month=None, *args, **kwargs):
         today = datetime.date.today()
+        self.today = today
 
         if year == None:
             year = today.year
@@ -127,8 +128,13 @@ class ListCalendar(LocaleHTMLCalendar):
         if day.month != themonth:
             return "<td/>"
         if self.month_dict[day]:
-            return '<td><a href="%s">%d</a></td>' % (self.get_link(day), day.day)
-        return '<td>%d</td>' % (day.day)
+            content = '<a href="%s">%d</a>' % (self.get_link(day), day.day)
+        else:
+            content = str(day.day)
+        if day == self.today:
+            return '<td class="today">%s</td>' % content
+        else:
+            return '<td>%s</td>' % content
 
     def get_link(self, dt):
         """
@@ -137,7 +143,7 @@ class ListCalendar(LocaleHTMLCalendar):
         :arg dt: date to turn into a url
         :type dt: date/datetime
         """
-        return "a"
+        return "#%s" % dt
 
     def monthdates2calendar(self, year, month):
         """

@@ -6,6 +6,7 @@
 {% load pytils_numeral %}
 {% load thumbnail %}
 {% load gencal %}
+{% load comments %}
 
 {% block extrahead %}
 <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.ias.js"></script>
@@ -41,52 +42,59 @@ jQuery.ias({
 {% endblock %}
 
 {% block content %}
+<form>
+    <button type="button" name="" value="" class="css3button" onclick="document.location.href='{% url add_event %}'">Создать соревнование</button>
+</form>
 <div class="event_list">
-    {% for events in months_events %}
+    {% for event_days, imonth, iyear in months_events %}
     <div class="month_events">
         <div class="grid_9">
-            {% for event in events %}
-                <div class="event">
-                    <div>
-                        <span class="date">{{ event.date|ru_strftime:"%d %B %Y" }}</span>
-                        <h3><a href="{% url place event.place.slug %}">{{ event.place }}</a></h3>
-                    </div>
-                    <div>
-                        <h1>{{ event.name }}</h1>
-                    </div>
-                    
-                    <div>
-                        {% for comp in event.competitions.all %}
-                            <div>
-                                {% if comp.processed %}
-                                    <a href="{% url protocol comp.id %}">{{ comp }}</a>
-                                {% else %}
-                                    <span>{{ comp }}</span>
-                                {% endif %}
-                            </div>  
-                        {% endfor %}
-                    </div>
+            {% for day_events in event_days %}
+                <h3 style="color:#990000;">
+                    <a class="anchor" name="{{ day_events.date|urlencode }}" href="#{{ day_events.date|urlencode }}">§</a>
+                    {{ day_events.date|ru_strftime:"%d %B" }}
+                </h3>
+                {% for event in day_events.events %}
+                    <div class="event">
+                        <div>
+                            <h4 class="place">{{ event.place }}</h4>
+                        </div>
+                        <div>
+                            <h5><a href="{% url event event.id %}">{{ event.name }}</a></h5>
+                        </div>
+                        
+                        <ul>
+                            {% for comp in event.competitions.all %}
+                                <li style="list-style: none outside none;">
+                                    {% if comp.processed %}
+                                        <a href="{% url protocol comp.id %}">{{ comp }}</a>
+                                    {% else %}
+                                        {{ comp }}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
 
-                    <div>
-                        {% if event.protocol_file %}
-                            <a href="{{ event.protocol_file.url }}">Скачать протокол</a>
-                        {% endif %}
-                        {{ event.description|default:""|markdown }}</div>
-                    <div>
-                        {{ event.standing|markdown}}
+                        <div>
+                            {% if event.protocol_file %}
+                                <a href="{{ event.protocol_file.url }}">Скачать протокол</a>
+                            {% endif %}
+                        </div>
                     </div>
-                </div>
+                {% endfor %}
             {% endfor %}
         </div>
         <div class="grid_3">
-            {% gencal events year month%}
+            {% gencal event_days iyear imonth%}
         </div>
     </div>
     {% endfor %}
+    {% if next_events_exists %}
     <div class="navigation">
             <div class="next-events">
                 <a href="/calendar/{{ next_year }}-{{ next_month }}">Следующие</a>
         </div>
     </div>
+    {% endif %}
 </div>
 {% endblock %}

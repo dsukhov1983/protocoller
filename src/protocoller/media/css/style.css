@@ -246,7 +246,7 @@ ul.sf-menu li li li.sfHover ul {
 
 
 h3.date{
-    margin-bottom: 0.75em;
+    margin-bottom: 1em;
 }
 
 .event h3{
@@ -256,7 +256,7 @@ h3.date{
 }
 
 .event .date{
-    font:0.85em Georgia,serif;
+    font:1em Georgia,serif;
 }
 
 .event a{
@@ -510,4 +510,52 @@ h4.place{
 
 th.sat, th.sun{
     color:red;
+}
+
+td.today{
+    border-style:solid;
+    border-color:red;
+    border-width:1px;
+}
+
+
+.comment-bubble {
+float : right;
+width : 48px;
+height : 48px;
+background : url(../img/comment.png) no-repeat;
+font-size : 18px;
+margin-top : -15px;
+margin-right : 2px;
+text-align : center;
+position:absolute;
+}
+
+button.css3button {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: #ffffff;
+    padding: 10px 20px;
+    margin-bottom:10px;
+    background: -moz-linear-gradient(
+        top,
+        #42cdff 0%,
+        #002266);
+    background: -webkit-gradient(
+        linear, left top, left bottom, 
+        from(#42cdff),
+        to(#002266));
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border: 1px solid #012c40;
+    -moz-box-shadow:
+        0px 1px 3px rgba(000,000,000,0.5),
+        inset 0px 0px 2px rgba(255,255,255,1);
+    -webkit-box-shadow:
+        0px 1px 3px rgba(000,000,000,0.5),
+        inset 0px 0px 2px rgba(255,255,255,1);
+    text-shadow:
+        0px -1px 0px rgba(000,000,000,0.4),
+        0px 1px 0px rgba(255,255,255,0.3);
 }

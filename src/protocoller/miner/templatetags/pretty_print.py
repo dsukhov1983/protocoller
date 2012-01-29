@@ -137,9 +137,12 @@ def active(request, pattern):
         return 'active'
     return ''
     
-    
 
-
-
-
+@register.simple_tag
+def print_comp(comp):
+        img = 'classic2.png' if comp.style == models.Competition.CLASSIC_STYLE else 'skate2.png'
+        return """<div class="competition">
+    <img src="/media/img/%s"/>
+    <span class="distance">%.0f&nbsp;км.</span>
+</div>""" % (img, comp.distance)
 

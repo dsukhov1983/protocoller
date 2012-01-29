@@ -1,59 +1,100 @@
 {% extends "base.html" %}
-
+{% load i18n %}
 {% load pytils_dt %}
 {% load pretty_print %}
+{% load markup %}
+{% load pytils_numeral %}
+{% load thumbnail %}
+{% load gencal %}
+{% load comments %}
 
-{% block content %}
+{% block extrahead %}
+<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.ias.js"></script>
+<script type="text/javascript">
+jQuery.ias({
+  container     : ".event_list",
+        // Enter the selector of the element containing
+        // your items that you want to paginate.
 
-{% for cg, dglist in comp_groups %}
-<div class="season_res">
-<h2 class="season">{{ cg }}
-  <a class="anchor" name="{{ cg|urlencode }}" href="#{{ cg|urlencode }}">§</a></h2>
-<div class="comp_list">
-  {% for date, comp_list in dglist %}
-  <div class="date">{{ date|ru_strftime:"%d %B" }}</div>
-  {% for c in comp_list %}
-  <div class="competition">    
-    <div class="place">{{ c.place|default:"" }}</div>
-    <div class="title">{{ c.name }}</div>
-    {% for p in c.competitions.all %}
-    <div class="protocol">
-      <a href="{% url protocoller.miner.views.protocol p.id %}" >{{ p }}</a>
-    </div>
-    {% endfor %}
-  </div>
-  {% endfor %}
-  {% endfor %}
-</div>
-</div>
-{% endfor %}
-<div class="pager">
-  <span class="step-links">
-    {% if cl_page.has_previous %}
-    <a href="?page={{ cl_page.previous_page_number }}">предыдущая</a>
-    {% else %}
-    <span>предыдущая</span>
-    {% endif %}  
-    
-    {% if cl_page.has_next %}
-    <a href="?page={{ cl_page.next_page_number }}">следующая</a>
-    {% else %}
-    <span>следующая</span>
-    {% endif %}
-    </span>
-</div>
-    
+  item      : ".month_events",
+        // Enter the selector of the element that each
+        // item has. Make sure the elements are inside
+        // the container element.
+
+  pagination    : "#content .navigation",
+        // Enter the selector of the element that contains
+        // your regular pagination links, like next,
+        // previous and the page numbers. This element
+        // will be hidden when IAS loads.
+
+  next      : ".next-events a",
+        // Enter the selector of the link element that
+        // links to the next page. The href attribute
+        // of this element will be used to get the items
+        // from the next page.
+
+  loader    : "{{ MEDIA_URL }}img/loader.gif"
+        // Enter the url to the loader image. This image
+        // will be displayed when the next page with items
+        // is loaded via AJAX.
+});    
+</script>
 {% endblock %}
 
-{% block right %}
-<div class="hint">
-На сайте собраны результаты соревнований по лыжным гонкам 
-за несколько лет.
-<p>
-Кроме просмотра протоколов здесь можно также:
-<ul>
-  <li><a href="/search">искать</a> результаты спортсмена по его фамилии, имени;</li>
-  <li><a href="/compare">сравнивать</a> результаты спортсменов между собой.</li>
-</ul>
+{% block content %}
+<form>
+    <button type="button" name="" value="" class="css3button" onclick="document.location.href='{% url add_event %}'">Создать соревнование</button>
+</form>
+<div class="event_list">
+    {% for event_days, imonth, iyear in months_events %}
+    <div class="month_events">
+        <div class="grid_9">
+            {% for day_events in event_days %}
+                <h3 style="color:#990000;">
+                    <a class="anchor" name="{{ day_events.date|urlencode }}" href="#{{ day_events.date|urlencode }}">§</a>
+                    {{ day_events.date|ru_strftime:"%d %B" }}
+                </h3>
+                {% for event in day_events.events %}
+                    <div class="event">
+                        <div>
+                            <h4 class="place">{{ event.place }}</h4>
+                        </div>
+                        <div>
+                            <h5><a href="{% url event event.id %}">{{ event.name }}</a></h5>
+                        </div>
+                        
+                        <ul>
+                            {% for comp in event.competitions.all %}
+                                <li style="list-style: none outside none;">
+                                    {% if comp.processed %}
+                                        <a href="{% url protocol comp.id %}">{{ comp }}</a>
+                                    {% else %}
+                                        {{ comp }}
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                        <div>
+                            {% if event.protocol_file %}
+                                <a href="{{ event.protocol_file.url }}">Скачать протокол</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="grid_3">
+            {% gencal event_days iyear imonth%}
+        </div>
+    </div>
+    {% endfor %}
+    {% if next_events_exists %}
+    <div class="navigation">
+            <div class="next-events">
+                <a href="/protocols/{{ next_year }}-{{ next_month }}">Следующие</a>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

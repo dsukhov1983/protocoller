@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-import re
-import itertools
-import random
-import datetime
 import csv
+import datetime
+import itertools
+import operator
+import random
+import re
 
-from pytils import translit
+from collections import namedtuple
 from django.db.models import Q
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django import forms
@@ -18,6 +19,7 @@ from django.contrib.comments.models import Comment
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, Http404
 from markitup.widgets import MarkItUpWidget
+from pytils import translit
 from sorl.thumbnail import get_thumbnail
 
 from protocoller.miner import models
@@ -691,36 +693,97 @@ def get_next_month(month, year):
         return month + 1, year
 
 
-def iter_month_events(year, month):
+def get_prev_month(month, year):
+    if month == 1:
+        return 12, year - 1
+    else:
+        return month - 1, year
+
+DayEvents = namedtuple("DayEvents", ["date", "events"])
+
+
+def iter_month_events(year, month, from_day, ascending=True):
     while True:
-        events_exists = models.SportEvent.objects\
-            .filter(date__gte=datetime.date(year, month, 1))\
-            .exists()
-        if not events_exists:
-            return
+        if ascending:
+            if not models.SportEvent.objects\
+                        .filter(date__gte=datetime.date(year, month, 1))\
+                        .exists():
+                return
+        else:
+            if not models.SportEvent.objects\
+                        .filter(date__lte=datetime.date(year, month, 1))\
+                        .exists():
+                return
+
         events = models.SportEvent.objects\
-            .filter(date__year=year, date__month=month)\
-            .order_by('date')
-        yield events, month, year
-        month, year = get_next_month(month, year)
+            .filter(date__year=year, date__month=month)
+        if ascending:
+            if from_day is not None:
+                events = events.filter(date__gte=from_day)
+            events = events.order_by('date')
+        else:
+            if from_day is not None:
+                events = events.filter(date__lte=from_day)
+            events = events.order_by('-date')
+
+        event_days = [DayEvents(day, list(events)) for day, events in
+                        itertools.groupby(events, operator.attrgetter('date'))]
+        yield event_days, month, year
+        month, year = get_next_month(month, year) if ascending else get_prev_month(month, year)
 
 
 def calendar_view(req):
     today = datetime.date.today()
-    return calendar_month_view(req, today.year, today.month)
+    return calendar_month_view(req, today.year, today.month, today)
 
 
-def calendar_month_view(req, year, month):
+def calendar_month_view(req, year, month, from_day=None):
     year, month = int(year), int(month)
-    limit = 3
+    limit = 10
     total = 0
     months_events = []
-    for events, imonth, iyear in iter_month_events(year, month):
-        months_events.append(events)
-        total += len(events)
+    for event_days, imonth, iyear in iter_month_events(year, month, from_day):
+        if event_days:
+            months_events.append((event_days, imonth, iyear))
+        total += len(event_days)
         if total >= limit:
             next_month, next_year = get_next_month(imonth, iyear)
+            next_events_exists = models.SportEvent.objects\
+                        .filter(date__gte=datetime.date(next_year, next_month, 1))\
+                        .exists()
             return render_to_response("calendar.html", locals(),
                                       context_instance=RequestContext(req))
+    if months_events:
+        next_events_exists = False
+        return render_to_response("calendar.html", locals(),
+                                context_instance=RequestContext(req))
+    raise Http404
+
+
+def protocols_view(req):
+    today = datetime.date.today()
+    return protocols_month_view(req, today.year, today.month, today)
+
+
+def protocols_month_view(req, year, month, from_day=None):
+    year, month = int(year), int(month)
+    limit = 10
+    total = 0
+    months_events = []
+    for event_days, imonth, iyear in iter_month_events(year, month, from_day, ascending=False):
+        if event_days:
+            months_events.append((event_days, imonth, iyear))
+        total += len(event_days)
+        if total >= limit:
+            next_month, next_year = get_prev_month(imonth, iyear)
+            next_events_exists = models.SportEvent.objects\
+                        .filter(date__lt=datetime.date(iyear, imonth, 1))\
+                        .exists()
+            return render_to_response("protocols.html", locals(),
+                                      context_instance=RequestContext(req))
+    if months_events:
+        next_events_exists = False
+        return render_to_response("protocols.html", locals(),
+                                context_instance=RequestContext(req))
     raise Http404
 
