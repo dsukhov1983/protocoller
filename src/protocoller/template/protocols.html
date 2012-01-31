@@ -9,7 +9,7 @@
 {% load comments %}
 
 {% block extrahead %}
-<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.ias.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.ias.js"></script>
 <script type="text/javascript">
 jQuery.ias({
   container     : ".event_list",
@@ -33,7 +33,7 @@ jQuery.ias({
         // of this element will be used to get the items
         // from the next page.
 
-  loader    : "{{ MEDIA_URL }}img/loader.gif"
+  loader    : "{{ STATIC_URL }}img/loader.gif"
         // Enter the url to the loader image. This image
         // will be displayed when the next page with items
         // is loaded via AJAX.
@@ -63,9 +63,9 @@ jQuery.ias({
                             <h5><a href="{% url event event.id %}">{{ event.name }}</a></h5>
                         </div>
                         
-                        <ul>
+                        <ul class="comp_list">
                             {% for comp in event.competitions.all %}
-                                <li style="list-style: none outside none;">
+                                <li>
                                     {% if comp.processed %}
                                         <a href="{% url protocol comp.id %}">{{ comp }}</a>
                                     {% else %}
@@ -75,11 +75,19 @@ jQuery.ias({
                             {% endfor %}
                         </ul>
 
-                        <div>
-                            {% if event.protocol_file %}
-                                <a href="{{ event.protocol_file.url }}">Скачать протокол</a>
-                            {% endif %}
-                        </div>
+                        {% if event.protocol_file %}
+                            <div>
+                                <a href="{{ event.protocol_file.url }}"><img src="{{ STATIC_URL }}img/download.png">Скачать протокол</a>
+                            </div>
+                        {% endif %}
+
+                        {% if event.terms_file %}
+                            <div>
+                                <a href="{{ event.terms_file.url }}"><img src="{{ STATIC_URL }}img/protocol.png">Скачать протокол</a>
+                            </div>
+                        {% endif %}
+                        
+
                     </div>
                 {% endfor %}
             {% endfor %}

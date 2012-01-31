@@ -106,6 +106,15 @@ class SportEvent(models.Model):
         return os.path.join('upload/protocols/%s/%s' % (dt.year, dt.month),
                             translit.slugify(instance.name) + ext)
 
+    def eval_terms_upload_to(instance, filename):
+        ext = ''
+        n = filename.rfind('.')
+        if n:
+            ext = filename[n:]
+        dt = instance.date
+        return os.path.join('upload/terms/%s/%s' % (dt.year, dt.month),
+                            translit.slugify(instance.name) + ext)
+
     place = models.ForeignKey(Place, null=True, verbose_name='Место проведения',
                               related_name="events")
     name = models.CharField('Название', max_length=250)
@@ -120,6 +129,8 @@ class SportEvent(models.Model):
     registration_open = models.BooleanField('Регистрация открыта', default=False)
     protocol_file = models.FileField('Протокол', upload_to=eval_upload_to,
                                      null=True, blank=True)
+    terms_file = models.FileField('Положение', upload_to=eval_terms_upload_to,
+                                     null=True, blank=True)                                 
     image = ImageField('Изображение', upload_to=eval_image_upload_to,
                        null=True, blank=True)
 

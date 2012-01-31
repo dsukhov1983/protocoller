@@ -112,10 +112,10 @@ def print_user(user):
     if is_openid_user(user):
         return """
 <span class="profile-image">
-<img src="%(media_url)simg/fi/%(icon_path)s" />
+<img src="%(static_url)simg/fi/%(icon_path)s" />
 </span>
 <span class="profile-name"> %(username)s </span>
-""" % dict(media_url = settings.MEDIA_URL,
+""" % dict(static_url = settings.STATIC_URL,
            icon_path = get_user_icon(user),
            username = user.openid_profiles.all()[0].nickname)
     else:
@@ -142,7 +142,7 @@ def active(request, pattern):
 def print_comp(comp):
         img = 'classic2.png' if comp.style == models.Competition.CLASSIC_STYLE else 'skate2.png'
         return """<div class="competition">
-    <img src="/media/img/%s"/>
+    <img src="/static/img/%s"/>
     <span class="distance">%.0f&nbsp;км.</span>
 </div>""" % (img, comp.distance)
 

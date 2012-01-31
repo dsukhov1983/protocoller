@@ -1,7 +1,6 @@
 # Django settings for protocoller project.
 import os
 
-
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 ADMINS = (
@@ -38,8 +37,11 @@ USE_I18N = True
 DATE_FORMAT = 'N j, Y'
 
 
-STATIC_ROOT = os.path.join(SITE_ROOT, 'media')
-STATIC_URL = '/media/'
+STATIC_ROOT = '/home/quoter/www/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+   '/home/quoter/devel/protocoller/src/protocoller/static',
+)
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -53,7 +55,7 @@ MEDIA_URL = '/media/'
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/media/admin/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'ta^4n6q(n50s7%)^nx-3u^i@l+owel-veww#!&8yf_r7bsd((g'
@@ -92,6 +94,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
     'django.contrib.comments',
     'protocoller.miner',
     'django.contrib.admin',
@@ -101,7 +105,7 @@ INSTALLED_APPS = (
     'socialauth',
     'openid_consumer',
     'registration',
-    'markitup',   
+    'markitup',
     'uni_form',
     'debug_toolbar',
     'perfect404',
@@ -171,7 +175,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "django.contrib.messages.context_processors.messages",
     "django.core.context_processors.request",
-    "protocoller.miner.context_processors.maps_api_key"
+    "protocoller.miner.context_processors.maps_api_key",
+    "django.core.context_processors.static"
     )
 
 
