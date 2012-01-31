@@ -500,7 +500,7 @@ class SportEventForm(forms.ModelForm):
     class Meta:
         model = models.SportEvent
         fields = ('place', 'date', 'name', 'registration_open',
-                  'description', 'protocol_file', 'image')
+                  'description', 'protocol_file', 'terms_file')
         widgets = dict(description = MarkItUpWidget())
 
     class Media:
@@ -528,8 +528,8 @@ def edit_event_view(request, event_id = None):
         
     CompFormset = inlineformset_factory(
         models.SportEvent, models.Competition,
-        fields = ('sex', 'name', 'style', 'start_type', 'distance',
-                  'start_time'),
+        fields = ('sex', 'style', 'start_type', 'distance',
+                  'name'),
         formfield_callback = custom_field_callback,
         can_delete = True, extra = 1)
 

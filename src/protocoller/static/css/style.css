@@ -223,7 +223,8 @@ ul.sf-menu li li li.sfHover ul {
 }
 
 .event{
-    margin-top:1em;
+    margin-top:0.5em;
+    margin-bottom:1em;
     overflow: auto;
 }
 

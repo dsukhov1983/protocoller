@@ -167,10 +167,10 @@ class Competition(models.Model):
 
     event = models.ForeignKey(SportEvent, null=True,
                               related_name="competitions")
-    sex = models.IntegerField('Пол', choices=SEX_TYPES, default=UNKNOWN)
+    sex = models.IntegerField('Пол', choices=SEX_TYPES, default=MALE)
     name = models.CharField('Название', max_length=250, blank=True)
-    style = models.IntegerField('Стиль', choices=STYLE_CHOICES)
-    start_type = models.IntegerField('Старт', choices=START_TYPES)
+    style = models.IntegerField('Стиль', choices=STYLE_CHOICES, default=FREE_STYLE)
+    start_type = models.IntegerField('Старт', choices=START_TYPES, default=MASS_START)
     distance = models.FloatField('Дистанция')
     link = models.URLField('ссылка', null=True, blank=True)
     rating = models.IntegerField(choices=RATING_TYPES, default=BOTH_RATING)
