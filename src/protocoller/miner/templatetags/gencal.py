@@ -80,6 +80,8 @@ class ListCalendar(HTMLCalendar):
 
     DAY_ABBR = ["пн", "вт", "ср", "чтв", "пт", "сбт", "вс"]
     cssclasses = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
+    MONTH_LIST = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль",
+                  "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
 
     def __init__(self, cal_items, year=None, month=None, *args, **kwargs):
         today = datetime.date.today()
@@ -183,6 +185,10 @@ class ListCalendar(HTMLCalendar):
         """
         s = ''.join(self.formatday(d, wd, themonth) for (d, wd) in theweek)
         return '<tr>%s</tr>' % s
+
+    def formatmonthname(self, year, month, withyear=True):
+        return '<th class="month" colspan="7">%s %s</th>' % (
+                self.MONTH_LIST[month - 1], year)
 
     def formatmonth(self, theyear, themonth, withyear=True):
         """
