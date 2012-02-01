@@ -116,7 +116,6 @@ INSTALLED_APPS = (
     'sentry',
     'sentry.client',
     'sorl.thumbnail',
-    'gencal'
 )
 
 LOGIN_REDIRECT_URL = '/'
