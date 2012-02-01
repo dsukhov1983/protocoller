@@ -50,14 +50,14 @@ jQuery.ias({
     <div class="month_events">
         <div class="grid_9">
             {% for day_events in event_days %}
-                <h3 style="color:#990000;">
-                    <a class="anchor" name="{{ day_events.date|urlencode }}" href="#{{ day_events.date|urlencode }}">§</a>
+                <h4 style="color:#990000;">
+                    <a class="anchor" name="{{ day_events.date|urlencode }}" href="#{{ day_events.date|urlencode }}"></a>
                     {{ day_events.date|ru_strftime:"%d %B" }}
-                </h3>
+                </h4>
                 {% for event in day_events.events %}
                     <div class="event">
                         <div>
-                            <h4 class="place">{{ event.place }}</h4>
+                            <div>{{ event.place }}</div>
                         </div>
                         <div>
                             <h5><a href="{% url event event.id %}">{{ event.name }}</a></h5>
