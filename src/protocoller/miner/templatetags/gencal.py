@@ -37,11 +37,10 @@ def gencal(obj_list, year=None, month=None, calendar_class=None):
         month = today.month
     if not calendar_class:
         calendar_class = ListCalendar
-    return ''.join(calendar_class(obj_list, year=year, month=month,
-                                  locale='ru_RU.UTF-8').formatmonth(year, month))
+    return ''.join(calendar_class(obj_list, year=year, month=month).formatmonth(year, month))
 
 
-class ListCalendar(LocaleHTMLCalendar):
+class ListCalendar(HTMLCalendar):
     """
     This is a calendar object which accepts a ``list`` argument and a
     ``date_field`` keyword argument.. This class will return an HTML
