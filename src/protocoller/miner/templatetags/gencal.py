@@ -1,7 +1,7 @@
 #coding: utf-8
 import datetime
 from django.utils.datastructures import SortedDict
-from calendar import LocaleHTMLCalendar, Calendar
+from calendar import HTMLCalendar, LocaleHTMLCalendar, Calendar
 from django import template
 
 register = template.Library()
