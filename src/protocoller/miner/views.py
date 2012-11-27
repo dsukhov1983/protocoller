@@ -18,28 +18,28 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.comments.models import Comment
 from django.forms.models import inlineformset_factory
 from django.http import HttpResponse, Http404
-from markitup.widgets import MarkItUpWidget
 from pytils import translit
-from sorl.thumbnail import get_thumbnail
 
-from protocoller.miner import models
+from . import common
+from . import models
+from . import widgets
 
 
 SAMPLE_SEARCHES = (u'Ильин Василий',
-                 u'Барышников Алексей',
-                 u'Климов Михаил',
-                 u'Кукрус Андрей',
-                 u'Зарицкий Михаил',
-                 u'Малыгин Александр',
-                 u'Кочетков Олег',
-                 u'Сухов Дмитрий',
-                 u'Кудиенко Михаил',
-                 u'Исаев Иван',
-                 u'Краснов Андрей',
-                 u'Арих Андрей',
-                 u'Нестеров Анатолий',
-                 u'Хачкованян Карен',
-                 u'Долгополов Никита')
+                   u'Барышников Алексей',
+                   u'Климов Михаил',
+                   u'Кукрус Андрей',
+                   u'Зарицкий Михаил',
+                   u'Малыгин Александр',
+                   u'Кочетков Олег',
+                   u'Сухов Дмитрий',
+                   u'Кудиенко Михаил',
+                   u'Исаев Иван',
+                   u'Краснов Андрей',
+                   u'Арих Андрей',
+                   u'Нестеров Анатолий',
+                   u'Хачкованян Карен',
+                   u'Долгополов Никита')
 
 
 def season(dt):
@@ -69,8 +69,7 @@ def login_view(request):
 
 
 def get_random_search():
-    return SAMPLE_SEARCHES[random.randint(0,
-                                          len(SAMPLE_SEARCHES) - 1)]
+    return SAMPLE_SEARCHES[random.randint(0, len(SAMPLE_SEARCHES) - 1)]
 
 
 def date2season(dt):
@@ -146,7 +145,7 @@ def get_person_results(person):
         person=person).order_by('-competition__event__date')
 
     rg = itertools.groupby(results,
-                    lambda r: date2season(r.competition.event.date))
+                           lambda r: date2season(r.competition.event.date))
     rg = [(n, list(l)) for n, l in rg]
     return rg
 
@@ -157,7 +156,7 @@ def persons_view(request, year=None, month=None):
     except ValueError:
         page = 1
     paginator = Paginator(models.Person.objects.all().order_by(
-            'surname', 'name', 'year'), 40)
+        'surname', 'name', 'year'), 40)
     try:
         persons = paginator.page(page)
     except (EmptyPage, InvalidPage):
@@ -184,7 +183,7 @@ def places_view(request):
     all_places = list(models.Place.objects.all().order_by('name'))
     places_cnt = len(all_places)
     parts = 4
-    places_parts = [all_places[i * places_cnt / parts:(i + 1) * places_cnt / parts] 
+    places_parts = [all_places[i * places_cnt / parts:(i + 1) * places_cnt / parts]
                     for i in range(parts)]
     return render_to_response('places.html', locals(),
                               context_instance=RequestContext(request))
@@ -209,7 +208,7 @@ class PlaceForm(forms.ModelForm):
         model = models.Place
         fields = ('name', 'link', 'description', 'location')
         widgets = {
-            'description': MarkItUpWidget(),
+            'description': widgets.WysiHtml5Textarea,
             'location': forms.HiddenInput(),
             }
 
@@ -224,37 +223,37 @@ def edit_place_view(request, id=None):
         place = models.Place()
 
     if request.method == 'POST':
-        form = PlaceForm(request.POST, instance = place) 
-        if form.is_valid(): 
+        form = PlaceForm(request.POST, instance=place)
+        if form.is_valid():
             place = form.save()
-            if new_object:                
+            if new_object:
                 place.created_by = request.user
                 place.save()
             return redirect(place)
     else:
-        form = PlaceForm(instance = place)
-        
+        form = PlaceForm(instance=place)
+
     return render_to_response('add_place.html',
                               locals(),
-                              context_instance = RequestContext(request))
-    
+                              context_instance=RequestContext(request))
+
 
 def search_persons(query):
     ql = map(lambda s: s.title(),
              filter(None, query.strip().split(' ')))
     if len(ql) > 1:
-        n, s = ql[:2]        
+        n, s = ql[:2]
         persons = models.Person.objects.filter(
-            (Q(name__icontains = n) & Q(surname__icontains = s)) |
-            (Q(name__icontains = s) & Q(surname__icontains = n)))
+            (Q(name__icontains=n) & Q(surname__icontains=s)) |
+            (Q(name__icontains=s) & Q(surname__icontains=n)))
     elif len(ql) == 1:
         q = ql[0]
         persons = models.Person.objects.filter(
             (Q(name__icontains=q) | Q(surname__icontains=q)))
     else:
-        persons = []    
+        persons = []
     return persons
-    
+
 
 def search_view(request):
     query = request.GET.get('query', '')
@@ -270,39 +269,33 @@ def search_view(request):
     except (EmptyPage, InvalidPage):
         persons = paginator.page(paginator.num_pages)
 
-    cid_list = map(int, filter(None, request.GET.get('cl', '').split(',')))
-    compare_list = list(models.Person.objects.filter(id__in=cid_list))
-    cl = ','.join([str(c.id) for c in compare_list])
-    for p in persons.object_list:
-        p.is_in_list = p in compare_list
     return render_to_response('search_result.html', locals(),
                               context_instance=RequestContext(request))
 
-    
+
 def compare_view(request):
     def cmp_res(r1, r2):
         if r1.time and r2.time:
-            return r1.time > r2.time
+            return cmp(r1.time, r2.time)
         if r1.pos > 0 or r2.pos > 0:
-            return r1.pos < r2.pos
-        return r1.pos_in_grp < r2.pos_in_grp
-    
-    cid_list = map(int, filter(None, request.GET.get('cl', '').split(',')))
-    persons = list(models.Person.objects.filter(id__in=cid_list))
+            return cmp(r1.pos, r2.pos)
+        return cmp(r1.pos_in_grp, r2.pos_in_grp)
+
+    compare_set = request.session.get(common.COMPARE_LIST_SESSION_KEY, set())
+    persons = list(models.Person.objects.filter(id__in=compare_set))
 
     results = models.Result.objects.select_related().filter(
-        person__in = persons).order_by('-competition__event__date', 'competition')
+        person__in=persons).order_by('-competition__event__date', 'competition')
 
     season_groups = []
-    for season, results in eval_groupby(results, 
+    for season, results in eval_groupby(results,
                                         lambda r: date2season(r.competition.event.date)):
         comp_res_groups = filter(
             lambda c: len(c[1]) > 1,
             eval_groupby(results, lambda x: x.competition))
         if not comp_res_groups:
             continue
-        comp_res_groups = [(c, sorted(rl, cmp_res)) 
-                           for c, rl in comp_res_groups]
+        comp_res_groups = [(c, sorted(rl, cmp=cmp_res)) for c, rl in comp_res_groups]
         season_groups.append(
             (season,
              [(comp, results[0].time, results) for comp, results in comp_res_groups]
@@ -321,17 +314,20 @@ class PersonFeedbackForm(forms.ModelForm):
         queryset=models.Result.objects.all(),
         widget=forms.HiddenInput(),
         required=False)
-                                                   
+
     class Meta:
         model = models.PersonFeedback
+        widgets = {
+                "comment": forms.Textarea(attrs={'rows': 10, 'cols': 50,
+                                                 'class': "input-block-level"})
+        }
 
 
 def feedback_person(request, person):
     p = get_object_or_404(models.Person,
                           id=int(person))
-
     rg = get_person_results(p)
-    
+
     if request.method != 'POST':
         init_val = dict((key, getattr(p, key)) for key in
                         ['name', 'surname', 'year', 'sex',
@@ -348,13 +344,13 @@ def feedback_person(request, person):
     form = PersonFeedbackForm(request.POST)
     form.person = p
 
-    rexp = re.compile('id_result_(\d+)_DELETE')        
-    wrid_list = []    
+    rexp = re.compile('id_result_(\d+)_DELETE')
+    wrid_list = []
     for key, val in request.POST.items():
         v = rexp.match(key)
         if v and val == 'on':
-            wrid_list.append(int(v.group(1)))                               
-            
+            wrid_list.append(int(v.group(1)))
+
     if form.is_valid():
         fb = form.save()
         for w in wrid_list:
@@ -364,10 +360,10 @@ def feedback_person(request, person):
             except Exception, e:
                 print e
         fb.save()
-        
+
         return render_to_response('success_feedback.html',
                                   context_instance=RequestContext(request))
-    
+
     else:
         for season, results in rg:
             for r in results:
@@ -382,13 +378,13 @@ def feedback_person(request, person):
 
 def get_event_summary():
     months = models.SportEvent.objects.extra(
-        select={'month':'strftime("%%Y-%%m",date)'}
-        ).order_by('-date').values_list('month')
-    months = map(lambda s:datetime.datetime.strptime(s[0],'%Y-%m'), months)
+        select={'month': 'strftime("%%Y-%%m",date)'}
+    ).order_by('-date').values_list('month')
+    months = map(lambda s: datetime.datetime.strptime(s[0], '%Y-%m'), months)
     mc = [(m, len(list(l))) for m, l in itertools.groupby(months)]
     ys = itertools.groupby(mc, lambda (d, c): d.year)
-    return [(y, list(l)) for y,l in ys]
-    
+    return [(y, list(l)) for y, l in ys]
+
 
 def comp_list_view(request, year=None, month=None):
     try:
@@ -399,8 +395,8 @@ def comp_list_view(request, year=None, month=None):
         page = 1
 
     comp_list = models.SportEvent.objects.all().select_related()\
-                .order_by('-date')
-    
+        .order_by('-date')
+
     if year is not None:
         if month is not None:
             start_date = datetime.date(year, month, 1)
@@ -411,135 +407,92 @@ def comp_list_view(request, year=None, month=None):
         else:
             start_date = datetime.date(year, 1, 1)
             end_date = datetime.date(year + 1, 1, 1)
-        comp_list = comp_list.filter(date__gte = start_date,
-                                     date__lt = end_date)
+        comp_list = comp_list.filter(date__gte=start_date,
+                                     date__lt=end_date)
     paginator = Paginator(comp_list, 30)
     comp_list = paginator.page(page)
     date_groups = itertools.groupby(comp_list.object_list,
-                                    lambda c:c.date)
+                                    lambda c: c.date)
     comp_groups = []
     for szn, dg in itertools.groupby(date_groups,
-                                     lambda d:d[0].year):
-        dg = [(d, list(l)) for d,l in dg]
-        comp_groups.append((szn, dg))            
-        
+                                     lambda d: d[0].year):
+        dg = [(d, list(l)) for d, l in dg]
+        comp_groups.append((szn, dg))
+
     return render_to_response('protocols.html',
                               {'comp_groups': comp_groups,
                                'cl_page': comp_list,
-                               'sample_search':get_random_search(),
+                               'sample_search': get_random_search(),
                                'event_summary': get_event_summary(),
                                'cur_year': year,
                                'cur_month': month},
-                              context_instance = RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
-def events_view(request, year = None, month = None):
-    events = models.SportEvent.objects.filter(date__gte = datetime.datetime.now())\
+def events_view(request, year=None, month=None):
+    events = models.SportEvent.objects.filter(date__gte=datetime.datetime.now())\
         .select_related()
     return render_to_response('events.html',
-                              dict(events = events),
-                              context_instance = RequestContext(request))
-
-
-def past_events_view(request):
-    try:
-        page = int(request.GET.get('page', '1'))
-        per_page = int(request.GET.get('per_page', '10'))
-    except ValueError:
-        page, per_page = 1, 10
-    print request.GET, page, per_page
-    today = datetime.date.today()
-    objects = models.SportEvent.objects.filter(
-        Q(date__lt = today, end_date = None) |
-        Q(end_date__lt = today)).order_by('-date')
-    paginator = Paginator(objects, per_page)
-    try:
-        events = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        events = paginator.page(paginator.num_pages)
-    events_groups = [(year, eval_groupby(comps, lambda o: o.date))
-                     for year, comps in eval_groupby(events.object_list, 
-                                                     lambda o: o.date.year)]    
-    return render_to_response('past_events.html', 
-                              locals(),
-                              context_instance = RequestContext(request))
-
-
-def future_events_view(request):
-    try:
-        page = int(request.GET.get('page', '1'))
-        per_page = int(request.GET.get('per_page', '10'))
-    except ValueError:
-        page, per_page = 1, 10
-    today = datetime.date.today()
-    objects = models.SportEvent.objects.filter(
-        Q(date__gte = today, end_date = None) |
-        Q(end_date__gte = today)).order_by('date')
-    paginator = Paginator(objects, per_page)
-    try:
-        events = paginator.page(page)
-    except (EmptyPage, InvalidPage):
-        events = paginator.page(paginator.num_pages)
-    events_groups = [(year, eval_groupby(comps, lambda o: o.date))
-                     for year, comps in eval_groupby(events.object_list, 
-                                                     lambda o: o.date.year)]    
-    return render_to_response('future_events.html', 
-                              locals(),
-                              context_instance = RequestContext(request))
+                              dict(events=events),
+                              context_instance=RequestContext(request))
 
 
 class SportEventForm(forms.ModelForm):
     date = forms.DateField(
-        label = 'Дата',
-        input_formats = ('%d.%m.%Y',),
-        widget = forms.DateInput(format = '%d.%m.%Y'))
+        label='Дата',
+        input_formats=('%d.%m.%Y',),
+        widget=forms.DateInput(format='%d.%m.%Y'))
     place = forms.ModelChoiceField(
-        queryset = models.Place.objects.all().order_by('name'),
-        label = 'Место проведения')
+        queryset=models.Place.objects.all().order_by('name'),
+        label='Место проведения')
 
     class Meta:
         model = models.SportEvent
-        fields = ('place', 'date', 'name', 'registration_open',
-                  'description', 'protocol_file', 'terms_file')
-        widgets = dict(description = MarkItUpWidget())
+        fields = ('place', 'date', 'name', 'registration_open', 'terms_file',
+                  'protocol_file', 'description', )
+        widgets = dict(description=widgets.WysiHtml5Textarea)
 
     class Media:
-        js = ('js/jquery.ui.datepicker-ru.js', 
+        js = ('js/jquery.ui.datepicker-ru.js',
               "http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/jquery-ui.min.js",
               "js/jquery.formset.min.js")
-        css = dict(all = ("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/redmond/jquery-ui.css",))
+        css = dict(all=("http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.7/themes/redmond/jquery-ui.css",
+                        ))
 
 
 @login_required
-def edit_event_view(request, event_id = None):
+def edit_event_view(request, event_id=None):
+    field_widgets = dict(sex=forms.Select(choices=models.SEX_TYPES,
+                                          attrs={'class': 'span1'}),
+                         style=forms.Select(choices=models.Competition.STYLE_CHOICES,
+                                            attrs={'class': 'span2'}),
+                         start_type=forms.Select(choices=models.Competition.START_TYPES,
+                                                 attrs={'class': 'span2'}),
+                         distance=forms.TextInput(attrs={'class': 'span2'}),
+                         name=forms.TextInput(attrs={'class': 'span3'}))
+
     def custom_field_callback(field):
-        if field.name in ('distance', 'start_time'):
-            return field.formfield(
-                widget = forms.TextInput(attrs = {'class': 'short-field'}))
-        else:
-            return field.formfield()
+        return field.formfield(widget=field_widgets.get(field.name))
 
     if event_id:
         new_object = False
-        event = get_object_or_404(models.SportEvent, id = event_id)
+        event = get_object_or_404(models.SportEvent, id=event_id)
     else:
         new_object = True
         event = models.SportEvent()
-        
+
     CompFormset = inlineformset_factory(
         models.SportEvent, models.Competition,
-        fields = ('sex', 'style', 'start_type', 'distance',
-                  'name'),
-        formfield_callback = custom_field_callback,
-        can_delete = True, extra = 1)
+        fields=('sex', 'style', 'start_type', 'distance', 'name'),
+        formfield_callback=custom_field_callback,
+        can_delete=True, extra=1)
 
-    if request.method == 'POST': 
-        form = SportEventForm(request.POST, request.FILES, instance = event) 
-        comp_formset = CompFormset(request.POST, request.FILES,
-            instance = event)
+    if request.method == 'POST':
+        form = SportEventForm(request.POST, request.FILES, instance=event)
+        comp_formset = CompFormset(request.POST, request.FILES, instance=event)
         if form.is_valid() and comp_formset.is_valid():
             if new_object:
-                event = form.save(commit = False)
+                event = form.save(commit=False)
                 event.created_by = request.user
                 event.save()
             else:
@@ -547,21 +500,21 @@ def edit_event_view(request, event_id = None):
             comp_formset.save()
             return redirect(event)
     else:
-        comp_formset = CompFormset(instance = event)
-        form = SportEventForm(instance = event)
+        comp_formset = CompFormset(instance=event)
+        form = SportEventForm(instance=event)
 
     return render_to_response('add_sport_event.html',
                               locals(),
-                              context_instance = RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 def event_view(request, event_id):
-    event = get_object_or_404(models.SportEvent, id = event_id)
+    event = get_object_or_404(models.SportEvent, id=event_id)
     regs_count = models.RegistrationMembership.objects\
-                    .filter(sport_event = event).count()
+        .filter(sport_event=event).count()
     return render_to_response('sport_event.html',
-                              locals(), 
-                              context_instance = RequestContext(request))
+                              locals(),
+                              context_instance=RequestContext(request))
 
 
 class EventRegistrationForm(forms.ModelForm):
@@ -569,67 +522,67 @@ class EventRegistrationForm(forms.ModelForm):
         model = models.RegistrationInfo
         widgets = {
             'sport_event': forms.HiddenInput(),
-            }
+        }
 
 
 def register_on_event_view(request, event_id):
-    event = get_object_or_404(models.SportEvent, id = event_id)
-    
+    event = get_object_or_404(models.SportEvent, id=event_id)
+
     form = None
     avail_regs, done_regs = [], []
     if request.user.is_authenticated():
         if request.method == 'POST':
             form = EventRegistrationForm(request.POST)
             if form.is_valid():
-                reg_info = form.save(commit = False)
+                reg_info = form.save(commit=False)
                 reg_info.by_user = request.user
                 reg_info.save()
-                reg_mem = models.RegistrationMembership(info = reg_info,
-                                                        sport_event = event)
+                reg_mem = models.RegistrationMembership(info=reg_info,
+                                                        sport_event=event)
                 reg_mem.save()
                 form = EventRegistrationForm()
         else:
             form = EventRegistrationForm()
         avail_regs = models.RegistrationInfo.objects\
-                        .filter(by_user=request.user)\
-                        .exclude(sport_event=event)
+            .filter(by_user=request.user)\
+            .exclude(sport_event=event)
     reg_list = models.RegistrationInfo.objects\
-                .filter(sport_event=event)
+        .filter(sport_event=event)
     return render_to_response(
         'event_registration.html',
-        locals(), 
-        context_instance = RequestContext(request))
-    
+        locals(),
+        context_instance=RequestContext(request))
+
 
 @login_required
 def subscribe_on_event_view(request, event_id, reg_id):
-    reg_info = get_object_or_404(models.RegistrationInfo, id = reg_id,
-                                 by_user = request.user)
-    event = get_object_or_404(models.SportEvent, id = event_id)
-    
-    mem = models.RegistrationMembership(info = reg_info,
-                                        sport_event = event)
+    reg_info = get_object_or_404(models.RegistrationInfo, id=reg_id,
+                                 by_user=request.user)
+    event = get_object_or_404(models.SportEvent, id=event_id)
+
+    mem = models.RegistrationMembership(info=reg_info,
+                                        sport_event=event)
     mem.save()
     return register_on_event_view(request, event_id)
-    
+
 
 @login_required
 def unsubscribe_from_event_view(request, event_id, reg_id):
-    reg_info = get_object_or_404(models.RegistrationInfo, id = reg_id,
-                                 by_user = request.user)
-    event = get_object_or_404(models.SportEvent, id = event_id)
+    reg_info = get_object_or_404(models.RegistrationInfo, id=reg_id,
+                                 by_user=request.user)
+    event = get_object_or_404(models.SportEvent, id=event_id)
     for m in models.RegistrationMembership.objects.filter(
-        info = reg_info, sport_event = event):
+            info=reg_info, sport_event=event):
         m.delete()
-    
+
     return register_on_event_view(request, event_id)
 
 
 def get_reg_info_view(request, event_id):
-    event = get_object_or_404(models.SportEvent, id = event_id)
+    event = get_object_or_404(models.SportEvent, id=event_id)
     reg_info = models.RegistrationMembership.objects.filter(
-        sport_event = event).order_by(
-        'info__surname', 'info__name').select_related()
+        sport_event=event).order_by(
+            'info__surname', 'info__name').select_related()
     response = HttpResponse(mimetype='text/csv')
     filename = translit.slugify(event.name) + '_' + str(event.date.year)
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % filename
@@ -644,34 +597,9 @@ def get_reg_info_view(request, event_id):
         writer.writerow(
             map(lambda s: s.encode('utf-8'),
                 [str(i + 1), info.surname + ' ' + info.name, sex_dict[info.sex],
-                 str(info.year), rank_dict[info.rank], info.city, 
+                 str(info.year), rank_dict[info.rank], info.city,
                  info.club]))
     return response
-
-
-def main_view(request):
-    today = datetime.date.today()
-    per_page = 10
-    coming_events = models.SportEvent.objects.filter(
-        Q(date__gte = today, end_date = None) |
-        Q(end_date__gte = today)).order_by('date')
-
-    past_events = models.SportEvent.objects.filter(
-        Q(date__lt = today, end_date = None)|
-        Q(end_date__lt = today)).order_by('-date')
-
-    coming_page, past_page = \
-        [Paginator(l, per_page).page(1) for l in (coming_events, past_events)]
-
-    coming_groups = [(year, eval_groupby(comps, lambda o:o.date))
-                     for year, comps in eval_groupby(coming_page.object_list, 
-                                                     lambda o: o.date.year)]
-    past_groups = [(year, eval_groupby(comps, lambda o:o.date))
-                     for year, comps in eval_groupby(past_page.object_list, 
-                                                     lambda o: o.date.year)]    
-            
-    return render_to_response('main.html', locals(),
-                              context_instance = RequestContext(request))
 
 
 def activity_view(request):
@@ -683,7 +611,7 @@ def activity_view(request):
     feedbacks = models.PersonFeedback.objects.order_by('-last_change')[:num]
     regs = models.RegistrationMembership.objects.order_by('-date')[:num]
     return render_to_response('activity.html', locals(),
-                              context_instance = RequestContext(request))
+                              context_instance=RequestContext(request))
 
 
 def get_next_month(month, year):
@@ -706,13 +634,13 @@ def iter_month_events(year, month, from_day, ascending=True):
     while True:
         if ascending:
             if not models.SportEvent.objects\
-                        .filter(date__gte=datetime.date(year, month, 1))\
-                        .exists():
+                .filter(date__gte=datetime.date(year, month, 1))\
+                    .exists():
                 return
         else:
             if not models.SportEvent.objects\
-                        .filter(date__lte=datetime.date(year, month, 1))\
-                        .exists():
+                .filter(date__lte=datetime.date(year, month, 1))\
+                    .exists():
                 return
 
         events = models.SportEvent.objects\
@@ -727,14 +655,18 @@ def iter_month_events(year, month, from_day, ascending=True):
             events = events.order_by('-date')
 
         event_days = [DayEvents(day, list(events)) for day, events in
-                        itertools.groupby(events, operator.attrgetter('date'))]
+                      itertools.groupby(events, operator.attrgetter('date'))]
         yield event_days, month, year
         month, year = get_next_month(month, year) if ascending else get_prev_month(month, year)
 
 
 def calendar_view(req):
     today = datetime.date.today()
-    return calendar_month_view(req, today.year, today.month, today)
+    try:
+        return calendar_month_view(req, today.year, today.month, today)
+    except Http404:
+        return render_to_response("calendar.html", locals(),
+                                  context_instance=RequestContext(req))
 
 
 def calendar_month_view(req, year, month, from_day=None):
@@ -749,14 +681,14 @@ def calendar_month_view(req, year, month, from_day=None):
         if total >= limit:
             next_month, next_year = get_next_month(imonth, iyear)
             next_events_exists = models.SportEvent.objects\
-                        .filter(date__gte=datetime.date(next_year, next_month, 1))\
-                        .exists()
+                .filter(date__gte=datetime.date(next_year, next_month, 1))\
+                .exists()
             return render_to_response("calendar.html", locals(),
                                       context_instance=RequestContext(req))
     if months_events:
         next_events_exists = False
         return render_to_response("calendar.html", locals(),
-                                context_instance=RequestContext(req))
+                                  context_instance=RequestContext(req))
     raise Http404
 
 
@@ -777,13 +709,12 @@ def protocols_month_view(req, year, month, from_day=None):
         if total >= limit:
             next_month, next_year = get_prev_month(imonth, iyear)
             next_events_exists = models.SportEvent.objects\
-                        .filter(date__lt=datetime.date(iyear, imonth, 1))\
-                        .exists()
+                .filter(date__lt=datetime.date(iyear, imonth, 1))\
+                .exists()
             return render_to_response("protocols.html", locals(),
                                       context_instance=RequestContext(req))
     if months_events:
         next_events_exists = False
         return render_to_response("protocols.html", locals(),
-                                context_instance=RequestContext(req))
+                                  context_instance=RequestContext(req))
     raise Http404
-

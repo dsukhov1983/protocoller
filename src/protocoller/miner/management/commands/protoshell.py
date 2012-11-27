@@ -18,9 +18,6 @@ class Command(BaseCommand):
 
         use_plain = options.get('plain', False)
 
-        import IPython
-        # Explicitly pass an empty list as arguments, because otherwise IPython
-        # would use sys.argv from this script.
-        shell = IPython.Shell.IPShellEmbed(argv=[])
-        shell()
-        
+        from IPython import embed
+        embed()
+

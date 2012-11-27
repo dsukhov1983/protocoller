@@ -2,43 +2,47 @@
 {% load i18n %}
 
 {% block content %}
-<div class="grid12">
-  <h1>Войти или создать новый аккаунт</h1>
-</div>
-
-<div class="grid_6">
-<form action="{% url  socialauth_openid_login %}" method="get" class="form" id="openid_form">
-  <input type="hidden" name="action" value="verify" />
-  <div id="openid_choice">
-    <p>Вы можете войти на сайт, используя учетную запись на одном из следующих ресурсов:</p>
-    <div id="openid_btns"></div>
+<div class="row">
+  <div class="span12">
+    <h2>Войти или создать новый аккаунт</h2>
   </div>
-  
-  <div id="openid_input_area">
-    <input id="openid_identifier" name="openid_identifier" type="text" value="http://" />
-    <input id="openid_submit" type="submit" value="Войти"/>
+
+  <div class="span6">
+  <form action="{% url  socialauth_openid_login %}" method="get" class="form" id="openid_form">
+    <input type="hidden" name="action" value="verify" />
+    <div id="openid_choice">
+      <p>Вы можете войти на сайт, используя учетную запись на одном из следующих ресурсов:</p>
+      <div id="openid_btns"></div>
+    </div>
+    
+    <div id="openid_input_area">
+      <input id="openid_identifier" name="openid_identifier" type="text" value="http://" />
+      <input id="openid_submit" type="submit" value="Войти"/>
+    </div>
+    <noscript>
+      <p>OpenID это сервис который позволяет вам входить в разные веб-сайты пользуясь одной учетной записью.
+        Узнайте <a href="http://openid.net/what/">больше о OpenID</a> и <a href="http://openid.net/get/">как получить OpenID аккаунт</a>.</p>
+    </noscript>
+  </form>
   </div>
-  <noscript>
-    <p>OpenID это сервис который позволяет вам входить в разные веб-сайты пользуясь одной учетной записью.
-      Узнайте <a href="http://openid.net/what/">больше о OpenID</a> и <a href="http://openid.net/get/">как получить OpenID аккаунт</a>.</p>
-  </noscript>
-</form>
-</div>
-<div class="grid_6">
+  <div class="span6">
 
-{% if form.errors %}
-<p>Неверное имя пользователя или пароль</p>
-{% endif %}
+  {% if form.errors %}
+    <div class="alert">
+      Неверное имя пользователя или пароль.
+    </div>
+  {% endif %}
 
-<form class="form" method="post" action="{% url django.contrib.auth.views.login %}">{% csrf_token %}
-  {% load uni_form_tags %}
-  {{ form|as_uni_form }}
+  <form class="form" method="post" action="{% url django.contrib.auth.views.login %}">
+    {% csrf_token %}
+    {% load crispy_forms_tags %}
+    {{ form|crispy }}
 
-  <input type="submit" value="Войти" />
+    <button class="btn btn-success" type="submit">Войти</button>
+    <input type="hidden" name="next" value="{{ next }}" />
+  </form>
+
   <p><a href="{% url auth_password_reset %}">Забыли</a> свой пароль?  <a href="{% url registration_register %}">Создать новую учетную запись</a>?</p>
-
-  
-  <input type="hidden" name="next" value="{{ next }}" />
-</form>
+  </div>
 </div>
 {% endblock %}

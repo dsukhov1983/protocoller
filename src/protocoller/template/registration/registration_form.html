@@ -1,14 +1,16 @@
 {% extends "registration/registration_base.html" %}
 {% block title %}Регистрация{% endblock %}
 {% block content %}
-<div class="grid_10">
-  <h2>Регистрация нового пользователя</h2>
-  <form method='POST' action='' class="form">
-    {% csrf_token %}
-    {% load uni_form_tags %}
-    {{ form|as_uni_form }}
-    
-    <input type="submit" value="Зарегистрироваться" />
-  </form>
+<div class="row">
+    <div class="span10">
+      <h2>Регистрация нового пользователя</h2>
+      <form method='POST' action='' class="form">
+        {% csrf_token %}
+        {% load crispy_forms_tags %}
+        {{ form|crispy }}
+        
+        <button class="btn" type="submit">Зарегистрироваться</button>
+      </form>
+    </div>
 </div>
 {% endblock %}

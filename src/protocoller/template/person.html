@@ -2,86 +2,106 @@
 {% load pytils_dt %}
 {% load pretty_print %}
 {% block content %}
-<div class="grid_7">
-  <h1>{{ person.full_name }}</h1>
-  <table class="infoTable">
-    <tbody>
-      <tr>
-        <th class="label">Год рождения</th>
-        <td>{{ person.year }}</td>
-      </tr>
-      {% if person.get_rank_display %}
-      <tr>
-        <th class="label">Квалификация</th>
-        <td>{{ person.get_rank_display }}</td>
-      </tr>
-      {% endif %}
-      {% if person.city %}
-      <tr>
-        <th class="label">Город</th>
-        <td>{{ person.city }}</td>
-      </tr>
-      {% endif %}
-      {% if person.club %}
-      <tr>
-        <th class="label">Клуб</th>
-        <td>{{ person.club }}</td>
-      </tr>
-      {% endif %}
-    </tbody>
-  </table>
+<div class="row">
+  <div class="span7">
+    <h2>{{ person.full_name }}</h2>
+    <table>
+      <tbody>
+        <tr>
+          <th class="pull-left">Год рождения</th>
+          <td>{{ person.year }}</td>
+        </tr>
+        {% if person.get_rank_display %}
+        <tr>
+          <th class="pull-left">Квалификация</th>
+          <td>{{ person.get_rank_display }}</td>
+        </tr>
+        {% endif %}
+        {% if person.city %}
+        <tr>
+          <th class="pull-left">Город</th>
+          <td>{{ person.city }}</td>
+        </tr>
+        {% endif %}
+        {% if person.club %}
+        <tr>
+          <th class="pull-left">Клуб</th>
+          <td>{{ person.club }}</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+    <a class="btn btn-success" id="add-to-compare-person-{{ person.id }}-button"
+        onclick="Dajaxice.protocoller.miner.add_to_compare(Dajax.process,
+                    {'person_id': {{ person.id }} });">Добавить к сравнению</a>
+    <a class="btn btn-warning" href="{% url feedback_person person.id %}">Сообщить об ошибке</a>
+  </div>
+
+  <div id="compare-persons-block" class="span5 {% if not compare_list %}hide{% endif %}">
+    
+    <a class="btn btn-link" href="{% url compare %}">Сравнить</a>
+  
+    <table class="table">
+      <tbody id="compare-list-body">
+        {% for p in compare_list %}
+          {% person_compare_row p %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
-<div class="clear"></div>
-<div class="grid_12">
-  <table class="protocol">
-    <thead>
-      <tr class="head">
-        <th>Дата</th>
-        <th>Место</th>
-        <th>Соревнование</th>
-        <th>М(абс)</th>
-        <th>М(грп)</th>
-        <th>Группа</th> 
-        <th>
-          <span class="widener">
-            <span class="full">Результат</span>
-            <span class="short">Рез-т</span>
-          </span>
-        </th>
-        <th>
-          <span class="widener">
-            <span class="full">Отставание</span>
-            <span class="short">Отст.</span>
-          </span>
-        </th>
-        <th>
-          <span class="widener">
-            <span class="full">Коэффициент</span>
-            <span class="short">Коэф.</span>
-          </span>
-        </th>
-      </tr> 
-    </thead>
-    <tbody>
-      {% for season, results in res_groups %}
-      <tr><td colspan="10"><h2>{{ season }}</h2></td></tr>
-      {% for r in results %}
-      <tr>
-        <td>{{ r.competition.event.date|ru_strftime:"%d %B"}}</td>
-        <td>{{ r.competition.event.place|default:"" }}</td>
-        <td>
-          <a href="{% url protocoller.miner.views.protocol r.competition.id %}" >{{ r.competition.event.name }} {{ r.competition }}</a>      
-        </td>
-        <td>{% print_pos r %}</td>
-        <td>{% print_grp_pos r %}</td>    
-        <td>{{ r.group|default:"" }}</td>
-        <td>{% print_time r %}</td>
-        <td>{% time_diff r.time r.competition.best_result %}</td>
-        <td>{% time_diff2 r.time r.competition.best_result %}</td>
-      </tr>
-      {% endfor %}
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="row">
+  <div class="span12">
+    <table class="protocol">
+      <thead>
+        <tr class="head">
+          <th>Дата</th>
+          <th>Место</th>
+          <th>Соревнование</th>
+          <th>М(абс)</th>
+          <th>М(грп)</th>
+          <th>Группа</th> 
+          <th>
+            <span class="widener">
+              <span class="full">Результат</span>
+              <span class="short">Рез-т</span>
+            </span>
+          </th>
+          <th>
+            <span class="widener">
+              <span class="full">Отставание</span>
+              <span class="short">Отст.</span>
+            </span>
+          </th>
+          <th>
+            <span class="widener">
+              <span class="full">Коэффициент</span>
+              <span class="short">Коэф.</span>
+            </span>
+          </th>
+        </tr> 
+      </thead>
+      <tbody>
+        {% for season, results in res_groups %}
+        <tr><td colspan="10"><strong>{{ season }}</strong></td></tr>
+        {% for r in results %}
+        <tr>
+          <td>{{ r.competition.event.date|ru_strftime:"%d %B"}}</td>
+          <td>{{ r.competition.event.place|default:"" }}</td>
+          <td>
+            <a href="{% url protocoller.miner.views.protocol r.competition.id %}" >{{ r.competition.event.name }} {{ r.competition }}</a>      
+          </td>
+          <td>{% print_pos r %}</td>
+          <td>{% print_grp_pos r %}</td>    
+          <td>{{ r.group|default:"" }}</td>
+          <td>{% print_time r %}</td>
+          <td>{% time_diff r.time r.competition.best_result %}</td>
+          <td>{% time_diff2 r.time r.competition.best_result %}</td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

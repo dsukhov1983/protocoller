@@ -4,6 +4,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
+from dajaxice.core import dajaxice_autodiscover, dajaxice_config
+
+dajaxice_autodiscover()
 admin.autodiscover()
 
 handler404 = 'perfect404.views.page_not_found'
@@ -36,9 +39,6 @@ urlpatterns = patterns(
      'unsubscribe_from_event_view', {}, 'event_unsubscribe'),
     (r'^event/(?P<event_id>\d+)/get/reg_info/$', 'get_reg_info_view', {},
      'download_reg_info'),
-    (r'^events/past/$', 'past_events_view', {}, 'past_events'),
-    (r'^events/future/$', 'future_events_view', {}, 'future_events'),
-
 
     (r'^places/$', 'places_view', {}, 'places'),
     (r'^places/add/$', 'edit_place_view', {}, 'add_place'),
@@ -64,6 +64,8 @@ urlpatterns = patterns(
 
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
+
+    url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
 )
 
 
@@ -76,7 +78,6 @@ urlpatterns += patterns(
     (r'^accounts/openid/signout/$', 'openid_consumer.views.signout', {},
      'socialauth_openid_sognout'),
     (r'^accounts/', include('registration.urls')),
-    url(r'^markitup/', include('markitup.urls')),  # markitup
     (r'^comments/', include('django.contrib.comments.urls')),  # comments
     (r'^sentry/', include('sentry.web.urls')),  # sentry
     )
@@ -84,9 +85,11 @@ urlpatterns += patterns(
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
+    print staticfiles_urlpatterns()
     urlpatterns += patterns(
          '',
          (r'^media/(?P<path>.*)$',
          'django.views.static.serve',
               {'document_root': '/home/quoter/www/protocoller/media/'}),
           )
+

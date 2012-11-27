@@ -1,0 +1,26 @@
+
+.widener .full { position: absolute; background: #fffcdc; z-index: 10; display: none; }
+.widener:hover { background: #fffcdc }
+.widener:hover .full { display: inline; border-top: 1px #fff solid; border-bottom: 1px #fff8b8 solid; margin: -1px -.33em; padding: 0 .33em; }
+.widener:hover .short { displa-: none }
+
+.protocol tbody tr:hover{
+    background: #eef0f4;
+}
+
+table.protocol{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.protocol td{
+    padding:2px 4px;
+}
+
+.hl {background-color: #FFEFC6;}
+
+.hide {
+    display: none;
+}
+
+

@@ -1,16 +1,67 @@
+{% load dajaxice_templatetags %}
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head profile="http://www.w3.org/2005/10/profile">
+<html>
+<head>
   <meta name='yandex-verification' content='67c1e4110e0581af' />
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/grid.css" />
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" />
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/typography.css" />
+  <link href="{{ STATIC_URL }}css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}css/openid.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}css/style.css" />
   <link rel="icon" type="image/vnd.microsoft.icon" href="{{ STATIC_URL }}/img/favicon.ico">
-  
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/openid-jquery.js"></script>
   <script type="text/javascript" src="{{ STATIC_URL }}js/openid-jquery-ru.js"></script>
+  <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+  {% dajaxice_js_import %}
+  <script src="{{ STATIC_URL }}dajax/jquery.dajax.core.js"></script>
+  <title>{% block title %}Протоколы лыжных соревнований{% endblock %}</title>
+
+  {% block extrahead %}{% endblock %}
+</head>
+{% load pretty_print %}
+<body> 
+  <div class="container">
+    <div class="navbar">
+      <div class="navbar-inner">
+        <a class="brand" href="#">Protocoller</a>
+        <ul class="nav">
+          <form class="navbar-search pull-left" action="/search">
+            <input name="query" type="text" class="search-query" placeholder="Поиск">
+          </form>
+          <li class="{% if active_tab == 'main' %} active{% endif %}"><a href="{% url main %}">Протоколы</a></li>
+          <li class="{% if active_tab == 'calendar' %} active{% endif %}"><a href="{% url calendar %}">Календарь</a></li>
+          <li class="{% if active_tab == 'places' %} active{% endif %}"><a href="{% url places %}">Трассы</a></li>
+          <li class="devider-vertical"></li>
+        </ul>
+        
+        <ul class="pull-right nav">
+          {% if user.is_authenticated %}
+            <li class="dropdown">
+              <a href="" class="dropdown-toggle" data-toggle="dropdown">{% print_user user %}
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <!--<li><a tabindex="-1" href="#">Action</a></li>-->
+                <li class="divider"></li>
+                <li><a tabindex="-1" href="{% url logout %}">Выйти</a></li>
+              </ul>
+            </li>
+          {% else %}
+            <li>
+              <a href="{% url login %}">Войти</a>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    
+    <div id="content">
+      {% block content %}{% endblock %}
+    </div>
+    
+    <div id="footer">
+      {% block footer %}{% endblock %}
+    </div>
+  </div>
 
   <script type="text/javascript">
     $(document).ready(function() {
@@ -18,67 +69,7 @@
     openid.init('openid_identifier');
     });
   </script>
-  <title>{% block title %}Протоколы лыжных соревнований{% endblock %}</title>
 
-  {% block extrahead %}{% endblock %}
-</head>
-{% load pretty_print %}
-<body> 
-<!-- Yandex.Metrika counter -->
-<div style="display:none;"><script type="text/javascript">
-(function(w, c) {
-    (w[c] = w[c] || []).push(function() {
-        try {
-            w.yaCounter12352549 = new Ya.Metrika({id:12352549, enableAll: true, webvisor:true});
-        }
-        catch(e) { }
-    });
-})(window, "yandex_metrika_callbacks");
-</script></div>
-<script src="//mc.yandex.ru/metrika/watch.js" type="text/javascript" defer="defer"></script>
-<noscript><div><img src="//mc.yandex.ru/watch/12352549" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
-  <div id="toolbar">
-    <div class="container_12">
-      <div id="menu" class="grid_12">
-        <ul class="sf-menu sf-js-enabled">
-          <li>
-            <form action="{% block search_url %}{% url search %}{% endblock %}" class="searchform" method="GET" >
-              <input name="query" class="searchfield" type="text" value="Поиск..." onfocus="if (this.value == 'Поиск...') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Поиск...';}" />
-              {% block search_fields %}{% endblock %}
-            </form>
-          </li>
-          <li><a href="{% url main %}">Протоколы</a></li>
-          <li><a href="{% url calendar %}">Календарь</a></li>
-          <li><a href="{% url places %}">Трассы</a></li>
-          <li><a href="{% url persons %}">Спортсмены</a></li>
-          <li class="end">
-            {% if user.is_authenticated %}
-            <div class="profile">
-            {% print_user user %}
-            </div>
-            <ul>
-              <li><a href="{% url logout %}">Выйти</a></li>
-            </ul>
-            {% else %}
-            <p><a href="{% url login %}">Войти</a></p>
-            {% endif %}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="container_12">
-    <div class="clear"></div>
-    <div id="content">
-      {% block content %}{% endblock %}
-    </div>
-    <div class="clear"></div>
-    <div id="footer">
-      {% block footer %}{% endblock %}
-    </div>
-  </div>
-  
   <script type="text/javascript">
     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
     document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -89,5 +80,21 @@
     pageTracker._trackPageview();
     } catch(err) {}
   </script>
+  <!-- Yandex.Metrika counter -->
+  <div style="display:none;"><script type="text/javascript">
+  (function(w, c) {
+      (w[c] = w[c] || []).push(function() {
+          try {
+              w.yaCounter12352549 = new Ya.Metrika({id:12352549, enableAll: true, webvisor:true});
+          }
+          catch(e) { }
+      });
+  })(window, "yandex_metrika_callbacks");
+  </script></div>
+  <script src="//mc.yandex.ru/metrika/watch.js" type="text/javascript" defer="defer"></script>
+  <noscript><div><img src="//mc.yandex.ru/watch/12352549" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+
+  {% block extrascript %}{% endblock %}
 </body>
 </html>

@@ -78,7 +78,7 @@ class ListCalendar(HTMLCalendar):
     :type month: int.
     """
 
-    DAY_ABBR = ["пн", "вт", "ср", "чтв", "пт", "сбт", "вс"]
+    DAY_ABBR = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
     cssclasses = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"]
     MONTH_LIST = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль",
                   "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
@@ -207,7 +207,7 @@ class ListCalendar(HTMLCalendar):
         v = []
         a = v.append
 
-        a('<table border="0" cellpadding="0" cellspacing="0" class="month">')
+        a('<table border="0" cellpadding="1" cellspacing="1" class="month">')
         a('\n')
         a(self.formatmonthname(theyear, themonth, withyear=withyear))
         a('\n')

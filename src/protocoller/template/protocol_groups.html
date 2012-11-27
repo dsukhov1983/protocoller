@@ -4,94 +4,96 @@
 {% load pretty_print %}
 
 {% block content %}
-<div class="grid_2 event">
-  <span class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</span>
-  <h3><a href="{% url place comp.event.place.slug %}">{{ comp.event.place }}</a></h3>
-  {% if alternate %}
-  <a href="{% url protocol comp.id %}">абсолютный зачет</a>
-  {% endif %}
+<div class="row">
+  <div class="span4">
+    <span class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</span>
+    <a href="{% url place comp.event.place.slug %}"><strong>{{ comp.event.place }}</strong></a>
+    {% if alternate %}
+      <a href="{% url protocol comp.id %}">абсолютный зачет</a>
+    {% endif %}
+  </div>
+  <div class="span8">
+    <h4>{{ comp.event.name }}</h4>
+    <h4>{{ comp }}</h4>
+    <h4>Протокол по группам</h4>
+  </div>
 </div>
-<div class="grid_8">
-  <h1>Протокол по группам</h1>
-  <h1>{{ comp.event.name }}</h1>
-  <h2>{{ comp }}</h2>
-</div>
-<div class="clear"></div>
 
-
-<div class="grid_12">
-  <ul class="plain_list">
-    <li>Группы:</li>
+<div class="row">
+  <div class="span12">
+    <strong>Группы:</strong>
     {% for group, br, results in result_groups %}
-    <li><a href="#{{ group|urlencode }}">{{ group }}</a></li>
+      <span><a href="#{{ group|urlencode }}">{{ group }}</a></span>
     {% endfor %}
-  </ul>
+  </div>
+</div>
   
-  <table class="protocol">
-    <thead>
-      <tr>
-        <th align="left">
-          <span class="widener">
-            <span class="full">Место</span>
-            <span class="short">М.</span>
-          </span>
-        </th>
-        <th>Ст.№</th>
-        <th>Фамилия Имя</th>
-        <th>
-          <span class="widener">
-            <span class="full">Звание</span>
-            <span class="short">Зв.</span>
-          </span>
-        </th>
-        <th>
-          <span class="widener">
-            <span class="full">Год</span>
-            <span class="short">Г.р.</span>
-          </span>
-        </th>
-        <th>Город</th>
-        <th>Клуб</th>
-        <th>
-          <span class="widener">
-            <span class="full">Результат</span>
-            <span class="short">Рез-т</span>
-          </span>
-        </th>
-        <th>
-          <span class="widener">
-            <span class="full">Отставание</span>
-            <span class="short">Отст.</span>
-          </span>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for group,  group_best_result, results in result_groups %}
-      <tr>
-        <td colspan="8"><h2>Группа {{ group }}<a class="anchor" name="{{ group|urlencode }}" href="#{{ group|urlencode }}">§</a></h2></td>
-      </tr>
-      {% for r in results %}
-      {% if r.pos_in_grp < 0 %}
-      <tr class="{% print_grp_pos r %}">
-      {% else %}
-      <tr>
-      {% endif %}
-        <td>{% print_grp_pos r %}</td>
-        <td>{{ r.number|default:"" }}</td>
-        <td><a class="person" href="{% url person r.person.id %}">{{ r.person.full_name }}</a></td>
-        <td>{{ r.person.get_rank_display }}</td>
-        <td>{{ r.person.year }}</td>
-        <td>{{ r.person.city|default:"" }}</td>
-        <td>{{ r.person.club|default:"" }}</td>
-        <td>{% print_time r %}</td>
-        <td>{% time_diff r.time group_best_result %}</td>
-      </tr>
-      {% endfor %}
-      {% endfor %}
-    </tbody>
-    
-    
-  </table>
+<div class="row">
+  <div class="span12">
+    <table class="protocol">
+      <thead>
+        <tr>
+          <th align="left">
+            <span class="widener">
+              <span class="full">Место</span>
+              <span class="short">М.</span>
+            </span>
+          </th>
+          <th>Ст.№</th>
+          <th>Фамилия Имя</th>
+          <th>
+            <span class="widener">
+              <span class="full">Звание</span>
+              <span class="short">Зв.</span>
+            </span>
+          </th>
+          <th>
+            <span class="widener">
+              <span class="full">Год</span>
+              <span class="short">Г.р.</span>
+            </span>
+          </th>
+          <th>Город</th>
+          <th>Клуб</th>
+          <th>
+            <span class="widener">
+              <span class="full">Результат</span>
+              <span class="short">Рез-т</span>
+            </span>
+          </th>
+          <th>
+            <span class="widener">
+              <span class="full">Отставание</span>
+              <span class="short">Отст.</span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for group,  group_best_result, results in result_groups %}
+        <tr>
+          <td colspan="8"><strong>Группа {{ group }}<a class="anchor" name="{{ group|urlencode }}" href="#{{ group|urlencode }}">§</a></strong></td>
+        </tr>
+        {% for r in results %}
+        {% if r.pos_in_grp < 0 %}
+        <tr class="{% print_grp_pos r %}">
+        {% else %}
+        <tr>
+        {% endif %}
+          <td>{% print_grp_pos r %}</td>
+          <td>{{ r.number|default:"" }}</td>
+          <td><a class="person" href="{% url person r.person.id %}">{{ r.person.full_name }}</a></td>
+          <td>{{ r.person.get_rank_display }}</td>
+          <td>{{ r.person.year }}</td>
+          <td>{{ r.person.city|default:"" }}</td>
+          <td>{{ r.person.club|default:"" }}</td>
+          <td>{% print_time r %}</td>
+          <td>{% time_diff r.time group_best_result %}</td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

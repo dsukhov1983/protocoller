@@ -4,7 +4,6 @@ import datetime
 from pytils import translit
 from django.db import models
 from django.contrib.auth.models import User
-from markitup.fields import MarkupField
 from itertools import count
 from sorl.thumbnail import ImageField
 
@@ -14,14 +13,14 @@ SEX_TYPES = (
     (MALE, u'муж'),
     (FEMALE, u'жен'),
     (UNKNOWN, '-'),
-    )
+)
 
 (ABS_RATING, GROUP_RATING, BOTH_RATING) = range(3)
 RATING_TYPES = (
     (ABS_RATING, 'абсолютный зачет'),
     (GROUP_RATING, 'зачет по группам'),
     (BOTH_RATING, 'оба')
-    )
+)
 
 
 class Place(models.Model):
@@ -40,14 +39,14 @@ class Place(models.Model):
     link = models.URLField('Адрес сайта', null=True, blank=True)
     location = models.CharField('Местоположение', max_length=200, null=True,
                                 blank=True)
-    description = MarkupField('Описание', default='', null=True, blank=True)
+    description = models.TextField('Описание', default='', null=True, blank=True)
     address = models.CharField('Адрес', max_length=250, default='', null=True,
                                blank=True)
     created_by = models.ForeignKey(User, null=True, editable=False,
                                    db_index=True, verbose_name='Кем создан')
-    last_change = models.DateTimeField(auto_now=True, 
-                                      default=datetime.datetime.now(),
-                                      editable=False)
+    last_change = models.DateTimeField(auto_now=True,
+                                       default=datetime.datetime.now(),
+                                       editable=False)
 
     image = ImageField('Изображение', upload_to=eval_upload_to,
                        null=True, blank=True)
@@ -74,7 +73,7 @@ class Place(models.Model):
                         place.slug = tslug
                         return
             else:
-                place.slug = slug  
+                place.slug = slug
 
         set_slug(self, translit.slugify(self.name))
         super(Place, self).save(*args, **kwargs)
@@ -87,14 +86,14 @@ class SportEvent(models.Model):
         (STATE_NEW, u'новый'),
         (STATE_APPROVED, u'подтвержден'),
         (STATE_HIDDEN, u'скрыт'),
-        )
+    )
 
     def eval_image_upload_to(instance, filename):
         ext = ''
         n = filename.rfind('.')
         if n:
             ext = filename[n:]
-        return os.path.join('upload/images/events', 
+        return os.path.join('upload/images/events',
                             translit.slugify(instance.name) + ext)
 
     def eval_upload_to(instance, filename):
@@ -115,22 +114,25 @@ class SportEvent(models.Model):
         return os.path.join('upload/terms/%s/%s' % (dt.year, dt.month),
                             translit.slugify(instance.name) + ext)
 
+    def is_past_due(self):
+        return self.date < datetime.date.today()
+
     place = models.ForeignKey(Place, null=True, verbose_name='Место проведения',
                               related_name="events")
     name = models.CharField('Название', max_length=250)
     date = models.DateField('Дата', db_index=True)
     end_date = models.DateField('Дата окончания', null=True, blank=True)
-    description = MarkupField('Описание', default='', null=True, blank=True)
+    description = models.TextField('Описание', default='', null=True, blank=True)
     state = models.IntegerField(choices=STATE_TYPES, default=STATE_NEW)
-    last_change = models.DateTimeField(auto_now=True, 
-                                      default=datetime.datetime.now(),
-                                      editable=False)
+    last_change = models.DateTimeField(auto_now=True,
+                                       default=datetime.datetime.now(),
+                                       editable=False)
     created_by = models.ForeignKey(User, null=True, editable=False)
     registration_open = models.BooleanField('Регистрация открыта', default=False)
     protocol_file = models.FileField('Протокол', upload_to=eval_upload_to,
                                      null=True, blank=True)
     terms_file = models.FileField('Положение', upload_to=eval_terms_upload_to,
-                                     null=True, blank=True)                                 
+                                  null=True, blank=True)
     image = ImageField('Изображение', upload_to=eval_image_upload_to,
                        null=True, blank=True)
 
@@ -157,13 +159,13 @@ class Competition(models.Model):
         (CLASSIC_STYLE, u'кл.ст.'),
         (FREE_STYLE, u'св.ст.'),
         (DUATHLON, u'дуат-н'),
-        )
+    )
 
     (MASS_START, SEP_START) = range(2)
     START_TYPES = (
         (MASS_START, u'мс.ст.'),
         (SEP_START, u'рзд.ст.')
-        )    
+    )
 
     event = models.ForeignKey(SportEvent, null=True,
                               related_name="competitions")
@@ -175,7 +177,7 @@ class Competition(models.Model):
     link = models.URLField('ссылка', null=True, blank=True)
     rating = models.IntegerField(choices=RATING_TYPES, default=BOTH_RATING)
     best_result = models.TimeField(null=True, blank=True, default="0:0:0")
-    last_change = models.DateTimeField(auto_now=True, 
+    last_change = models.DateTimeField(auto_now=True,
                                        default=datetime.datetime.now(),
                                        editable=False)
     created_by = models.ForeignKey(User, null=True, editable=False)
@@ -188,7 +190,7 @@ class Competition(models.Model):
                 return "%.0f" % d
             else:
                 return "%s" % d
-        s = u"%s %s км, %s, %s" % (self.name,                              
+        s = u"%s %s км, %s, %s" % (self.name,
                                    display_dist(self.distance),
                                    self.get_style_display(),
                                    self.get_start_type_display())
@@ -208,10 +210,10 @@ RANK_TYPES = (
     (R2, u'II'),
     (R3, u'III'),
     (NR, u'')
-    )
+)
 
 
-class Person(models.Model):   
+class Person(models.Model):
 
     def eval_upload_to(instance, filename):
         ext = ''
@@ -264,11 +266,11 @@ class Person(models.Model):
 
 (DNS, DNF, DQF) = range(-3, 0)
 
-RESULT_TYPES = ( 
+RESULT_TYPES = (
     (DNS, u'dns'),
     (DNF, u'dnf'),
     (DQF, u'dqf')
-    )
+)
 
 
 class RawResult(models.Model):
@@ -295,7 +297,7 @@ class RawResult(models.Model):
     group = models.CharField(max_length=20, null=True, blank=True)
     pos_in_grp = models.IntegerField(null=True, blank=True)
     time = models.TimeField()
-    qualif_rank = models.IntegerField(choices=RANK_TYPES, default=NR)   
+    qualif_rank = models.IntegerField(choices=RANK_TYPES, default=NR)
 
     last_change = models.DateTimeField(auto_now=True)
     state = models.IntegerField(choices=STATE_CHOICES, default=NEW)
@@ -325,7 +327,7 @@ class RawResult(models.Model):
             unicode(self.year),
             self.get_rank_display(),
             self.city,
-            self.club])        
+            self.club])
         res = u' '.join(rl)
 
         if self.time:
@@ -344,7 +346,7 @@ class RawResult(models.Model):
             return ""
 
 
-class Result(models.Model):    
+class Result(models.Model):
 
     person = models.ForeignKey(Person, db_index=True)
     competition = models.ForeignKey(Competition, db_index=True)
@@ -355,7 +357,7 @@ class Result(models.Model):
     pos_in_grp = models.IntegerField(null=True, blank=True)
     time = models.TimeField()
     qualif_rank = models.IntegerField(choices=RANK_TYPES,
-                                      null=True, blank=True)    
+                                      null=True, blank=True)
 
     last_change = models.DateTimeField(auto_now=True)
 
@@ -378,7 +380,7 @@ class PersonFeedback(models.Model):
     person = models.ForeignKey(Person)
 
     name = models.CharField("Имя", max_length=20, default="",
-                            null=True, db_index=True)    
+                            null=True, db_index=True)
     surname = models.CharField("Фамилия", max_length=30, db_index=True)
     year = models.IntegerField("Год рождения", null=True, blank=True, db_index=True)
     sex = models.IntegerField("Пол", choices=SEX_TYPES, default=UNKNOWN)
@@ -392,14 +394,14 @@ class PersonFeedback(models.Model):
     comment = models.TextField("Комментарий", blank=True)
     contact_email = models.EmailField()
     contact_name = models.CharField(max_length=30)
-    last_change = models.DateTimeField(auto_now=True, 
+    last_change = models.DateTimeField(auto_now=True,
                                        default=datetime.datetime.now(),
                                        editable=False)
 
 
 class RegistrationInfo(models.Model):
-    """Данные, которые оставляет пользователь при регистрации на 
-    соревнование. Предполагается, что он регистрирует не только себя, но 
+    """Данные, которые оставляет пользователь при регистрации на
+    соревнование. Предполагается, что он регистрирует не только себя, но
     и других.
     """
     surname = models.CharField("Фамилия", max_length=30, db_index=True)
@@ -408,10 +410,10 @@ class RegistrationInfo(models.Model):
     sex = models.IntegerField("Пол", choices=SEX_TYPES, default=UNKNOWN)
     rank = models.IntegerField("Звание", choices=RANK_TYPES, default=NR)
     club = models.CharField("Клуб", max_length=30, default='', blank=True)
-    city = models.CharField("Город", max_length=30, default='', 
+    city = models.CharField("Город", max_length=30, default='',
                             blank=True)
 
-    by_user = models.ForeignKey(User, null=True, editable=False, 
+    by_user = models.ForeignKey(User, null=True, editable=False,
                                 related_name='registrations')
     sport_event = models.ManyToManyField(SportEvent, through='RegistrationMembership',
                                          editable=False)
@@ -421,7 +423,7 @@ class RegistrationInfo(models.Model):
                                [self.surname, self.name]))
 
     def __unicode__(self):
-        return ' '.join([self.surname, self.name, self.get_rank_display(), 
+        return ' '.join([self.surname, self.name, self.get_rank_display(),
                          unicode(self.year), self.club, self.city])
 
 
@@ -432,4 +434,3 @@ class RegistrationMembership(models.Model):
     sport_event = models.ForeignKey(SportEvent)
     competition = models.ForeignKey(Competition, null=True)
     date = models.DateTimeField(auto_now=True)
-

@@ -4,78 +4,81 @@
 {% load pretty_print %}
 
 {% block content %}
-<div class="grid_2 event">
-  <span class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</span>
-  <h3><a href="{% url place comp.event.place.slug %}">{{ comp.event.place }}</a></h3>
-  {% if alternate %}
-  <a href="{% url protocol_by_groups comp.id %}">по группам</a>
-  {% endif %}
+<div class="row">
+  <div class="span4">
+    <span class="date">{{ comp.event.date|ru_strftime:"%d %B %Y" }}</span>
+    <a href="{% url place comp.event.place.slug %}"><strong>{{ comp.event.place }}</strong></a>
+    {% if alternate %}
+      <a href="{% url protocol_by_groups comp.id %}">по группам</a>
+    {% endif %}
+  </div>
+  <div class="span8">
+    <h3>{{ comp.event.name }}</h3>
+    <h3>{{ comp }}</h3>
+    <h3>Протокол</h3>
+  </div>
 </div>
-<div class="grid_8">
-  <h1>Протокол</h1>
-  <h1>{{ comp.event.name }}</h1>
-  <h2>{{ comp }}</h2>
-</div>
-<div class="clear"></div>
-<div class="grid_12">
-  <table class="protocol">
-    <thead>
-      <tr>
-        <th align="left">
-          <span class="widener">
-            <span class="full">Место</span>
-            <span class="short">М.</span>
-          </span>
-        </th>
-        <th>Ст.№</th>
-        <th>Фамилия Имя</th>
-        <th>
-          <span class="widener">
-            <span class="full">Звание</span>
-            <span class="short">Зв.</span>
-          </span>
-        </th>
-        <th>
-          <span class="widener">
-            <span class="full">Год</span>
-            <span class="short">Г.р.</span>
-          </span>
-        </th>
-        <th>Город</th>
-        <th>Клуб</th>
-        <th>
-          <span class="widener">
-            <span class="full">Результат</span>
-            <span class="short">Рез-т</span>
-          </span>
-        </th>
-        <th>
-          <span class="widener">
-            <span class="full">Отставание</span>
-            <span class="short">Отст.</span>
-          </span>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for r in results %}
-      {% if r.pos < 0 %}
-      <tr class="{% print_pos r %}">
-      {% else %}
-      <tr>
-      {% endif %}
-        <td>{% print_pos r %}</td>
-        <td>{{ r.number|default:"" }}</td>
-        <td><a class="person" href="{% url person r.person.id %}">{{ r.person.full_name }}</a></td>
-        <td>{{ r.person.get_rank_display }}</td>
-        <td>{{ r.person.year }}</td>
-        <td>{{ r.person.city|default:"" }}</td>
-        <td>{{ r.person.club|default:"" }}</td>
-        <td>{% print_time r %}</td>
-        <td>{% time_diff r.time comp.best_result %}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="row">
+  <div class="span12">
+    <table class="protocol">
+      <thead>
+        <tr>
+          <th align="left">
+            <span class="widener">
+              <span class="full">Место</span>
+              <span class="short">М.</span>
+            </span>
+          </th>
+          <th>Ст.№</th>
+          <th>Фамилия Имя</th>
+          <th>
+            <span class="widener">
+              <span class="full">Звание</span>
+              <span class="short">Зв.</span>
+            </span>
+          </th>
+          <th>
+            <span class="widener">
+              <span class="full">Год</span>
+              <span class="short">Г.р.</span>
+            </span>
+          </th>
+          <th>Город</th>
+          <th>Клуб</th>
+          <th>
+            <span class="widener">
+              <span class="full">Результат</span>
+              <span class="short">Рез-т</span>
+            </span>
+          </th>
+          <th>
+            <span class="widener">
+              <span class="full">Отставание</span>
+              <span class="short">Отст.</span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+        {% if r.pos < 0 %}
+        <tr class="{% print_pos r %}">
+        {% else %}
+        <tr>
+        {% endif %}
+          <td>{% print_pos r %}</td>
+          <td>{{ r.number|default:"" }}</td>
+          <td><a class="person" href="{% url person r.person.id %}">{{ r.person.full_name }}</a></td>
+          <td>{{ r.person.get_rank_display }}</td>
+          <td>{{ r.person.year }}</td>
+          <td>{{ r.person.city|default:"" }}</td>
+          <td>{{ r.person.club|default:"" }}</td>
+          <td>{% print_time r %}</td>
+          <td>{% time_diff r.time comp.best_result %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

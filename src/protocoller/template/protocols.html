@@ -42,59 +42,69 @@ jQuery.ias({
 {% endblock %}
 
 {% block content %}
-<form>
-    <button type="button" name="" value="" class="css3button" onclick="document.location.href='{% url add_event %}'">Создать соревнование</button>
-</form>
+<a class="btn btn-success" href="{% url add_event %}">Создать соревнование</a>
+
 <div class="event_list">
     {% for event_days, imonth, iyear in months_events %}
-    <div class="month_events">
-        <div class="grid_9">
+    <div class="row month_events">
+        <div class="span9">
             {% for day_events in event_days %}
-                <h4 style="color:#990000;">
-                    <a class="anchor" name="{{ day_events.date|urlencode }}" href="#{{ day_events.date|urlencode }}"></a>
-                    {{ day_events.date|ru_strftime:"%d %B" }}
-                </h4>
+                <div class="row">
+                    <h4 class="span9" style="color:#990000;">
+                        <a class="anchor" name="{{ day_events.date|urlencode }}" href="#{{ day_events.date|urlencode }}"></a>
+                        {{ day_events.date|ru_strftime:"%d %B" }}
+                    </h4>
+                </div>
                 {% for event in day_events.events %}
                     <div class="event">
-                        <div>
-                            <div>{{ event.place }}</div>
-                        </div>
-                        <div>
-                            <h5><a href="{% url event event.id %}">{{ event.name }}</a></h5>
+                        <div class="row">
+                            <div class="span9">
+                                <p><strong><a href="{% url event event.id %}">{{ event.name }}</a></strong> {{ event.place }}</p>
+                            </div>
                         </div>
                         
-                        <ul class="comp_list">
-                            {% for comp in event.competitions.all %}
-                                <li>
-                                    {% if comp.processed %}
-                                        <a href="{% url protocol comp.id %}">{{ comp }}</a>
-                                    {% else %}
-                                        {{ comp }}
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-
-                        {% if event.protocol_file %}
-                            <div>
-                                <a href="{{ event.protocol_file.url }}"><img src="{{ STATIC_URL }}img/download.png">Скачать протокол</a>
+                        <div class="row">
+                            <div class="span6">
+                                <ul class="comp_list">
+                                    {% for comp in event.competitions.all %}
+                                        <li>
+                                            {% if comp.processed %}
+                                              <a href="{% url protocol comp.id %}">{{ comp }}</a>
+                                            {% else %}
+                                              <span>{{ comp }}</span>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
                             </div>
-                        {% endif %}
 
-                        {% if event.terms_file %}
-                            <div>
-                                <a href="{{ event.terms_file.url }}"><img src="{{ STATIC_URL }}img/protocol.png">Скачать протокол</a>
+                            <div class="span3">
+                                {% if event.protocol_file %}
+                                    <div>
+                                        <i class="icon-download"></i><a href="{{ event.protocol_file.url }}">Протокол</a>
+                                    </div>
+                                {% endif %}
+
+                                {% if event.terms_file %}
+                                    <div>
+                                        <i class="icon-download"></i><a href="{{ event.terms_file.url }}">Положение</a>
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
-                        
+                        </div>
 
+                        {% get_comment_count for event as comment_count %}
+                        {% if comment_count > 0 %}
+                            <a href="{% url event event.id %}"><i class="icon-comment"></i>{{ comment_count }} комментари{{ comment_count|choose_plural:"ий,я,ев" }}</a>
+                        {% endif %}
                     </div>
                 {% endfor %}
             {% endfor %}
         </div>
-        <div class="grid_3">
+        <div class="span3">
             {% gencal event_days iyear imonth%}
         </div>
+        
     </div>
     {% endfor %}
     {% if next_events_exists %}

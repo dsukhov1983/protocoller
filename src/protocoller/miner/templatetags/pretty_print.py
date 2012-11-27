@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
+from datetime import time
 
 from django import template
 from django.conf import settings
-from datetime import time
+from django.core.urlresolvers import reverse
+
 from protocoller.miner import models
 
 register = template.Library()
 
-
 _result_map = dict(models.RESULT_TYPES)
+
 
 @register.simple_tag
 def print_pos(result):
@@ -24,7 +26,6 @@ def print_grp_pos(result):
 
 @register.simple_tag
 def print_time(result):
-
     if _result_map.has_key(result.pos):
         return "N/A"
 
@@ -36,21 +37,18 @@ def print_time(result):
 
 @register.simple_tag
 def time_diff(t1, t2):
-
-    s1 = t1.hour*60*60 + t1.minute*60 + t1.second
-    s2 = t2.hour*60*60 + t2.minute*60 + t2.second
-    
-    ds = s1-s2
+    s1 = t1.hour * 3600 + t1.minute * 60 + t1.second
+    s2 = t2.hour * 3600 + t2.minute * 60 + t2.second
+    ds = s1 - s2
 
     if ds <= 0:
         return ""
-    
+
     (min, sec) = divmod(ds, 60)
     (hour, min) = divmod(min, 60)
 
     td = time(hour=hour, minute=min, second=sec)
 
-    
     if td.hour:
         return td.strftime('+%H:%M:%S')
     elif td.minute:
@@ -61,25 +59,22 @@ def time_diff(t1, t2):
 
 @register.simple_tag
 def time_diff2(t1, t2):
-
-    s1 = t1.hour*60*60 + t1.minute*60 + t1.second
-    s2 = t2.hour*60*60 + t2.minute*60 + t2.second
-    
-    ds = s1-s2
+    s1 = t1.hour * 3600 + t1.minute * 60 + t1.second
+    s2 = t2.hour * 3600 + t2.minute * 60 + t2.second
+    ds = s1 - s2
 
     if ds <= 0:
         return ""
-    
+
     (min, sec) = divmod(ds, 60)
     (hour, min) = divmod(min, 60)
 
     td = time(hour=hour, minute=min, second=sec)
 
     if s2 != 0:
-        return " %.3f"%(float(s1)/float(s2))
+        return " %.3f" % (float(s1) / float(s2))
     else:
         return ""
-
 
 
 # list of pairs (keyword, iconname)
@@ -110,24 +105,21 @@ def print_user(user):
         return 'openid.ico.gif'
 
     if is_openid_user(user):
-        return """
-<span class="profile-image">
-<img src="%(static_url)simg/fi/%(icon_path)s" />
-</span>
-<span class="profile-name"> %(username)s </span>
-""" % dict(static_url = settings.STATIC_URL,
-           icon_path = get_user_icon(user),
-           username = user.openid_profiles.all()[0].nickname)
+        return """<span><img src="%(static_url)simg/fi/%(icon_path)s" /></span>&nbsp;%(username)s""" \
+                % dict(static_url=settings.STATIC_URL,
+                       icon_path=get_user_icon(user),
+                       username=user.openid_profiles.all()[0].nickname)
     else:
         return """
 <span class="profile-name"> %(username)s </span>
-""" % dict(username = user.username)
+""" % dict(username=user.username)
+
 
 @register.simple_tag
 def print_fio(user):
     """Печатает имя и фамилию пользователя"""
     return '.'.join(filter(None, [user.first_name, user.last_name]))
-   
+
 
 @register.simple_tag
 def active(request, pattern):
@@ -136,7 +128,7 @@ def active(request, pattern):
     if re.search(pattern, request.path):
         return 'active'
     return ''
-    
+
 
 @register.simple_tag
 def print_comp(comp):
@@ -145,4 +137,16 @@ def print_comp(comp):
     <img src="/static/img/%s"/>
     <span class="distance">%.0f&nbsp;км.</span>
 </div>""" % (img, comp.distance)
+
+
+@register.simple_tag
+def person_compare_row(person):
+    person_url = reverse("person", args=[person.id])
+    return ('<tr id="compare-person-%s"><td>'
+            '<td><a class="icon-remove" onclick="Dajaxice.protocoller.miner.remove_from_compare('
+            '''Dajax.process,{'person_id': %s});"></a></td>'''
+            '</td><td><a href="%s">%s</a></td>'
+            '<td>%s</td><td>%s</td></tr>') \
+                % (person.id, person.id, person_url, person.full_name(),
+                   person.year, person.get_rank_display())
 

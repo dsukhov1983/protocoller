@@ -9,13 +9,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = os.path.join(SITE_ROOT, 'db', 'main')             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(SITE_ROOT, 'db', 'main'),
+    }
+}
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be available on all operating systems.
@@ -32,39 +31,36 @@ SITE_ID = 1
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
-
+USE_L10N = True
 
 DATE_FORMAT = 'N j, Y'
 
 
 STATIC_ROOT = '/home/quoter/www/'
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-   '/home/quoter/devel/protocoller/src/protocoller/static',
-)
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
+#MEDIA_ROOT = os.path.join(SITE_ROOT, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
+#MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = '/static/admin/'
+#ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'ta^4n6q(n50s7%)^nx-3u^i@l+owel-veww#!&8yf_r7bsd((g'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.load_template_source',
-    'django.template.loaders.app_directories.load_template_source',
-    'django.template.loaders.eggs.load_template_source',
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -106,16 +102,16 @@ INSTALLED_APPS = (
     'openid_consumer',
     'registration',
     'markitup',
-    'uni_form',
     'debug_toolbar',
     'perfect404',
-    #sentry apps
-    # don't forget to add the dependencies!
     'indexer',
     'paging',
     'sentry',
-    'sentry.client',
+    'raven.contrib.django',
     'sorl.thumbnail',
+    'crispy_forms',
+    'dajaxice',
+    'dajax'
 )
 
 LOGIN_REDIRECT_URL = '/'
@@ -124,7 +120,7 @@ OPENID_REDIRECT_NEXT = '/accounts/openid/done/'
 LOGIN_URL = "/login/"
 
 OPENID_SREG = {"requred": "nickname, email, fullname",
-               "optional":"postcode, country",
+               "optional": "postcode, country",
                "policy_url": ""}
 
 #example should be something more like the real thing, i think
@@ -133,7 +129,7 @@ OPENID_AX = [{"type_uri": "http://axschema.org/contact/email",
               "required": True,
               "alias": "email"},
              {"type_uri": "http://axschema.org/schema/fullname",
-              "count":1 ,
+              "count": 1,
               "required": False,
               "alias": "fname"}]
 
@@ -175,21 +171,27 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.messages.context_processors.messages",
     "django.core.context_processors.request",
     "protocoller.miner.context_processors.maps_api_key",
+    "protocoller.miner.context_processors.compare_list",
     "django.core.context_processors.static"
     )
 
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.eggs.Loader',
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'dajaxice.finders.DajaxiceFinder',
+)
 
 #django-registration settings
 ACCOUNT_ACTIVATION_DAYS = 10
 
 #Yandex maps API key
 YANDEX_MAPS_API_KEY = 'AODzFE0BAAAAoXcZYwIAG1u61AXDPbZD7AdmjO1-aSAjBZoAAAAAAAAAAABTlA6cYksJKJo4ORU9l6EgMBk7TQ=='
-
-#MARKITUP
-MARKITUP_FILTER = ('markdown.markdown', {'safe_mode': True})
-MARKITUP_SET = 'markitup/sets/markdown'
-MARKITUP_SKIN = 'markitup/skins/markitup'
-JQUERY_URL = "http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"
 
 #django-debug-toolbar
 INTERNAL_IPS = ('127.0.0.1',)
@@ -207,3 +209,5 @@ CACHES = {
 }
 
 CACHE_BACKEND = 'db://miner_cache_table'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap'

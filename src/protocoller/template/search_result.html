@@ -5,10 +5,14 @@
 <input id="cl" value="{{ cl }}" name="cl" type="hidden"/>
 {% endblock %}
 {% block content %}
-<div class="grid_8">
+<div class="row">
+<div class="span7">
   {% if persons.object_list %}
-  <h2>Результаты поиска</h2>
-  <table class="search_results">
+  <h3>Результаты поиска</h3>
+
+  Вы искали <em>'{{ query }}'</em>
+
+  <table class="table">
     <tbody>
     {% for p in persons.object_list %}
     <tr class="person">
@@ -17,10 +21,10 @@
             {{ p.year }} {{ p.city|default:"" }} {{ p.club|default:"" }}</a>
       </td>
       <td>
-        {% if not p.is_in_list %}
-        <a class="pseudolink" 
-           href="{% url search %}?query={{ query }}{% if persons.number > 1 %}&page={{ persons.number }}{% endif %}&cl={% if cl %}{{ cl }},{% endif %}{{ p.id }}">к сравнению</a>
-        {% endif %}
+          <a class="btn btn-link {% if p in compare_list %}hide{% endif %}" id="add-to-compare-person-{{ p.id }}-button"
+            onclick="Dajaxice.protocoller.miner.add_to_compare(Dajax.process,
+                    {'person_id': {{ p.id }} });"
+                    title="добавить к сравнению"><i class="icon-plus-sign"></i></a>
       </td>
     </tr>
     {% endfor %}  
@@ -28,48 +32,33 @@
   </table>
   
   {% ifnotequal persons.paginator.num_pages 1 %}
-
-  <div class="pager">
-    <span class="step-links">
-      {% if persons.has_previous %}        
-      <a href="?query={{ query }}&page={{ persons.previous_page_number }}">предыдущая</a>
-      {% endif %}        
-
-      {% if persons.has_next %}
-      <a href="?query={{ query }}&page={{ persons.next_page_number }}">
-        следующая</a>
-      {% endif %}
-      <div>
+    <div class="pagination">
+      <ul>
         {% for p in persons.paginator.page_range %}
-        {% ifequal persons.number p %}
-        <b>{{ p }}</b>
-        {% else %}
-        <a href="?query={{ query }}&page={{ p }}">{{ p }}</a>
-        {% endifequal %}
+          <li {% ifequal persons.number p %}class="disabled" {% endifequal %}>
+              <a href="?query={{ query }}&page={{ p }}">{{ p }}</a>
+           </li>
         {% endfor %}
-      </div>
-    </span>
-  </div>
+      </ul>
+    </div>
   {% endifnotequal %}
   {% else %}
-  {% if query %}
-  <h2>Ничего не найдено.</h2>
-  {% endif %}
+    {% if query %}
+      <h3>Ничего не найдено.</h3>
+    {% endif %}
   {% endif %}
  </div>
-<div class="grid_4">
-  {% if compare_list %}
-  <h2>Добавлены к сравнению</h2>
-  <div class="hl_region">
-    <ul class="search_results">
-      {% for p in compare_list %}
-      <li>
-        <a href="{% url person p.id %}">{{ p.full_name }} {{ p.year }}</a>
-      </li>
-      {% endfor %}
-    </ul>
-    <a href="{% url compare %}?cl={{ cl }}">Сравнить</a>
-  </div>
-  {% endif %}
+
+  <div id="compare-persons-block" class="span5 {% if not compare_list %}hide{% endif %}">
+    <strong>Добавлены к сравнению</strong>
+    <a class="btn btn-link" href="{% url compare %}">Сравнить</a>
+    <table class="table">
+      <tbody id="compare-list-body">
+        {% for p in compare_list %}
+          {% person_compare_row p %}
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
 </div>
 {% endblock %}

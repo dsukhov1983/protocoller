@@ -5,125 +5,55 @@
 
 {% block content %}
 
-Здесь Вы можете исправить ошибки в данных. 
-После проверки изменения будут применены.
+<div class="row">
+  <div class="span10">
+    Здесь Вы можете сообщить об ошибках в данных. 
+    После проверки изменения будут применены.
 
-<div id="stylized" class="myform">
+    <form action="{% url feedback_person person.id %}" method="POST" 
+          class="form-horisontal">
+      {% csrf_token %}
+      {% load crispy_forms_tags %}
+      {{ form|crispy }}
 
-  <form action="{% url feedback_person person.id %}" method="POST" 
-        class="feedback_form">  
+      <table class="protocol">
+        {% for season, results in res_groups %}
 
-    {{ form.person }}
-    {{ form.wrong_results }}
+        <tr><th colspan="10" class="group">{{ season }}</th></tr>
 
-    <div class="formfield">
-      {{ form.name.errors }}
-      <label for="id_name">Имя:</label>
-      {{ form.name }}
-    </div>
+        <tr class="head">
+          <th>Дата</th>
+          <th>Место</th>
+          <th>Соревнование</th>
+          <th>М(абс)</th>
+          <th>М(грп)</th>
+          <th>Группа</th>    
+          <th>Рез-тат</th>
+          <th>Отставание</th>
+          <th>Удалить</th>
+        </tr>  
 
-    <div class="formfield">
-      {{ form.surname.errors }}
-      <label for="id_surname">Фамилия:</label>
-      {{ form.surname }}
-    </div>
-
-    <div class="formfield">
-      {{ form.year.errors }}
-      <label for="id_year">Год рождения:</label>
-      {{ form.year }}
-    </div>
-
-    <div class="formfield">
-      {{ form.sex.errors }}
-      <label for="id_sex">Пол:</label>
-      {{ form.sex }}
-    </div>
-
-    <div class="formfield">
-      {{ form.rank.errors }}
-      <label for="id_rank">Звание:</label>
-      {{ form.rank }}
-    </div>
-
-    <div class="formfield">
-      {{ form.club.errors }}
-      <label for="id_club">Клуб:</label>
-      {{ form.club }}
-    </div>
-
-    <div class="formfield">
-      {{ form.city.errors }}
-      <label for="id_city">Город:</label>
-      {{ form.city }}
-    </div>
-
-
-    <table class="protocol">
-      {% for season, results in res_groups %}
-
-      <tr><th colspan="10" class="group">{{ season }}</th></tr>
-
-      <tr class="head">
-        <th>Дата</th>
-        <th>Место</th>
-        <th>Соревнование</th>
-        <th>М(абс)</th>
-        <th>М(грп)</th>
-        <th>Группа</th>    
-        <th>Рез-тат</th>
-        <th>Отставание</th>
-        <th>Удалить</th>
-      </tr>  
-
-
-      {% for r in results %}
-      <tr >
-        <td>{{ r.competition.event.date|ru_strftime:"%d %B"}}</td>
-        <td>{{ r.competition.event.place|default:"" }}</td>
-        <td>
-          <a href="{% url protocoller.miner.views.protocol r.competition.id %}" >{{ r.competition.event }} {{ r.competition }}</a>      
-        </td>
-        <td>{% print_pos r %}</td>
-        <td>{% print_grp_pos r %}</td>    
-        <td>{{ r.group|default:"" }}</td>
-        <td>{% print_time r %}</td>
-        <td>{% time_diff r.time r.competition.best_result %}</td>
-        <td><input type="checkbox" id="id_result_{{ r.id }}_DELETE" 
-                   name="id_result_{{ r.id }}_DELETE" 
-                   {% if r.is_deleted %} value="on" checked {% endif %} /></td>
-      </tr>
-      {% endfor %}
-      {% endfor %}
-      
-    </table>
-    
-
-
-    <div class="formfield">
-      {{ form.comment.errors }}
-      <label for="id_comment">Комментарий:</label>
-      {{ form.comment }}
-    </div>
-
-    <fieldset>
-      <legend>Контактная информация</legend>
-
-      <div class="formfield">
-        {{ form.contact_name.errors }}
-        <label for="id_contact_name">Фамилия, Имя<span class="reqMark">*</span>:</label>
-        {{ form.contact_name }}
-      </div>
-
-      <div class="formfield">
-        {{ form.contact_email.errors }}
-        <label for="id_contact_email">e-mail<span class="reqMark">*</span>:</label>
-        {{ form.contact_email }}
-      </div>    
-    </fieldset>
-
-    <input type="submit" value="Записать" />
-  </form>
+        {% for r in results %}
+        <tr >
+          <td>{{ r.competition.event.date|ru_strftime:"%d %B"}}</td>
+          <td>{{ r.competition.event.place|default:"" }}</td>
+          <td>
+            <a href="{% url protocoller.miner.views.protocol r.competition.id %}" >{{ r.competition.event }} {{ r.competition }}</a>      
+          </td>
+          <td>{% print_pos r %}</td>
+          <td>{% print_grp_pos r %}</td>    
+          <td>{{ r.group|default:"" }}</td>
+          <td>{% print_time r %}</td>
+          <td>{% time_diff r.time r.competition.best_result %}</td>
+          <td><input type="checkbox" id="id_result_{{ r.id }}_DELETE" 
+                     name="id_result_{{ r.id }}_DELETE" 
+                     {% if r.is_deleted %} value="on" checked {% endif %} /></td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+      </table>
+      <button class="btn btn-success" type="submit">Сохранить</button>
+    </form>
+  </div>
 </div>
-
 {% endblock %}
