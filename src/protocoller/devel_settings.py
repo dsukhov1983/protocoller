@@ -2,7 +2,7 @@ from settings import *
 DEBUG = True
 TEMPLATE_DEBUG = True
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-UPLOAD_ROOT = ""
+MEDIA_ROOT = "upload"
 DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.version.VersionDebugPanel',
     'debug_toolbar.panels.timer.TimerDebugPanel',
