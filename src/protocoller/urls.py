@@ -88,8 +88,8 @@ if settings.DEBUG:
     print staticfiles_urlpatterns()
     urlpatterns += patterns(
          '',
-         (r'^media/(?P<path>.*)$',
+         (r'^upload/(?P<path>.*)$',
          'django.views.static.serve',
-              {'document_root': '/home/quoter/www/protocoller/media/'}),
+              {'document_root': settings.MEDIA_ROOT}),
           )
 

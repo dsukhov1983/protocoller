@@ -35,13 +35,13 @@
     </ul>
     {% if event.protocol_file %}
         <div>
-            <i class="icon-download"></i><a href="{{ event.protocol_file.url }}">Протокол</a>
+            <i class="icon-download"></i><a href="/upload/{{ event.protocol_file.url }}">Протокол</a>
         </div>
     {% endif %}
 
     {% if event.terms_file %}
         <div>
-            <i class="icon-download"></i><a href="{{ event.terms_file.url }}">Положение</a>
+            <i class="icon-download"></i><a href="/upload/{{ event.terms_file.url }}">Положение</a>
         </div>
     {% endif %}
   </div>
