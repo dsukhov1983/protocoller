@@ -4,6 +4,7 @@ import datetime
 from pytils import translit
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 from itertools import count
 from sorl.thumbnail import ImageField
 
@@ -30,7 +31,7 @@ class Place(models.Model):
         n = filename.rfind('.')
         if n:
             ext = filename[n:]
-        return os.path.join('upload/images/places', instance.slug + ext)
+        return os.path.join(settings.UPLOAD_ROOT, 'images/places', instance.slug + ext)
 
     name = models.CharField('Название', max_length=50)
     slug = models.CharField(max_length=20, default='',
@@ -93,7 +94,7 @@ class SportEvent(models.Model):
         n = filename.rfind('.')
         if n:
             ext = filename[n:]
-        return os.path.join('upload/images/events',
+        return os.path.join(settings.UPLOAD_ROOT, 'images/events',
                             translit.slugify(instance.name) + ext)
 
     def eval_upload_to(instance, filename):
@@ -102,7 +103,7 @@ class SportEvent(models.Model):
         if n:
             ext = filename[n:]
         dt = instance.date
-        return os.path.join('upload/protocols/%s/%s' % (dt.year, dt.month),
+        return os.path.join(settings.UPLOAD_ROOT, 'protocols/%s/%s' % (dt.year, dt.month),
                             translit.slugify(instance.name) + ext)
 
     def eval_terms_upload_to(instance, filename):
@@ -111,7 +112,7 @@ class SportEvent(models.Model):
         if n:
             ext = filename[n:]
         dt = instance.date
-        return os.path.join('upload/terms/%s/%s' % (dt.year, dt.month),
+        return os.path.join(settings.UPLOAD_ROOT, 'terms/%s/%s' % (dt.year, dt.month),
                             translit.slugify(instance.name) + ext)
 
     def is_past_due(self):
@@ -220,7 +221,7 @@ class Person(models.Model):
         n = filename.rfind('.')
         if n:
             ext = filename[n:]
-        return os.path.join('upload/images/persons', str(instance.id) + ext)
+        return os.path.join(settings.UPLOAD_ROOT, 'images/persons', str(instance.id) + ext)
 
     name = models.CharField(max_length=20, default="",
                             null=True, db_index=True)
