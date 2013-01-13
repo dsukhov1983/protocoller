@@ -185,6 +185,7 @@ def places_view(request):
     parts = 4
     places_parts = [all_places[i * places_cnt / parts:(i + 1) * places_cnt / parts]
                     for i in range(parts)]
+    active_tab = "places"
     return render_to_response('places.html', locals(),
                               context_instance=RequestContext(request))
 
@@ -274,12 +275,18 @@ def search_view(request):
 
 
 def compare_view(request):
+    def cmp_pos(p1, p2):
+        if p1 > 0 and p2 > 0:
+            return cmp(p1, p2)
+        elif p1 > 0:
+            return -1
+        elif p2 > 0:
+            return 1
+        else:
+            return 0
+
     def cmp_res(r1, r2):
-        if r1.time and r2.time:
-            return cmp(r1.time, r2.time)
-        if r1.pos > 0 or r2.pos > 0:
-            return cmp(r1.pos, r2.pos)
-        return cmp(r1.pos_in_grp, r2.pos_in_grp)
+        return cmp_pos(r1.pos, r2.pos) or cmp_pos(r1.pos_in_grp, r2.pos_in_grp)
 
     compare_set = request.session.get(common.COMPARE_LIST_SESSION_KEY, set())
     persons = list(models.Person.objects.filter(id__in=compare_set))
@@ -674,6 +681,7 @@ def calendar_month_view(req, year, month, from_day=None):
     limit = 10
     total = 0
     months_events = []
+    active_tab = "calendar"
     for event_days, imonth, iyear in iter_month_events(year, month, from_day):
         if event_days:
             months_events.append((event_days, imonth, iyear))
@@ -702,6 +710,7 @@ def protocols_month_view(req, year, month, from_day=None):
     limit = 10
     total = 0
     months_events = []
+    active_tab = "protocols"
     for event_days, imonth, iyear in iter_month_events(year, month, from_day, ascending=False):
         if event_days:
             months_events.append((event_days, imonth, iyear))

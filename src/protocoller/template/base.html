@@ -25,9 +25,9 @@
         <a class="brand" href="#">Protocoller</a>
         <ul class="nav">
           <form class="navbar-search pull-left" action="/search">
-            <input name="query" type="text" class="search-query" placeholder="Поиск">
+            <input name="query" type="text" class="search-query" placeholder="Поиск спортсмена">
           </form>
-          <li class="{% if active_tab == 'main' %} active{% endif %}"><a href="{% url main %}">Протоколы</a></li>
+          <li class="{% if active_tab == 'protocols' %} active{% endif %}"><a href="{% url protocols %}">Протоколы</a></li>
           <li class="{% if active_tab == 'calendar' %} active{% endif %}"><a href="{% url calendar %}">Календарь</a></li>
           <li class="{% if active_tab == 'places' %} active{% endif %}"><a href="{% url places %}">Трассы</a></li>
           <li class="devider-vertical"></li>
