@@ -49,7 +49,8 @@ urlpatterns = patterns(
     (r'^person/(?P<person_id>\d+)/$', 'person_view', {}, 'person'),
 
     (r'^search$', 'search_view', {}, 'search'),
-    (r'^compare$', 'compare_view', {}, 'compare'),
+    (r'^compare/$', 'compare_view', {}, 'compare'),
+    (r'^compare/(?P<cs>[\d,]+)/$', 'compare_list_view', {}, 'compare_list'),
     (r'^person_fb/(?P<person>\d+)$', 'feedback_person', {}, 'feedback_person'),
 
     (r'^login/$', 'login_view', {}, 'login'),
@@ -85,7 +86,6 @@ urlpatterns += patterns(
 
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
-    print staticfiles_urlpatterns()
     urlpatterns += patterns(
          '',
          (r'^upload/(?P<path>.*)$',

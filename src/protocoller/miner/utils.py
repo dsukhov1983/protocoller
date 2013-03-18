@@ -17,17 +17,19 @@ RESULT_VARIANTS = (
     (models.DNS, [u'dns', u'не старт', u'неявка']),
     (models.DNF, [u'dnf', u'сош', u'не фин']),
     (models.DQF, [u'dqf', u'диск', u'рез. аннул.', u'снят'])
-    )
-        
+)
+
 
 def format_name(val):
     return val.capitalize()
 
+
 def name_surname(obj, val, delimiter=' '):
     l = filter(None, val.strip().split(delimiter))
     obj.surname = l[0].capitalize()
-    if len(l)>1:
+    if len(l) > 1:
         obj.name = l[1].capitalize()
+
 
 def sex_parse(obj, val):
     val = val.strip().lower()
@@ -81,7 +83,7 @@ def time_parse(obj, val):
         except:
             pass
 
-    print "Failed to parse date %s"%val
+    print "Failed to parse date %s" % val
     obj.time = datetime.time()
 
 
@@ -123,7 +125,7 @@ _parse_map = {
     CITY: ST(str_parse, 'city'),
     TIME: time_parse,
     IGNORE: lambda obj, val: None}
-    
+
 equivalence_sets = (u'ао', u'её', u'оё', u'зс', u'гк', u'бп', u'ий', u'бп',
                     u'щш')
 
@@ -132,9 +134,10 @@ for s in equivalence_sets:
     for c in s:
         _equiv_map[c] = _equiv_map.get(c, []) + list(s)
 
+
 def fuzy_equal(a, b):
     if a == b or \
-       b in _equiv_map.get(a, []):
+            b in _equiv_map.get(a, []):
         return True
     return False
 
@@ -147,7 +150,7 @@ def levenshtein(a, b):
         # Make sure n <= m, to use O(min(n,m)) space
         a, b = b, a
         n, m = m, n
-        
+
     current = range(n + 1)
     for i in range(1, m + 1):
         previous, current = current, [i] + [0] * n
@@ -166,16 +169,17 @@ def combinations(iter1, iter2):
         for j in iter2:
             yield (i, j)
 
+
 def measure(a, b):
     res = 0
-    res += 2*levenshtein(a.surname, b.surname)
+    res += 2 * levenshtein(a.surname, b.surname)
     res += levenshtein(a.name or "", b.name or "")
     if a.year and b.year:
         res += levenshtein(str(a.year), str(b.year))
-     
+
     return res
 
-    
+
 THRESHOLD = 4  # порог для поиска похожих Person
 all_persons = list(models.Person.objects.all())
 
@@ -188,19 +192,19 @@ def find_best_result(comp):
         comp.save()
         return
     except Exception, e:
-        print "failed to find best result: %s" % e
+        print "failed to find best result: '%s'" % e
     try:
         br = models.Result.objects.filter(competition=comp)\
-                    .exclude(pos__lt=0)\
-                    .exclude(pos_in_grp__lt=0)\
-                    .order_by('time')[0]
+            .exclude(pos__lt=0)\
+            .exclude(pos_in_grp__lt=0)\
+            .order_by('time')[0]
         comp.best_result = br.time
         print br.time
         comp.save()
         return
     except Exception, e:
         print "failed to find best result: %s" % e
-        
+
 
 def reload_persons():
     global all_persons
@@ -209,7 +213,7 @@ def reload_persons():
 
 
 def new_person_from_rec(result, rec):
-    #adding new
+    # adding new
     prs = models.Person(name=rec.name,
                         surname=rec.surname,
                         year=rec.year,
@@ -224,6 +228,7 @@ def new_person_from_rec(result, rec):
     print "+",
     sys.stdout.flush()
 
+
 def analyse_result(rec):
     print "processing %r" % rec
     result = models.Result(number=rec.number,
@@ -234,20 +239,20 @@ def analyse_result(rec):
                            qualif_rank=rec.qualif_rank,
                            competition=rec.competition,
                            raw_result=rec)
-    #trying to find such object
+    # trying to find such object
     rl = models.Person.objects.filter(surname=rec.surname)
     if rl:
         srl = sorted([(r, measure(rec, r)) for r in rl],
                      lambda a, b: cmp(a[1], b[1]))
         if srl[0][1] == 0:
-            print ".choosed %r"%srl[0][0]
+            print ".choosed %r" % srl[0][0]
             sys.stdout.flush()
             result.person = srl[0][0]
             result.save()
             return None
-            
+
     global all_persons
-    srl = sorted(filter(lambda v: v[1]<= THRESHOLD,
+    srl = sorted(filter(lambda v: v[1] <= THRESHOLD,
                         [(r, measure(rec, r)) for r in all_persons]),
                  lambda a, b: cmp(a[1], b[1]))
     if srl:
@@ -278,17 +283,17 @@ def resolve(result, rec, srl):
                 result.save()
                 return
         except Exception, e:
-                print "Failed: %s"%e
-    
+                print "Failed: %s" % e
+
 
 def process_rlist(rlist):
     for r in rlist:
         r.save()
-    
+
     for r in filter(None, map(analyse_result, rlist)):
         resolve(*r)
 
-    
+
 def process_rlist_new(rlist):
     for r in rlist:
         r.save()
@@ -307,8 +312,8 @@ def parse_bitza_format(raw):
     club = col[5].string
     time = col[9].string
     return (pos, num, sname, name, year, city, club, time)
-    
-    
+
+
 def link_results():
     rl = models.Result.objects.filter(raw_result=None)
     for r in rl:
@@ -320,8 +325,8 @@ def link_results():
         except Exception, e:
             print "Could't find %s, %r, %s: %s" % (
                 r.competition.id, r.person, r.number, e)
-        
-    
+
+
 def recalculate_pos_in_grp(c_id):
     c = models.Competition.objects.get(id=c_id)
     res = models.Result.objects.select_related().filter(competition=c).filter(pos__gte=0).order_by('group')
@@ -346,13 +351,13 @@ def validate_person_fields(person):
         alt_vals = sorted([getattr(r.raw_result, attr) for r in results])
         alt_groups = map(lambda (v, l): (v, len(list(l))),
                          itertools.groupby(alt_vals))
-        
+
         alt_groups = sorted(alt_groups,
                             key=lambda (v, c): c,
                             reverse=True)
 
         if alt_groups[0][1] > 1 and alt_groups[0][0] != pval:
-            print person, "attr = %s"%attr
+            print person, "attr = %s" % attr
             for pos, (val, cnt) in enumerate(alt_groups):
                 print "[%s] %s -- %s times" % (pos, val, cnt)
 
@@ -404,7 +409,7 @@ def post_process_comp(comp):
 
 def find_person_by_surname(surname):
     global all_persons
-    srl = sorted(filter(lambda v: v[1]<= 2,
+    srl = sorted(filter(lambda v: v[1] <= 2,
                         [(r, levenshtein(r.surname, surname))
                          for r in all_persons]),
                  lambda a, b: cmp(a[1], b[1]))
@@ -450,4 +455,3 @@ def process_file(path, fields, competition, **defaults):
     raw_results = parse_list(data, fields, defaults)
     process_rlist_new(raw_results)
     post_process_comp(competition)
-    

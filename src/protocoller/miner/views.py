@@ -275,6 +275,16 @@ def search_view(request):
 
 
 def compare_view(request):
+    compare_set = request.session.get(common.COMPARE_LIST_SESSION_KEY, set())
+    if compare_set:
+        cs = ",".join(map(str, compare_set))
+        return redirect("compare_list", cs)
+    season_groups = []
+    return render_to_response('compare_results.html', locals(),
+                              context_instance=RequestContext(request))
+
+
+def compare_list_view(request, cs):
     def cmp_pos(p1, p2):
         if p1 > 0 and p2 > 0:
             return cmp(p1, p2)
@@ -288,7 +298,8 @@ def compare_view(request):
     def cmp_res(r1, r2):
         return cmp_pos(r1.pos, r2.pos) or cmp_pos(r1.pos_in_grp, r2.pos_in_grp)
 
-    compare_set = request.session.get(common.COMPARE_LIST_SESSION_KEY, set())
+    print "@@@"
+    compare_set = map(int, filter(None, cs.split(",")))
     persons = list(models.Person.objects.filter(id__in=compare_set))
 
     results = models.Result.objects.select_related().filter(
