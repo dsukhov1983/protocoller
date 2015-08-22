@@ -154,11 +154,12 @@ class SportEvent(models.Model):
 
 class Competition(models.Model):
 
-    (CLASSIC_STYLE, FREE_STYLE, DUATHLON) = range(3)
+    (CLASSIC_STYLE, FREE_STYLE, DUATHLON, MTB) = range(4)
     STYLE_CHOICES = (
         (CLASSIC_STYLE, u'кл.ст.'),
         (FREE_STYLE, u'св.ст.'),
         (DUATHLON, u'дуат-н'),
+        (MTB, u'мтб'),
     )
 
     (MASS_START, SEP_START) = range(2)
